@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import 'utils/services.dart';
+import 'utils/components.dart';
 import 'services/session_manager.dart';
 
 class RoundSpotDetector extends StatelessWidget {
