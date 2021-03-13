@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'services/session_manager.dart';
+import 'components/session_manager.dart';
 import 'utils/components.dart';
 
 class RoundSpotObserver extends RouteObserver<PageRoute<dynamic>> {

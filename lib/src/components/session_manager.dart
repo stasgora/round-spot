@@ -5,17 +5,23 @@ import 'package:round_spot/src/models/event.dart';
 import 'package:round_spot/src/models/session.dart';
 import 'package:round_spot/src/utils/components.dart';
 
-import 'session_renderer.dart';
+import 'processors/numerical_processor.dart';
+import 'processors/session_processor.dart';
+import 'processors/graphical_processor.dart';
 
 class SessionManager {
-	final _renderer = S.get<SessionRenderer>();
 	final _config = S.get<RoundSpotConfig>();
 
 	Session? _session;
+	final Map<RoundSpotOutputType, SessionProcessor> _processors = {
+		RoundSpotOutputType.GRAPHICAL_RENDER : GraphicalProcessor(),
+		RoundSpotOutputType.NUMERIC_DATA : NumericalProcessor()
+	};
 
 	void startSession({String? name}) {
 		if (_session != null && shouldSaveSession())
-			_renderer.render(_session!..end());
+			for (var type in _config.outputTypes)
+				_processors[type]!.process(_session!..end());
 		_session = Session(name: name);
 	}
 

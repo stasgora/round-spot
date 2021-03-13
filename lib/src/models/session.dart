@@ -9,4 +9,16 @@ class Session {
   Session({this.name}) : startTime = DateTime.now().millisecondsSinceEpoch;
 
   void end() => endTime = DateTime.now().millisecondsSinceEpoch;
+
+  Map<String, dynamic> toJson() => {
+  	'name': name ?? '',
+		'span': {
+			'start': startTime,
+			'end': endTime
+		},
+		'events': [
+			for (var event in events)
+				event.toJson()
+		]
+	};
 }
