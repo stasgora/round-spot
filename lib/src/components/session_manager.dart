@@ -13,9 +13,9 @@ class SessionManager {
 	final _config = S.get<RoundSpotConfig>();
 
 	Session? _session;
-	final Map<RoundSpotOutputType, SessionProcessor> _processors = {
-		RoundSpotOutputType.GRAPHICAL_RENDER : GraphicalProcessor(),
-		RoundSpotOutputType.NUMERIC_DATA : NumericalProcessor()
+	final Map<OutputType, SessionProcessor> _processors = {
+		OutputType.GRAPHICAL_RENDER : S.get<GraphicalProcessor>(),
+		OutputType.NUMERIC_DATA : S.get<NumericalProcessor>()
 	};
 
 	void startSession({String? name}) {

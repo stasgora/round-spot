@@ -10,4 +10,6 @@ class RoundSpot {
 		initializeComponents(config);
 		return RoundSpotDetector(child: child, screenKey: S.get<ScreenshotProvider>().key);
 	}
+
+	static void setEnabled(bool enabled) => updateConfig((config) => config..enabled = enabled);
 }

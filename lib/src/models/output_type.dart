@@ -1,3 +1,3 @@
-enum RoundSpotOutputType {
+enum OutputType {
   NUMERIC_DATA, GRAPHICAL_RENDER
 }
