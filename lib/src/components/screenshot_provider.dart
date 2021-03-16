@@ -7,8 +7,8 @@ class ScreenshotProvider {
 	final GlobalKey key = GlobalKey();
 
 	Future<ui.Image?> takeScreenshot() async {
-		if (key.currentContext == null)
-			return Future.value(null);
-		return (key.currentContext!.findRenderObject() as RenderRepaintBoundary).toImage();
+		if (key.currentContext == null) return Future.value(null);
+		var screen = key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+		return screen.toImage();
 	}
 }

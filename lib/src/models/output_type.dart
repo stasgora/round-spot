@@ -1,3 +1,3 @@
 enum OutputType {
-  NUMERIC_DATA, GRAPHICAL_RENDER
+  numericData, graphicalRender
 }

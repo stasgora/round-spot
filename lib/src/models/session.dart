@@ -1,4 +1,4 @@
-import 'package:round_spot/src/models/event.dart';
+import 'event.dart';
 
 class Session {
 	final List<Event> events = [];

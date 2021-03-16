@@ -1,15 +1,21 @@
 import 'package:flutter/widgets.dart';
 
-import 'models/config.dart';
 import 'components/screenshot_provider.dart';
-import 'utils/components.dart';
 import 'detector_widget.dart';
+import 'models/config.dart';
+import 'utils/components.dart';
 
 class RoundSpot {
 	static Widget initialize({Widget? child, RoundSpotConfig? config}) {
 		initializeComponents(config);
-		return RoundSpotDetector(child: child, screenKey: S.get<ScreenshotProvider>().key);
+		return RoundSpotDetector(
+			screenKey: S.get<ScreenshotProvider>().key,
+			child: child,
+		);
 	}
 
-	static void setEnabled(bool enabled) => updateConfig((config) => config..enabled = enabled);
+	// ignore: avoid_positional_boolean_parameters
+	static void setEnabled(bool enabled) {
+	  updateConfig((config) => config..enabled = enabled);
+	}
 }
