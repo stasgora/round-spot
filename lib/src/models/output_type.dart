@@ -1,3 +1,1 @@
-enum OutputType {
-  numericData, graphicalRender
-}
+enum OutputType { numericData, graphicalRender }

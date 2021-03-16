@@ -21,8 +21,8 @@ class RoundSpotConfig {
       int? minSessionEventCount,
       Set<OutputType>? outputTypes,
       SyncFrequency? syncFrequency,
-      Color? renderingColor}) :
-        assert(minSessionEventCount == null || minSessionEventCount >= 1),
+      Color? renderingColor})
+      : assert(minSessionEventCount == null || minSessionEventCount >= 1),
         assert(maxSessionIdleTime == null || maxSessionIdleTime >= 1),
         enabled = enabled ?? true,
         minSessionEventCount = minSessionEventCount ?? 1,
@@ -30,14 +30,18 @@ class RoundSpotConfig {
         syncFrequency = syncFrequency ?? SyncFrequency(),
         renderingColor = renderingColor ?? Colors.orange[800]!;
 
-  RoundSpotConfig.fromJson(Map<String, dynamic> json) : this(
-      enabled: json['enabled'],
-      maxSessionIdleTime: json['maxSessionIdleTime'],
-      minSessionEventCount: json['minSessionEventCount'],
-      outputTypes: json['outputTypes'] ? (json['outputTypes'] as List<int>)
-	        .map((type) => OutputType.values[type]).toSet() : null,
-      syncFrequency: SyncFrequency.fromJson(json['syncFrequency']),
-      renderingColor: json['renderingColor'] ?
-          Color(int.parse(json['renderingColor'], radix: 16)) : null
-  );
+  RoundSpotConfig.fromJson(Map<String, dynamic> json)
+      : this(
+            enabled: json['enabled'],
+            maxSessionIdleTime: json['maxSessionIdleTime'],
+            minSessionEventCount: json['minSessionEventCount'],
+            outputTypes: json['outputTypes']
+                ? (json['outputTypes'] as List<int>)
+                    .map((type) => OutputType.values[type])
+                    .toSet()
+                : null,
+            syncFrequency: SyncFrequency.fromJson(json['syncFrequency']),
+            renderingColor: json['renderingColor']
+                ? Color(int.parse(json['renderingColor'], radix: 16))
+                : null);
 }

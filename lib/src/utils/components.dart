@@ -10,11 +10,11 @@ final GetIt _instance = GetIt.asNewInstance();
 GetIt get S => _instance;
 
 void initializeComponents(RoundSpotConfig? config) {
-	S.registerSingleton<RoundSpotConfig>(config ?? RoundSpotConfig());
-	S.registerSingleton<ScreenshotProvider>(ScreenshotProvider());
-	S.registerSingleton<GraphicalProcessor>(GraphicalProcessor());
-	S.registerSingleton<NumericalProcessor>(NumericalProcessor());
-	S.registerSingleton<SessionManager>(SessionManager());
+  S.registerSingleton<RoundSpotConfig>(config ?? RoundSpotConfig());
+  S.registerSingleton<ScreenshotProvider>(ScreenshotProvider());
+  S.registerSingleton<GraphicalProcessor>(GraphicalProcessor());
+  S.registerSingleton<NumericalProcessor>(NumericalProcessor());
+  S.registerSingleton<SessionManager>(SessionManager());
 }
 
 void setConfig(RoundSpotConfig config) {

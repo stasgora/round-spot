@@ -5,26 +5,26 @@ import 'components/session_manager.dart';
 import 'utils/components.dart';
 
 class RoundSpotDetector extends StatelessWidget {
-	final _manager = S.get<SessionManager>();
+  final _manager = S.get<SessionManager>();
 
-	final Widget? child;
-	final GlobalKey? screenKey;
+  final Widget? child;
+  final GlobalKey? screenKey;
 
-	RoundSpotDetector({this.child, this.screenKey});
+  RoundSpotDetector({this.child, this.screenKey});
 
-	void _onTap(PointerDownEvent details) {
-	  _manager.registerEvent(details.position);
-	}
+  void _onTap(PointerDownEvent details) {
+    _manager.registerEvent(details.position);
+  }
 
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-	    key: screenKey,
-	    child: Listener(
-		    onPointerDown: _onTap,
-		    behavior: HitTestBehavior.translucent,
-		    child: child,
-	    ),
+      key: screenKey,
+      child: Listener(
+        onPointerDown: _onTap,
+        behavior: HitTestBehavior.translucent,
+        child: child,
+      ),
     );
   }
 }

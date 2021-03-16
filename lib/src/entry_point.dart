@@ -6,16 +6,16 @@ import 'models/config.dart';
 import 'utils/components.dart';
 
 class RoundSpot {
-	static Widget initialize({Widget? child, RoundSpotConfig? config}) {
-		initializeComponents(config);
-		return RoundSpotDetector(
-			screenKey: S.get<ScreenshotProvider>().key,
-			child: child,
-		);
-	}
+  static Widget initialize({Widget? child, RoundSpotConfig? config}) {
+    initializeComponents(config);
+    return RoundSpotDetector(
+      screenKey: S.get<ScreenshotProvider>().key,
+      child: child,
+    );
+  }
 
-	// ignore: avoid_positional_boolean_parameters
-	static void setEnabled(bool enabled) {
-	  updateConfig((config) => config..enabled = enabled);
-	}
+  // ignore: avoid_positional_boolean_parameters
+  static void setEnabled(bool enabled) {
+    updateConfig((config) => config..enabled = enabled);
+  }
 }
