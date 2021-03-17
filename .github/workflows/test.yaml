@@ -1,4 +1,4 @@
-name: Test Round Spot
+name: test
 on: [push, pull_request]
 
 jobs:
