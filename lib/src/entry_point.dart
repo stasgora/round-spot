@@ -14,8 +14,7 @@ class RoundSpot {
     );
   }
 
-  // ignore: avoid_positional_boolean_parameters
-  static void setEnabled(bool enabled) {
+  static void setEnabled({required bool enabled}) {
     updateConfig((config) => config..enabled = enabled);
   }
 }
