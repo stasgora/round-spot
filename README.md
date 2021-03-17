@@ -1,5 +1,4 @@
-# Round Spot
-
+# <div align="center">Round Spot</div>
 
 <div align="center">
   <a href="https://github.com/stasgora/round-spot/actions"><img src="https://github.com/stasgora/round-spot/workflows/test/badge.svg" alt="build"></a>
