@@ -1,0 +1,1 @@
+enum HeatMapStyle { smooth, layered }
