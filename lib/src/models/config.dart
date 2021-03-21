@@ -25,7 +25,7 @@ class RoundSpotConfig {
       : assert(minSessionEventCount == null || minSessionEventCount >= 1),
         assert(maxSessionIdleTime == null || maxSessionIdleTime >= 1),
         assert(heatMapTransparency == null ||
-		        heatMapTransparency >= 0 && heatMapTransparency <= 255),
+            heatMapTransparency >= 0 && heatMapTransparency <= 255),
         enabled = enabled ?? true,
         minSessionEventCount = minSessionEventCount ?? 1,
         outputTypes = outputTypes ?? {OutputType.graphicalRender},
@@ -40,10 +40,12 @@ class RoundSpotConfig {
             minSessionEventCount: json['minSessionEventCount'],
             outputTypes: json['outputTypes']
                 ? (json['outputTypes'] as List<int>)
-		            .map((type) => OutputType.values[type]).toSet()
+                    .map((type) => OutputType.values[type])
+                    .toSet()
                 : null,
             syncFrequency: SyncFrequency.fromJson(json['syncFrequency']),
             heatMapStyle: json['heatMap']?['style'] != null
-		            ? HeatMapStyle.values[json['outputTypes']] : null,
+                ? HeatMapStyle.values[json['outputTypes']]
+                : null,
             heatMapTransparency: json['heatMap']?['transparency']);
 }

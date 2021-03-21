@@ -13,6 +13,6 @@ class Event {
         'time': timestamp
       };
 
-  Path asPath(double radius) => Path()
-		  ..addOval(Rect.fromCircle(center: location, radius: radius));
+  Path asPath(double radius) =>
+      Path()..addOval(Rect.fromCircle(center: location, radius: radius));
 }
