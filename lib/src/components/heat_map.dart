@@ -7,7 +7,7 @@ import 'package:simple_cluster/simple_cluster.dart';
 import '../models/cluster_path.dart';
 import '../models/session.dart';
 
-typedef ScaleFunction = double Function(int level, int clusterSize);
+typedef ScaleFunction = double Function(double level, int clusterSize);
 
 class HeatMap {
   double maxDistance;
@@ -31,12 +31,14 @@ class HeatMap {
     smallestCluster = dbScan.noise.isNotEmpty ? 1 : sizes.reduce(min);
   }
 
-  Path getPathLayer(int level, {ScaleFunction scaleFunc = logBasedLevelScale}) {
+  Path getPathLayer(double layer,
+      {ScaleFunction scaleFunc = logBasedLevelScale}) {
     var joinedPath = Path();
-    for (var cluster in _paths.where((p) => p.clusterSize >= level)) {
+    var paths = _paths.where((p) => p.clusterSize / largestCluster >= layer);
+    for (var cluster in paths) {
       var transform = Matrix4.identity()
         ..translate(cluster.center.dx, cluster.center.dy)
-        ..scale(scaleFunc(level, cluster.clusterSize))
+        ..scale(scaleFunc(layer * largestCluster, cluster.clusterSize))
         ..translate(-cluster.center.dx, -cluster.center.dy);
       var path = cluster.path.transform(transform.storage);
       joinedPath = Path.combine(PathOperation.union, joinedPath, path);
@@ -62,6 +64,6 @@ class HeatMap {
     _paths.addAll(dbScan.noise.map(simpleCluster));
   }
 
-  static double logBasedLevelScale(int level, int clusterSize) =>
+  static double logBasedLevelScale(double level, int clusterSize) =>
       1 + log(clusterSize - level + 1);
 }

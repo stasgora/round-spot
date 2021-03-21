@@ -4,6 +4,7 @@ import 'sync_frequency.dart';
 
 class RoundSpotConfig {
   bool enabled;
+  double uiElementSize;
 
   // Session
   int? maxSessionIdleTime; // TODO Implement
@@ -16,6 +17,7 @@ class RoundSpotConfig {
 
   RoundSpotConfig(
       {bool? enabled,
+      double? uiElementSize,
       int? maxSessionIdleTime,
       int? minSessionEventCount,
       Set<OutputType>? outputTypes,
@@ -27,6 +29,7 @@ class RoundSpotConfig {
         assert(heatMapTransparency == null ||
             heatMapTransparency >= 0 && heatMapTransparency <= 255),
         enabled = enabled ?? true,
+        uiElementSize = uiElementSize ?? 1,
         minSessionEventCount = minSessionEventCount ?? 1,
         outputTypes = outputTypes ?? {OutputType.graphicalRender},
         syncFrequency = syncFrequency ?? SyncFrequency(),
@@ -36,6 +39,7 @@ class RoundSpotConfig {
   RoundSpotConfig.fromJson(Map<String, dynamic> json)
       : this(
             enabled: json['enabled'],
+            uiElementSize: json['uiElementSize'],
             maxSessionIdleTime: json['maxSessionIdleTime'],
             minSessionEventCount: json['minSessionEventCount'],
             outputTypes: json['outputTypes']
