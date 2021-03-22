@@ -29,7 +29,7 @@ class RoundSpotConfig {
         assert(heatMapTransparency == null ||
             heatMapTransparency >= 0 && heatMapTransparency <= 255),
         enabled = enabled ?? true,
-        uiElementSize = uiElementSize ?? 1,
+        uiElementSize = uiElementSize ?? 10,
         minSessionEventCount = minSessionEventCount ?? 1,
         outputTypes = outputTypes ?? {OutputType.graphicalRender},
         syncFrequency = syncFrequency ?? SyncFrequency(),

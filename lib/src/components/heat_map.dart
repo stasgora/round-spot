@@ -7,11 +7,11 @@ import 'package:simple_cluster/simple_cluster.dart';
 import '../models/cluster_path.dart';
 import '../models/session.dart';
 
-typedef ScaleFunction = double Function(double level, int clusterSize);
+typedef ScaleFunction = double Function(double level, double scaleFactor);
 
 class HeatMap {
-  double maxDistance;
-  double detailLevel;
+  double pointProximity;
+  double clusterScale; // 0.5 - 1.5
   DBSCAN dbScan;
   Session session;
   final _paths = <ClusterPath>[];
@@ -20,8 +20,10 @@ class HeatMap {
   late int smallestCluster;
 
   HeatMap(
-      {required this.session, required this.maxDistance, this.detailLevel = .2})
-      : dbScan = DBSCAN(epsilon: maxDistance) {
+      {required this.session,
+      required this.pointProximity,
+      this.clusterScale = 0.5})
+      : dbScan = DBSCAN(epsilon: pointProximity) {
     var dbPoints = session.events.map<List<double>>((e) => e.locationAsList);
     dbScan.run(dbPoints.toList());
     _createClusterPaths();
@@ -36,9 +38,10 @@ class HeatMap {
     var joinedPath = Path();
     var paths = _paths.where((p) => p.clusterSize / largestCluster >= layer);
     for (var cluster in paths) {
+      var scaleInput = cluster.clusterSize - layer * largestCluster;
       var transform = Matrix4.identity()
         ..translate(cluster.center.dx, cluster.center.dy)
-        ..scale(scaleFunc(layer * largestCluster, cluster.clusterSize))
+        ..scale(scaleFunc(scaleInput, 1 / clusterScale))
         ..translate(-cluster.center.dx, -cluster.center.dy);
       var path = cluster.path.transform(transform.storage);
       joinedPath = Path.combine(PathOperation.union, joinedPath, path);
@@ -47,7 +50,7 @@ class HeatMap {
   }
 
   void _createClusterPaths() {
-    var pointRadius = (1 - detailLevel) * maxDistance;
+    var pointRadius = pointProximity * 0.75;
     for (var cluster in dbScan.cluster) {
       var clusterPath = Path();
       for (var pointIndex in cluster) {
@@ -64,6 +67,6 @@ class HeatMap {
     _paths.addAll(dbScan.noise.map(simpleCluster));
   }
 
-  static double logBasedLevelScale(double level, int clusterSize) =>
-      1 + log(clusterSize - level + 1);
+  static double logBasedLevelScale(double level, double scaleFactor) =>
+      1 + log(level + 0.5 / scaleFactor) / scaleFactor;
 }
