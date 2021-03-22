@@ -14,7 +14,6 @@ dependencies:
     sdk: flutter
 
   get_it: ^6.0.0
-  path_provider: ^2.0.1
   simple_cluster: ^0.3.0
 
 dev_dependencies:

@@ -6,7 +6,7 @@ import 'package:flutter/painting.dart';
 import '../../models/heat_map_style.dart';
 import '../../models/session.dart';
 import '../../utils/components.dart';
-import '../../utils/file_utils.dart';
+import '../../utils/export_utils.dart';
 import '../heat_map.dart';
 import '../screenshot_provider.dart';
 import 'session_processor.dart';
@@ -29,7 +29,7 @@ class GraphicalProcessor extends SessionProcessor {
 
     var canvasPicture = pictureRecorder.endRecording();
     var sessionImage = await canvasPicture.toImage(image.width, image.height);
-    return saveDebugImage(sessionImage);
+    return exportHeatMap(sessionImage);
   }
 
   void drawHeatMap(Canvas canvas, Session session) {

@@ -15,7 +15,7 @@ class RoundSpotObserver extends RouteObserver<PageRoute<dynamic>> {
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-	  super.didPop(route, previousRoute);
+    super.didPop(route, previousRoute);
     if (previousRoute is! PageRoute) return;
     _manager.onPageOpened(name: previousRoute.settings.name);
   }
