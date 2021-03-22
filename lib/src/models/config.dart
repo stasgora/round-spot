@@ -4,7 +4,7 @@ import 'sync_frequency.dart';
 
 class RoundSpotConfig {
   bool enabled;
-  double uiElementSize;
+  double uiElementSize; // 5 - 20
 
   // Session
   int? maxSessionIdleTime; // TODO Implement
