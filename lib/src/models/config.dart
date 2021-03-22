@@ -1,11 +1,10 @@
-import 'dart:ui';
-
-import 'package:flutter/material.dart';
+import 'heat_map_style.dart';
 import 'output_type.dart';
 import 'sync_frequency.dart';
 
 class RoundSpotConfig {
   bool enabled;
+  double uiElementSize;
 
   // Session
   int? maxSessionIdleTime; // TODO Implement
@@ -13,26 +12,34 @@ class RoundSpotConfig {
   Set<OutputType> outputTypes;
   SyncFrequency syncFrequency; // TODO Implement
   // Visuals
-  Color renderingColor;
+  HeatMapStyle heatMapStyle;
+  int heatMapTransparency;
 
   RoundSpotConfig(
       {bool? enabled,
-      this.maxSessionIdleTime,
+      double? uiElementSize,
+      int? maxSessionIdleTime,
       int? minSessionEventCount,
       Set<OutputType>? outputTypes,
       SyncFrequency? syncFrequency,
-      Color? renderingColor})
+      HeatMapStyle? heatMapStyle,
+      int? heatMapTransparency})
       : assert(minSessionEventCount == null || minSessionEventCount >= 1),
         assert(maxSessionIdleTime == null || maxSessionIdleTime >= 1),
+        assert(heatMapTransparency == null ||
+            heatMapTransparency >= 0 && heatMapTransparency <= 255),
         enabled = enabled ?? true,
+        uiElementSize = uiElementSize ?? 10,
         minSessionEventCount = minSessionEventCount ?? 1,
         outputTypes = outputTypes ?? {OutputType.graphicalRender},
         syncFrequency = syncFrequency ?? SyncFrequency(),
-        renderingColor = renderingColor ?? Colors.orange[800]!;
+        heatMapStyle = heatMapStyle ?? HeatMapStyle.smooth,
+        heatMapTransparency = (heatMapTransparency ?? 230) % 256;
 
   RoundSpotConfig.fromJson(Map<String, dynamic> json)
       : this(
             enabled: json['enabled'],
+            uiElementSize: json['uiElementSize'],
             maxSessionIdleTime: json['maxSessionIdleTime'],
             minSessionEventCount: json['minSessionEventCount'],
             outputTypes: json['outputTypes']
@@ -41,7 +48,8 @@ class RoundSpotConfig {
                     .toSet()
                 : null,
             syncFrequency: SyncFrequency.fromJson(json['syncFrequency']),
-            renderingColor: json['renderingColor']
-                ? Color(int.parse(json['renderingColor'], radix: 16))
-                : null);
+            heatMapStyle: json['heatMap']?['style'] != null
+                ? HeatMapStyle.values[json['outputTypes']]
+                : null,
+            heatMapTransparency: json['heatMap']?['transparency']);
 }
