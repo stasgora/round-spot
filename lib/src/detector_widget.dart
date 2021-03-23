@@ -12,9 +12,7 @@ class RoundSpotDetector extends StatelessWidget {
 
   RoundSpotDetector({this.child, this.screenKey});
 
-  void _onTap(PointerDownEvent details) {
-    _manager.onEvent(details.position);
-  }
+  void _onTap(PointerDownEvent details) => _manager.onEvent(details.position);
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:logging/logging.dart';
+
 import '../../round_spot.dart';
 import '../models/event.dart';
 import '../models/session.dart';
@@ -10,6 +12,8 @@ import 'processors/numerical_processor.dart';
 import 'processors/session_processor.dart';
 
 class SessionManager {
+  final _logger = Logger('RoundSpot.SessionManager');
+
   final _config = S.get<RoundSpotConfig>();
 
   final Map<String, Session> _pages = {};
@@ -31,7 +35,7 @@ class SessionManager {
   };
 
   void onPageOpened({String? name}) {
-    if (_currentPage != null && _shouldSaveSession()) saveSession(_session!);
+    if (_currentPage != null && _shouldSaveSession()) _saveSession(_session!);
     _currentPage = name ?? '${DateTime.now()}';
     _pages[_currentPage!] ??= Session(name: name);
   }
@@ -46,13 +50,21 @@ class SessionManager {
     return _session!.events.length >= _config.minSessionEventCount;
   }
 
-  void saveSession(Session session) {
+  void _saveSession(Session session) {
     for (var type in _config.outputTypes) {
-      runZoned(() async {
-        if (_callbacks[type] == null) return;
+      runZonedGuarded(() async {
+        if (_callbacks[type] == null) {
+          _logger.warning(
+              'Requested $type generation but the callback is null, skipping.');
+          return;
+        }
         var output = await _processors[type]!.process(_session!..end());
         _callbacks[type]!(output);
-      });
+      },
+          (e, stackTrace) => _logger.severe(
+              'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
+              e,
+              stackTrace));
     }
   }
 }

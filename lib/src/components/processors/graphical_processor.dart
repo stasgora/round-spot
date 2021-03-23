@@ -17,7 +17,6 @@ class GraphicalProcessor extends SessionProcessor {
   @override
   Future process(Session session) async {
     var image = await _screenshotProvider.takeScreenshot();
-    if (image == null) return;
     final pictureRecorder = PictureRecorder();
     final canvas = Canvas(pictureRecorder);
     canvas.drawImage(image, Offset.zero, Paint());
