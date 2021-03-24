@@ -1,11 +1,11 @@
 # <div align="center"><img src="assets/logo.png" alt="icon" width="100"><br> Round Spot</div>
 
 <div align="center">
+  An easy to use heat map interface analysis library
+  
   <a href="https://github.com/stasgora/round-spot/actions"><img src="https://github.com/stasgora/round-spot/workflows/build/badge.svg" alt="build"></a>
   <a href="https://github.com/tenhobi/effective_dart"><img src="https://img.shields.io/badge/style-effective_dart-40c4ff.svg" alt="style: effective dart"></a>
   <a href="https://github.com/stasgora/round-spot/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
-
-  An easy to use heat map interface analysis library
 </div>
 
 **Round Spot** simplifies the UI accessibility and behaviour analysis for Flutter applications by handling the data gathering and processing. It produces beautiful heat map visualizations that aim to make the UI improvement and troubleshooting easy and intuitive.
@@ -33,7 +33,7 @@ void main() {
 Add an observer for monitoring the navigator:
 ```dart
 MaterialApp(
-  navigatorObservers: [RoundSpotObserver()],
+  navigatorObservers: [ RoundSpotObserver() ],
 )
 ```
 
@@ -49,6 +49,7 @@ Configure the tool to fit your needs:
 ```dart
 RoundSpot.initialize(
   config: RoundSpotConfig(
+    minSessionEventCount: 30,
     outputTypes: { OutputType.graphicalRender },
     heatMapStyle: HeatMapStyle.smooth
   ),
