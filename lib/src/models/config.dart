@@ -7,6 +7,7 @@ class RoundSpotConfig {
   double uiElementSize; // 5 - 20
 
   // Session
+  Set<String>? disabledRoutes;
   int? maxSessionIdleTime; // TODO Implement
   int minSessionEventCount;
   Set<OutputType> outputTypes;
@@ -18,7 +19,8 @@ class RoundSpotConfig {
   RoundSpotConfig(
       {bool? enabled,
       double? uiElementSize,
-      int? maxSessionIdleTime,
+      this.disabledRoutes,
+      this.maxSessionIdleTime,
       int? minSessionEventCount,
       Set<OutputType>? outputTypes,
       SyncFrequency? syncFrequency,
@@ -39,7 +41,9 @@ class RoundSpotConfig {
   RoundSpotConfig.fromJson(Map<String, dynamic> json)
       : this(
             enabled: json['enabled'],
-            uiElementSize: json['uiElementSize'],
+					  uiElementSize: json['uiElementSize'],
+		        disabledRoutes: json['disabledRoutes']
+				        ? (json['disabledRoutes'] as List<String>).toSet() : null,
             maxSessionIdleTime: json['maxSessionIdleTime'],
             minSessionEventCount: json['minSessionEventCount'],
             outputTypes: json['outputTypes']

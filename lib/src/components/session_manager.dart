@@ -19,6 +19,8 @@ class SessionManager {
   final Map<String, Session> _pages = {};
   String? _currentPage;
 
+  Session? get _session => _pages[_currentPage];
+
   SessionManager(
       HeatMapCallback? heatMapCallback, NumericCallback? numericCallback)
       : _callbacks = {
@@ -26,15 +28,15 @@ class SessionManager {
           OutputType.numericData: numericCallback
         };
 
-  Session? get _session => _pages[_currentPage];
-
   final Map<OutputType, Function?> _callbacks;
   final Map<OutputType, SessionProcessor> _processors = {
     OutputType.graphicalRender: S.get<GraphicalProcessor>(),
     OutputType.numericData: S.get<NumericalProcessor>()
   };
 
-  void onPageOpened({String? name}) {
+  void onRouteOpened({String? name}) {
+  	var routes = _config.disabledRoutes;
+  	if (routes != null && routes.contains(name)) return;
     if (_currentPage != null && _shouldSaveSession()) _saveSession(_session!);
     _currentPage = name ?? '${DateTime.now()}';
     _pages[_currentPage!] ??= Session(name: name);
@@ -61,10 +63,12 @@ class SessionManager {
         var output = await _processors[type]!.process(_session!..end());
         _callbacks[type]!(output);
       },
-          (e, stackTrace) => _logger.severe(
+          (e, stackTrace) {
+            _logger.severe(
               'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
               e,
-              stackTrace));
+              stackTrace);
+          });
     }
   }
 }
