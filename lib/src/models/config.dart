@@ -2,7 +2,7 @@ import 'heat_map_style.dart';
 import 'output_type.dart';
 import 'sync_frequency.dart';
 
-class RoundSpotConfig {
+class Config {
   bool enabled;
   double uiElementSize; // 5 - 20
 
@@ -16,7 +16,7 @@ class RoundSpotConfig {
   HeatMapStyle heatMapStyle;
   int heatMapTransparency;
 
-  RoundSpotConfig(
+  Config(
       {bool? enabled,
       double? uiElementSize,
       this.disabledRoutes,
@@ -38,12 +38,13 @@ class RoundSpotConfig {
         heatMapStyle = heatMapStyle ?? HeatMapStyle.smooth,
         heatMapTransparency = (heatMapTransparency ?? 230) % 256;
 
-  RoundSpotConfig.fromJson(Map<String, dynamic> json)
+  Config.fromJson(Map<String, dynamic> json)
       : this(
             enabled: json['enabled'],
-					  uiElementSize: json['uiElementSize'],
-		        disabledRoutes: json['disabledRoutes']
-				        ? (json['disabledRoutes'] as List<String>).toSet() : null,
+            uiElementSize: json['uiElementSize'],
+            disabledRoutes: json['disabledRoutes']
+                ? (json['disabledRoutes'] as List<String>).toSet()
+                : null,
             maxSessionIdleTime: json['maxSessionIdleTime'],
             minSessionEventCount: json['minSessionEventCount'],
             outputTypes: json['outputTypes']

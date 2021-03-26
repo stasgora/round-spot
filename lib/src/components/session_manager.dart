@@ -14,7 +14,7 @@ import 'processors/session_processor.dart';
 class SessionManager {
   final _logger = Logger('RoundSpot.SessionManager');
 
-  final _config = S.get<RoundSpotConfig>();
+  final _config = S.get<Config>();
 
   final Map<String, Session> _pages = {};
   String? _currentPage;
@@ -35,8 +35,8 @@ class SessionManager {
   };
 
   void onRouteOpened({String? name}) {
-  	var routes = _config.disabledRoutes;
-  	if (routes != null && routes.contains(name)) return;
+    var routes = _config.disabledRoutes;
+    if (routes != null && routes.contains(name)) return;
     if (_currentPage != null && _shouldSaveSession()) _saveSession(_session!);
     _currentPage = name ?? '${DateTime.now()}';
     _pages[_currentPage!] ??= Session(name: name);
@@ -62,13 +62,12 @@ class SessionManager {
         }
         var output = await _processors[type]!.process(_session!..end());
         _callbacks[type]!(output);
-      },
-          (e, stackTrace) {
-            _logger.severe(
-              'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
-              e,
-              stackTrace);
-          });
+      }, (e, stackTrace) {
+        _logger.severe(
+            'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
+            e,
+            stackTrace);
+      });
     }
   }
 }

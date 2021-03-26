@@ -5,7 +5,7 @@ import '../../utils/components.dart';
 
 abstract class SessionProcessor {
   @protected
-  final config = S.get<RoundSpotConfig>();
+  final config = S.get<Config>();
 
   Future process(Session session);
 }

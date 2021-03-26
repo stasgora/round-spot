@@ -18,41 +18,42 @@ This tool is still in active development - the core functionality is mostly work
 
 To start using **Round Spot** within your app, import it in your main file:
 ```dart
-import 'package:round_spot/round_spot.dart';
+import 'package:round_spot/round_spot.dart' as round_spot;
 ```
+> **⚠️ Note:** Using a `round_spot` prefix is highly recommended due to potential name collisions and better readability
 
 ### Setup
 Wrap your `MaterialApp` widget to initialize the library:
 ```dart
 void main() {
-  runApp(RoundSpot.initialize(
-    child: Application(),
+  runApp(round_spot.initialize(
+    child: Application()
   ));
 }
 ```
 Add an observer for monitoring the navigator:
 ```dart
 MaterialApp(
-  navigatorObservers: [ RoundSpotObserver() ],
+  navigatorObservers: [ round_spot.Observer() ]
 )
 ```
 
 ### Configuration
 Provide the callbacks for saving the processed output:
 ```dart
-RoundSpot.initialize(
+round_spot.initialize(
   heatMapCallback: (data) => sendHeatMapImage(data)
 )
 ```
 Configure the tool to fit your needs:
 > **⚠️ Note:** Configuration is very much a **WIP**
 ```dart
-RoundSpot.initialize(
-  config: RoundSpotConfig(
+round_spot.initialize(
+  config: round_spot.Config(
     minSessionEventCount: 30,
-    outputTypes: { OutputType.graphicalRender },
-    heatMapStyle: HeatMapStyle.smooth
-  ),
+    outputTypes: { round_spot.OutputType.graphicalRender },
+    heatMapStyle: round_spot.HeatMapStyle.smooth
+  )
 )
 ```
 
