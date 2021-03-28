@@ -5,9 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'components/screenshot_provider.dart';
 import 'detector_widget.dart';
 import 'models/config.dart';
+import 'models/output_info.dart';
 import 'utils/components.dart';
 
-typedef HeatMapCallback = void Function(Uint8List data);
+typedef HeatMapCallback = void Function(Uint8List data, OutputInfo info);
 typedef NumericCallback = void Function(String data);
 
 Widget initialize(

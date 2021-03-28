@@ -13,6 +13,8 @@ import 'processors/session_processor.dart';
 import 'screenshot_provider.dart';
 
 class SessionManager {
+  final HeatMapCallback? heatMapCallback;
+  final NumericCallback? numericCallback;
   final _logger = Logger('RoundSpot.SessionManager');
 
   final _config = S.get<Config>();
@@ -23,14 +25,8 @@ class SessionManager {
 
   Session? get _session => _pages[_currentPage];
 
-  SessionManager(
-      HeatMapCallback? heatMapCallback, NumericCallback? numericCallback)
-      : _callbacks = {
-          OutputType.graphicalRender: heatMapCallback,
-          OutputType.numericData: numericCallback
-        };
+  SessionManager(this.heatMapCallback, this.numericCallback);
 
-  final Map<OutputType, Function?> _callbacks;
   final Map<OutputType, SessionProcessor> _processors = {
     OutputType.graphicalRender: S.get<GraphicalProcessor>(),
     OutputType.numericData: S.get<NumericalProcessor>()
@@ -44,17 +40,21 @@ class SessionManager {
     var routes = _config.disabledRoutes;
     if (routes != null && routes.contains(name)) return;
     _currentPage = name ?? '${DateTime.now()}';
-    _pages[_currentPage!] ??= Session(name: name);
+    _createSession();
   }
 
   void onEvent(Offset position) async {
     if (_currentPage == null) return;
+    _createSession();
     var event = Event(position, DateTime.now().millisecondsSinceEpoch);
     _session!.events.add(event);
     if (_session!.screenSnap == null) {
       _session!.screenSnap = await _screenshotProvider.takeScreenshot();
     }
   }
+
+  void _createSession() =>
+      _pages[_currentPage!] ??= Session(name: _currentPage!);
 
   void _endSessions() {
     bool skipSession(Session session) =>
@@ -69,13 +69,19 @@ class SessionManager {
     if (!_pages.containsKey(name)) return;
     for (var type in _config.outputTypes) {
       runZonedGuarded(() async {
-        if (_callbacks[type] == null) {
+        if ((type == OutputType.graphicalRender
+            ? heatMapCallback : numericCallback) == null) {
           _logger.warning(
               'Requested $type generation but the callback is null, skipping.');
           return;
         }
-        var output = await _processors[type]!.process(_pages[name]!..end());
-        _callbacks[type]!(output);
+        var session = _pages[name]!;
+        var output = await _processors[type]!.process(session..end());
+        if (type == OutputType.graphicalRender) {
+          heatMapCallback!(output, session);
+        } else {
+         numericCallback!(output);
+        }
       }, (e, stackTrace) {
         _logger.severe(
             'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
