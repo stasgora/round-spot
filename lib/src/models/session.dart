@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'event.dart';
 
 class Session {
@@ -5,6 +7,7 @@ class Session {
   final String? name;
   final int startTime;
   int? endTime;
+  Image? screenSnap;
 
   Session({this.name}) : startTime = DateTime.now().millisecondsSinceEpoch;
 

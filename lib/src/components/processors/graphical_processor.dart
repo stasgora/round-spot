@@ -5,18 +5,14 @@ import 'package:flutter/painting.dart';
 
 import '../../models/heat_map_style.dart';
 import '../../models/session.dart';
-import '../../utils/components.dart';
 import '../../utils/export_utils.dart';
 import '../heat_map.dart';
-import '../screenshot_provider.dart';
 import 'session_processor.dart';
 
 class GraphicalProcessor extends SessionProcessor {
-  final _screenshotProvider = S.get<ScreenshotProvider>();
-
   @override
   Future process(Session session) async {
-    var image = await _screenshotProvider.takeScreenshot();
+    var image = session.screenSnap!;
     final pictureRecorder = PictureRecorder();
     final canvas = Canvas(pictureRecorder);
     canvas.drawImage(image, Offset.zero, Paint());
