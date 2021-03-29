@@ -1,6 +1,5 @@
 import 'heat_map_style.dart';
 import 'output_type.dart';
-import 'sync_frequency.dart';
 
 class Config {
   bool enabled;
@@ -11,7 +10,6 @@ class Config {
   int? maxSessionIdleTime;
   int minSessionEventCount;
   Set<OutputType> outputTypes;
-  SyncFrequency syncFrequency; // TODO Implement
   // Visuals
   HeatMapStyle heatMapStyle;
   int heatMapTransparency;
@@ -23,7 +21,6 @@ class Config {
       this.maxSessionIdleTime,
       int? minSessionEventCount,
       Set<OutputType>? outputTypes,
-      SyncFrequency? syncFrequency,
       HeatMapStyle? heatMapStyle,
       int? heatMapTransparency})
       : assert(minSessionEventCount == null || minSessionEventCount >= 1),
@@ -34,7 +31,6 @@ class Config {
         uiElementSize = uiElementSize ?? 10,
         minSessionEventCount = minSessionEventCount ?? 1,
         outputTypes = outputTypes ?? {OutputType.graphicalRender},
-        syncFrequency = syncFrequency ?? SyncFrequency(),
         heatMapStyle = heatMapStyle ?? HeatMapStyle.smooth,
         heatMapTransparency = (heatMapTransparency ?? 230) % 256;
 
@@ -52,7 +48,6 @@ class Config {
                     .map((type) => OutputType.values[type])
                     .toSet()
                 : null,
-            syncFrequency: SyncFrequency.fromJson(json['syncFrequency']),
             heatMapStyle: json['heatMap']?['style'] != null
                 ? HeatMapStyle.values[json['outputTypes']]
                 : null,

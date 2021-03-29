@@ -46,9 +46,13 @@ class SessionManager {
 
   void onEvent(Offset position) async {
     if (_currentPage == null) return;
+    if (!_config.enabled) {
+      _endSessions();
+      return;
+    }
     _pages[_currentPage!] ??= Session(name: _currentPage!);
     var event = Event(position, DateTime.now().millisecondsSinceEpoch);
-    _session!.events.add(event);
+    _session!.addEvent(event);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
       _idleTimer =
@@ -81,7 +85,7 @@ class SessionManager {
           return;
         }
         var session = _pages[name]!;
-        var output = await _processors[type]!.process(session..end());
+        var output = await _processors[type]!.process(session);
         if (type == OutputType.graphicalRender) {
           heatMapCallback!(output, session);
         } else {
