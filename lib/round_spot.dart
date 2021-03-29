@@ -6,3 +6,4 @@ export 'src/models/heat_map_style.dart';
 export 'src/models/output_info.dart';
 export 'src/models/output_type.dart';
 export 'src/navigator_observer.dart';
+export 'src/widgets/detector.dart';

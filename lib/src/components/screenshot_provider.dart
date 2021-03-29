@@ -5,12 +5,10 @@ import 'package:flutter/widgets.dart';
 import '../models/exceptions.dart';
 
 class ScreenshotProvider {
-  final GlobalKey key = GlobalKey();
-
-  Future<ui.Image> takeScreenshot() async {
-    if (key.currentContext == null) throw ScreenshotContextInaccessible();
+  Future<ui.Image> takeScreenshot(GlobalKey areaKey) async {
+    if (areaKey.currentContext == null) throw ScreenshotContextInaccessible();
     var screen =
-        key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        areaKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     return screen.toImage();
   }
 }

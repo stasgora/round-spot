@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../round_spot.dart';
 import '../models/event.dart';
@@ -21,11 +23,9 @@ class SessionManager {
   final _config = S.get<Config>();
   final _screenshotProvider = S.get<ScreenshotProvider>();
 
-  final Map<String, Session> _pages = {};
+  final Map<Tuple2<String, GlobalKey>, Session> _pages = {};
   String? _currentPage;
   Timer? _idleTimer;
-
-  Session? get _session => _pages[_currentPage];
 
   SessionManager(this.heatMapCallback, this.numericCallback);
 
@@ -44,22 +44,22 @@ class SessionManager {
     _currentPage = name ?? '${DateTime.now()}';
   }
 
-  void onEvent(Offset position) async {
+  void onEvent({required Event event, required GlobalKey areaKey}) async {
     if (_currentPage == null) return;
     if (!_config.enabled) {
       _endSessions();
       return;
     }
-    _pages[_currentPage!] ??= Session(name: _currentPage!);
-    var event = Event(position, DateTime.now().millisecondsSinceEpoch);
-    _session!.addEvent(event);
+    var sessionKey = Tuple2(_currentPage!, areaKey);
+    var session = (_pages[sessionKey] ??= Session(name: _currentPage!));
+    session.addEvent(event);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
       _idleTimer =
           Timer(Duration(seconds: _config.maxSessionIdleTime!), _endSessions);
     }
-    if (_session!.screenSnap == null) {
-      _session!.screenSnap = await _screenshotProvider.takeScreenshot();
+    if (session.screenSnap == null) {
+	    session.screenSnap = await _screenshotProvider.takeScreenshot(areaKey);
     }
   }
 
@@ -72,8 +72,8 @@ class SessionManager {
     _pages.removeWhere((key, session) => !skipSession(session));
   }
 
-  void _exportSession(String name) {
-    if (!_pages.containsKey(name)) return;
+  void _exportSession(Tuple2<String, GlobalKey> key) {
+    if (!_pages.containsKey(key)) return;
     for (var type in _config.outputTypes) {
       runZonedGuarded(() async {
         if ((type == OutputType.graphicalRender
@@ -84,7 +84,7 @@ class SessionManager {
               'Requested $type generation but the callback is null, skipping.');
           return;
         }
-        var session = _pages[name]!;
+        var session = _pages[key]!;
         var output = await _processors[type]!.process(session);
         if (type == OutputType.graphicalRender) {
           heatMapCallback!(output, session);
