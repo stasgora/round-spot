@@ -8,7 +8,7 @@ class Config {
 
   // Session
   Set<String>? disabledRoutes;
-  int? maxSessionIdleTime; // TODO Implement
+  int? maxSessionIdleTime;
   int minSessionEventCount;
   Set<OutputType> outputTypes;
   SyncFrequency syncFrequency; // TODO Implement

@@ -35,6 +35,7 @@ class GraphicalProcessor extends SessionProcessor {
       if (heatMap.largestCluster == 1) return 1;
       return heatMap.largestCluster * config.heatMapStyle.multiplier;
     }
+
     calcFraction(int i) => (i - 1) / max((layerCount() - 1), 1);
     calcBlur(double val) => (4 * val * val + 2) * config.uiElementSize / 10;
     for (var i = 1; i <= layerCount(); i++) {

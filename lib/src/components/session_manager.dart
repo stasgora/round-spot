@@ -15,6 +15,7 @@ import 'screenshot_provider.dart';
 class SessionManager {
   final HeatMapCallback? heatMapCallback;
   final NumericCallback? numericCallback;
+
   final _logger = Logger('RoundSpot.SessionManager');
 
   final _config = S.get<Config>();
@@ -22,6 +23,7 @@ class SessionManager {
 
   final Map<String, Session> _pages = {};
   String? _currentPage;
+  Timer? _idleTimer;
 
   Session? get _session => _pages[_currentPage];
 
@@ -40,21 +42,22 @@ class SessionManager {
     var routes = _config.disabledRoutes;
     if (routes != null && routes.contains(name)) return;
     _currentPage = name ?? '${DateTime.now()}';
-    _createSession();
   }
 
   void onEvent(Offset position) async {
     if (_currentPage == null) return;
-    _createSession();
+    _pages[_currentPage!] ??= Session(name: _currentPage!);
     var event = Event(position, DateTime.now().millisecondsSinceEpoch);
     _session!.events.add(event);
+    if (_config.maxSessionIdleTime != null) {
+      _idleTimer?.cancel();
+      _idleTimer =
+          Timer(Duration(seconds: _config.maxSessionIdleTime!), _endSessions);
+    }
     if (_session!.screenSnap == null) {
       _session!.screenSnap = await _screenshotProvider.takeScreenshot();
     }
   }
-
-  void _createSession() =>
-      _pages[_currentPage!] ??= Session(name: _currentPage!);
 
   void _endSessions() {
     bool skipSession(Session session) =>
@@ -70,7 +73,9 @@ class SessionManager {
     for (var type in _config.outputTypes) {
       runZonedGuarded(() async {
         if ((type == OutputType.graphicalRender
-            ? heatMapCallback : numericCallback) == null) {
+                ? heatMapCallback
+                : numericCallback) ==
+            null) {
           _logger.warning(
               'Requested $type generation but the callback is null, skipping.');
           return;
@@ -80,7 +85,7 @@ class SessionManager {
         if (type == OutputType.graphicalRender) {
           heatMapCallback!(output, session);
         } else {
-         numericCallback!(output);
+          numericCallback!(output);
         }
       }, (e, stackTrace) {
         _logger.severe(
