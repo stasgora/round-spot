@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../../models/config.dart';
+import '../../models/config/config.dart';
 import '../../models/session.dart';
 import '../../utils/components.dart';
 

@@ -2,25 +2,23 @@ import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 
-import 'components/screenshot_provider.dart';
-import 'detector_widget.dart';
-import 'models/config.dart';
+import 'models/config/config.dart';
 import 'models/output_info.dart';
 import 'utils/components.dart';
+import 'widgets/detector.dart';
+import 'widgets/lifecycle_observer.dart';
 
 typedef HeatMapCallback = void Function(Uint8List data, OutputInfo info);
 typedef NumericCallback = void Function(String data);
 
-Widget initialize(
-    {Widget? child,
-    Config? config,
-    HeatMapCallback? heatMapCallback,
-    NumericCallback? numericCallback}) {
+Widget initialize({
+  required Widget child,
+  Config? config,
+  HeatMapCallback? heatMapCallback,
+  NumericCallback? numericCallback,
+}) {
   initializeComponents(config, heatMapCallback, numericCallback);
-  return Detector(
-    screenKey: S.get<ScreenshotProvider>().key,
-    child: child,
-  );
+  return LifecycleObserver(child: Detector(child: child, areaID: ''));
 }
 
 Config get config => S.get<Config>();

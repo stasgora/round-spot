@@ -19,11 +19,11 @@ class HeatMap {
   late int largestCluster;
   late int smallestCluster;
 
-  HeatMap(
-      {required this.session,
-      required this.pointProximity,
-      this.clusterScale = 0.5})
-      : dbScan = DBSCAN(epsilon: pointProximity) {
+  HeatMap({
+    required this.session,
+    required this.pointProximity,
+    this.clusterScale = 0.5,
+  }) : dbScan = DBSCAN(epsilon: pointProximity) {
     var dbPoints = session.events.map<List<double>>((e) => e.locationAsList);
     dbScan.run(dbPoints.toList());
     _createClusterPaths();
@@ -33,8 +33,10 @@ class HeatMap {
     smallestCluster = dbScan.noise.isNotEmpty ? 1 : sizes.reduce(min);
   }
 
-  Path getPathLayer(double layer,
-      {ScaleFunction scaleFunc = logBasedLevelScale}) {
+  Path getPathLayer(
+    double layer, {
+    ScaleFunction scaleFunc = logBasedLevelScale,
+  }) {
     var joinedPath = Path();
     var paths = _paths.where((p) => p.clusterSize / largestCluster >= layer);
     for (var cluster in paths) {

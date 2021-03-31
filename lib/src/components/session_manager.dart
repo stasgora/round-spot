@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 
 import '../../round_spot.dart';
+import '../models/detector_config.dart';
 import '../models/event.dart';
 import '../models/session.dart';
 import '../utils/components.dart';
@@ -12,6 +14,7 @@ import 'processors/numerical_processor.dart';
 import 'processors/session_processor.dart';
 import 'screenshot_provider.dart';
 
+/// Coordinates and manages data gathering, processing and reporting.
 class SessionManager {
   final HeatMapCallback? heatMapCallback;
   final NumericCallback? numericCallback;
@@ -22,10 +25,9 @@ class SessionManager {
   final _screenshotProvider = S.get<ScreenshotProvider>();
 
   final Map<String, Session> _pages = {};
+  final Set<int> _processedEventIDs = {};
   String? _currentPage;
   Timer? _idleTimer;
-
-  Session? get _session => _pages[_currentPage];
 
   SessionManager(this.heatMapCallback, this.numericCallback);
 
@@ -44,22 +46,31 @@ class SessionManager {
     _currentPage = name ?? '${DateTime.now()}';
   }
 
-  void onEvent(Offset position) async {
-    if (_currentPage == null) return;
+  void onEvent({required Event event, required DetectorConfig detector}) async {
+    if (_currentPage == null || _processedEventIDs.contains(event.id)) return;
     if (!_config.enabled) {
       _endSessions();
       return;
     }
-    _pages[_currentPage!] ??= Session(name: _currentPage!);
-    var event = Event(position, DateTime.now().millisecondsSinceEpoch);
-    _session!.addEvent(event);
+    var sessionKey = detector.areaID;
+    if (!detector.hasGlobalScope) sessionKey += _currentPage!;
+
+    var session = (_pages[sessionKey] ??= Session(
+      page: detector.hasGlobalScope ? null : _currentPage,
+      area: detector.areaID,
+    ));
+    session.addEvent(event);
+    _processedEventIDs.add(event.id);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
-      _idleTimer =
-          Timer(Duration(seconds: _config.maxSessionIdleTime!), _endSessions);
+      _idleTimer = Timer(
+        Duration(seconds: _config.maxSessionIdleTime!),
+        _endSessions,
+      );
     }
-    if (_session!.screenSnap == null) {
-      _session!.screenSnap = await _screenshotProvider.takeScreenshot();
+    if (session.screenSnap == null) {
+      session.screenSnap =
+          await _screenshotProvider.takeScreenshot(detector.areaKey);
     }
   }
 
@@ -72,8 +83,8 @@ class SessionManager {
     _pages.removeWhere((key, session) => !skipSession(session));
   }
 
-  void _exportSession(String name) {
-    if (!_pages.containsKey(name)) return;
+  void _exportSession(String key) {
+    if (!_pages.containsKey(key)) return;
     for (var type in _config.outputTypes) {
       runZonedGuarded(() async {
         if ((type == OutputType.graphicalRender
@@ -81,10 +92,11 @@ class SessionManager {
                 : numericCallback) ==
             null) {
           _logger.warning(
-              'Requested $type generation but the callback is null, skipping.');
+            'Requested $type generation but the callback is null, skipping.',
+          );
           return;
         }
-        var session = _pages[name]!;
+        var session = _pages[key]!;
         var output = await _processors[type]!.process(session);
         if (type == OutputType.graphicalRender) {
           heatMapCallback!(output, session);
@@ -93,9 +105,10 @@ class SessionManager {
         }
       }, (e, stackTrace) {
         _logger.severe(
-            'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
-            e,
-            stackTrace);
+          'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
+          e,
+          stackTrace,
+        );
       });
     }
   }
