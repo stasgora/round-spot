@@ -3,9 +3,9 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../round_spot.dart';
+import '../models/detector_config.dart';
 import '../models/event.dart';
 import '../models/session.dart';
 import '../utils/components.dart';
@@ -24,7 +24,7 @@ class SessionManager {
   final _config = S.get<Config>();
   final _screenshotProvider = S.get<ScreenshotProvider>();
 
-  final Map<Tuple2<String, String>, Session> _pages = {};
+  final Map<String, Session> _pages = {};
   final Set<int> _processedEventIDs = {};
   String? _currentPage;
   Timer? _idleTimer;
@@ -46,27 +46,31 @@ class SessionManager {
     _currentPage = name ?? '${DateTime.now()}';
   }
 
-  void onEvent(
-      {required Event event,
-      required GlobalKey areaKey,
-      required String areaID}) async {
+  void onEvent({required Event event, required DetectorConfig detector}) async {
     if (_currentPage == null || _processedEventIDs.contains(event.id)) return;
     if (!_config.enabled) {
       _endSessions();
       return;
     }
-    var sessionKey = Tuple2(_currentPage!, areaID);
-    var session =
-        (_pages[sessionKey] ??= Session(page: _currentPage!, area: areaID));
+    var sessionKey = detector.areaID;
+    if (!detector.hasGlobalScope) sessionKey += _currentPage!;
+
+    var session = (_pages[sessionKey] ??= Session(
+      page: detector.hasGlobalScope ? null : _currentPage,
+      area: detector.areaID,
+    ));
     session.addEvent(event);
     _processedEventIDs.add(event.id);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
-      _idleTimer =
-          Timer(Duration(seconds: _config.maxSessionIdleTime!), _endSessions);
+      _idleTimer = Timer(
+        Duration(seconds: _config.maxSessionIdleTime!),
+        _endSessions,
+      );
     }
     if (session.screenSnap == null) {
-      session.screenSnap = await _screenshotProvider.takeScreenshot(areaKey);
+      session.screenSnap =
+          await _screenshotProvider.takeScreenshot(detector.areaKey);
     }
   }
 
@@ -79,7 +83,7 @@ class SessionManager {
     _pages.removeWhere((key, session) => !skipSession(session));
   }
 
-  void _exportSession(Tuple2<String, String> key) {
+  void _exportSession(String key) {
     if (!_pages.containsKey(key)) return;
     for (var type in _config.outputTypes) {
       runZonedGuarded(() async {
@@ -88,7 +92,8 @@ class SessionManager {
                 : numericCallback) ==
             null) {
           _logger.warning(
-              'Requested $type generation but the callback is null, skipping.');
+            'Requested $type generation but the callback is null, skipping.',
+          );
           return;
         }
         var session = _pages[key]!;

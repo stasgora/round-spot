@@ -8,7 +8,7 @@ import 'output_info.dart';
 /// Represents a record of user interactions
 /// with a particular [area] on some [page].
 class Session implements OutputInfo {
-  final String page;
+  final String? page;
   final String area;
   final int startTime;
   int endTime;
@@ -17,7 +17,7 @@ class Session implements OutputInfo {
   final List<Event> _events = [];
   List<Event> get events => _events;
 
-  Session({required this.page, required this.area})
+  Session({this.page, required this.area})
       : startTime = getTimestamp(),
         endTime = getTimestamp();
 
