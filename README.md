@@ -1,7 +1,7 @@
 # <div align="center"><img src="https://raw.githubusercontent.com/stasgora/round-spot/master/assets/logo.png" alt="icon" width="100"><br> Round Spot</div>
 
 <div align="center">
-  An easy to use heat map interface analysis library
+  Easy to use heat map interface analysis library
   
   <a href="https://github.com/stasgora/round-spot/actions"><img src="https://github.com/stasgora/round-spot/workflows/build/badge.svg" alt="build"></a>
   <a href="https://github.com/tenhobi/effective_dart"><img src="https://img.shields.io/badge/style-effective_dart-40c4ff.svg" alt="style: effective dart"></a>
@@ -68,7 +68,7 @@ round_spot.initialize(
 #### Route naming
 This library uses route names to differentiate between pages.
 Make sure you are either:
-- Using [named routes](https://flutter.dev/docs/cookbook/navigation/named-routes)
+- Using [named routes](https://flutter.dev/docs/cookbook/navigation/named-routes) or
 - Specifying `name` in [RouteSetting](https://api.flutter.dev/flutter/widgets/RouteSettings-class.html) when pushing a [PageRoute](https://api.flutter.dev/flutter/widgets/PageRoute-class.html)
 
 #### Scrollable widgets
