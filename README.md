@@ -10,6 +10,14 @@
 
 **Round Spot** simplifies the UI accessibility and behaviour analysis for Flutter applications by handling the data gathering and processing. It produces beautiful heat map visualizations that aim to make the UI improvement and troubleshooting easy and intuitive.
 
+## Examples
+
+| ![](https://raw.githubusercontent.com/stasgora/round-spot/master/assets/screens/calendar.png) | ![](https://raw.githubusercontent.com/stasgora/round-spot/master/assets/screens/form.png) | ![](https://raw.githubusercontent.com/stasgora/round-spot/master/assets/screens/panel.png) | ![](https://raw.githubusercontent.com/stasgora/round-spot/master/assets/screens/rating.png) |
+| :--------------------: | :--------------------: | :--------------------------: | :-------------------: |
+|        Calendar        |         Form           |            Panel             |         Cards         |
+
+(Screens taken from the **[Fokus](https://github.com/fokus-team/fokus)** application)
+
 ## 🚧 State 🚧
 This tool is still in active development - the core functionality is mostly working but many important features are still missing.
 
