@@ -17,9 +17,7 @@ Widget initialize(
     HeatMapCallback? heatMapCallback,
     NumericCallback? numericCallback}) {
   initializeComponents(config, heatMapCallback, numericCallback);
-  return LifecycleObserver(
-	  child: Detector(child: child)
-  );
+  return LifecycleObserver(child: Detector(child: child, areaID: 'global'));
 }
 
 Config get config => S.get<Config>();

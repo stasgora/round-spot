@@ -23,7 +23,8 @@ class SessionManager {
   final _config = S.get<Config>();
   final _screenshotProvider = S.get<ScreenshotProvider>();
 
-  final Map<Tuple2<String, GlobalKey>, Session> _pages = {};
+  final Map<Tuple2<String, String>, Session> _pages = {};
+  final Set<int> _processedEventIDs = {};
   String? _currentPage;
   Timer? _idleTimer;
 
@@ -44,22 +45,27 @@ class SessionManager {
     _currentPage = name ?? '${DateTime.now()}';
   }
 
-  void onEvent({required Event event, required GlobalKey areaKey}) async {
-    if (_currentPage == null) return;
+  void onEvent(
+      {required Event event,
+      required GlobalKey areaKey,
+      String? areaID}) async {
+    if (_currentPage == null || _processedEventIDs.contains(event.id)) return;
     if (!_config.enabled) {
       _endSessions();
       return;
     }
-    var sessionKey = Tuple2(_currentPage!, areaKey);
+    var sessionKey = Tuple2(_currentPage!, areaID ?? '');
     var session = (_pages[sessionKey] ??= Session(name: _currentPage!));
     session.addEvent(event);
+    print(event.id);
+    _processedEventIDs.add(event.id);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
       _idleTimer =
           Timer(Duration(seconds: _config.maxSessionIdleTime!), _endSessions);
     }
     if (session.screenSnap == null) {
-	    session.screenSnap = await _screenshotProvider.takeScreenshot(areaKey);
+      session.screenSnap = await _screenshotProvider.takeScreenshot(areaKey);
     }
   }
 
@@ -72,7 +78,7 @@ class SessionManager {
     _pages.removeWhere((key, session) => !skipSession(session));
   }
 
-  void _exportSession(Tuple2<String, GlobalKey> key) {
+  void _exportSession(Tuple2<String, String> key) {
     if (!_pages.containsKey(key)) return;
     for (var type in _config.outputTypes) {
       runZonedGuarded(() async {
