@@ -14,6 +14,7 @@ import 'processors/numerical_processor.dart';
 import 'processors/session_processor.dart';
 import 'screenshot_provider.dart';
 
+/// Coordinates and manages data gathering, processing and reporting.
 class SessionManager {
   final HeatMapCallback? heatMapCallback;
   final NumericCallback? numericCallback;
@@ -55,7 +56,8 @@ class SessionManager {
       return;
     }
     var sessionKey = Tuple2(_currentPage!, areaID);
-    var session = (_pages[sessionKey] ??= Session(name: _currentPage!));
+    var session =
+        (_pages[sessionKey] ??= Session(page: _currentPage!, area: areaID));
     session.addEvent(event);
     _processedEventIDs.add(event.id);
     if (_config.maxSessionIdleTime != null) {
@@ -98,9 +100,10 @@ class SessionManager {
         }
       }, (e, stackTrace) {
         _logger.severe(
-            'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
-            e,
-            stackTrace);
+          'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
+          e,
+          stackTrace,
+        );
       });
     }
   }

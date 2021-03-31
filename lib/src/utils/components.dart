@@ -5,7 +5,7 @@ import '../components/processors/numerical_processor.dart';
 import '../components/screenshot_provider.dart';
 import '../components/session_manager.dart';
 import '../entry_point.dart';
-import '../models/config.dart';
+import '../models/config/config.dart';
 
 final GetIt _instance = GetIt.asNewInstance();
 GetIt get S => _instance;

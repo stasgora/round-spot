@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/gestures.dart';
+import '../utils/utils.dart';
 
 class Event {
   final Offset location;
@@ -11,12 +12,12 @@ class Event {
 
   Event.fromPointer(PointerEvent event)
       : location = event.localPosition,
-        timestamp = DateTime.now().millisecondsSinceEpoch,
+        timestamp = getTimestamp(),
         id = event.pointer;
 
   Map<String, dynamic> toJson() => {
         'location': {'x': location.dx, 'y': location.dy},
-        'time': timestamp
+        'time': timestamp,
       };
 
   Path asPath(double radius) =>

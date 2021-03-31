@@ -3,9 +3,9 @@ import 'dart:ui';
 
 import 'package:flutter/painting.dart';
 
-import '../../models/heat_map_style.dart';
+import '../../models/config/heat_map_style.dart';
 import '../../models/session.dart';
-import '../../utils/export_utils.dart';
+import '../../utils/utils.dart';
 import '../heat_map.dart';
 import 'session_processor.dart';
 

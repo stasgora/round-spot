@@ -9,3 +9,5 @@ Future<Uint8List> exportHeatMap(Image image) async {
 
 Future exportNumericData(Map<String, dynamic> data) async =>
     JsonEncoder.withIndent('\t').convert(data);
+
+int getTimestamp() => DateTime.now().millisecondsSinceEpoch;

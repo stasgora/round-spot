@@ -22,6 +22,7 @@ class Detector extends StatefulWidget {
   /// across widget tree rebuilds and multiple visits.
   ///
   /// It must be unique on the [PageRoute] where its used.
+  /// The empty ID is reserved as it's used by the root detector on every page.
   /// {@endtemplate}
   final String areaID;
 
@@ -47,12 +48,13 @@ class _DetectorState extends State<Detector> {
   @override
   Widget build(BuildContext context) {
     return RepaintBoundary(
-        key: _areaKey,
-        child: Listener(
-          onPointerDown: _onTap,
-          behavior: HitTestBehavior.translucent,
-          child: widget.child,
-        ));
+      key: _areaKey,
+      child: Listener(
+        onPointerDown: _onTap,
+        behavior: HitTestBehavior.translucent,
+        child: widget.child,
+      ),
+    );
   }
 }
 
@@ -60,8 +62,8 @@ class _DetectorState extends State<Detector> {
 ///
 /// {@macro Detector.scrollable}
 ///
-/// (This is a proxy for a [Detector] widget
-/// that places its children in a [Column])
+/// _This is a proxy for a [Detector] widget
+/// that places its children in a [Column]_
 class ListDetector extends StatelessWidget {
   /// The widgets below this widget to be observed.
   ///
@@ -77,9 +79,7 @@ class ListDetector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Detector(
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
       areaID: areaID,
     );
   }
