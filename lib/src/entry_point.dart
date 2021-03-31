@@ -12,7 +12,7 @@ typedef HeatMapCallback = void Function(Uint8List data, OutputInfo info);
 typedef NumericCallback = void Function(String data);
 
 Widget initialize(
-    {Widget? child,
+    {required Widget child,
     Config? config,
     HeatMapCallback? heatMapCallback,
     NumericCallback? numericCallback}) {

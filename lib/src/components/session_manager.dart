@@ -48,16 +48,15 @@ class SessionManager {
   void onEvent(
       {required Event event,
       required GlobalKey areaKey,
-      String? areaID}) async {
+      required String areaID}) async {
     if (_currentPage == null || _processedEventIDs.contains(event.id)) return;
     if (!_config.enabled) {
       _endSessions();
       return;
     }
-    var sessionKey = Tuple2(_currentPage!, areaID ?? '');
+    var sessionKey = Tuple2(_currentPage!, areaID);
     var session = (_pages[sessionKey] ??= Session(name: _currentPage!));
     session.addEvent(event);
-    print(event.id);
     _processedEventIDs.add(event.id);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
