@@ -1,3 +1,4 @@
+/// Customizable heat map interface analysis library
 library round_spot;
 
 export 'src/entry_point.dart';

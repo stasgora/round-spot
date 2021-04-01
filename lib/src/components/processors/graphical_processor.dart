@@ -9,6 +9,7 @@ import '../../utils/utils.dart';
 import '../heat_map.dart';
 import 'session_processor.dart';
 
+/// Processes sessions into heat maps
 class GraphicalProcessor extends SessionProcessor {
   @override
   Future process(Session session) async {
@@ -51,4 +52,9 @@ class GraphicalProcessor extends SessionProcessor {
 
   Color _getSpectrumColor(double value, {double alpha = 1}) =>
       HSVColor.fromAHSV(alpha, (1 - value) * 225, 1, 1).toColor();
+}
+
+extension HeatMapLayerMultiplier on HeatMapStyle {
+  int get multiplier =>
+      const {HeatMapStyle.smooth: 3, HeatMapStyle.layered: 2}[this]!;
 }

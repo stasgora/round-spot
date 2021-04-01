@@ -1,6 +1,8 @@
 import 'heat_map_style.dart';
 import 'output_type.dart';
 
+/// Holds the configuration relating to the
+/// specifics of data gathering and processing.
 class Config {
   bool enabled;
   double uiElementSize; // 5 - 20
@@ -10,7 +12,9 @@ class Config {
   int? maxSessionIdleTime;
   int minSessionEventCount;
   Set<OutputType> outputTypes;
+
   // Visuals
+  /// Determines the style of the generated heat maps.
   HeatMapStyle heatMapStyle;
   int heatMapTransparency;
 

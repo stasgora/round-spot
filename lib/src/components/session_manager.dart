@@ -10,14 +10,14 @@ import '../models/event.dart';
 import '../models/session.dart';
 import '../utils/components.dart';
 import 'processors/graphical_processor.dart';
-import 'processors/numerical_processor.dart';
+import 'processors/raw_data_processor.dart';
 import 'processors/session_processor.dart';
 import 'screenshot_provider.dart';
 
 /// Coordinates and manages data gathering, processing and reporting.
 class SessionManager {
   final HeatMapCallback? heatMapCallback;
-  final NumericCallback? numericCallback;
+  final RawDataCallback? rawDataCallback;
 
   final _logger = Logger('RoundSpot.SessionManager');
 
@@ -29,11 +29,11 @@ class SessionManager {
   String? _currentPage;
   Timer? _idleTimer;
 
-  SessionManager(this.heatMapCallback, this.numericCallback);
+  SessionManager(this.heatMapCallback, this.rawDataCallback);
 
   final Map<OutputType, SessionProcessor> _processors = {
     OutputType.graphicalRender: S.get<GraphicalProcessor>(),
-    OutputType.numericData: S.get<NumericalProcessor>()
+    OutputType.rawData: S.get<RawDataProcessor>()
   };
 
   void onLifecycleStateChanged(AppLifecycleState state) {
@@ -80,7 +80,7 @@ class SessionManager {
     for (var key in _pages.keys) {
       if (!skipSession(_pages[key]!)) _exportSession(key);
     }
-    _pages.removeWhere((key, session) => !skipSession(session));
+    //_pages.removeWhere((key, session) => !skipSession(session));
   }
 
   void _exportSession(String key) {
@@ -89,7 +89,7 @@ class SessionManager {
       runZonedGuarded(() async {
         if ((type == OutputType.graphicalRender
                 ? heatMapCallback
-                : numericCallback) ==
+                : rawDataCallback) ==
             null) {
           _logger.warning(
             'Requested $type generation but the callback is null, skipping.',
@@ -101,7 +101,7 @@ class SessionManager {
         if (type == OutputType.graphicalRender) {
           heatMapCallback!(output, session);
         } else {
-          numericCallback!(output);
+          rawDataCallback!(output);
         }
       }, (e, stackTrace) {
         _logger.severe(

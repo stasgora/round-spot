@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import '../utils/utils.dart';
 
+/// Holds information about a single user interaction
 class Event {
   final Offset location;
   final int timestamp;

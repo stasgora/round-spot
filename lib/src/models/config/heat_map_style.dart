@@ -1,6 +1,8 @@
-enum HeatMapStyle { smooth, layered }
+/// Available heat map styles.
+enum HeatMapStyle {
+  /// The default smoothed out look.
+  smooth,
 
-extension HeatMapLayerMultiplier on HeatMapStyle {
-  int get multiplier =>
-      const {HeatMapStyle.smooth: 3, HeatMapStyle.layered: 2}[this]!;
+  /// Alternative layered style.
+  layered
 }

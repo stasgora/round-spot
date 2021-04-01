@@ -9,6 +9,7 @@ import '../models/session.dart';
 
 typedef ScaleFunction = double Function(double level, double scaleFactor);
 
+/// Processes touch events into drawable path layers using clustering
 class HeatMap {
   double pointProximity;
   double clusterScale; // 0.5 - 1.5

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+/// Contains information about group of clustered events.
 class ClusterPath {
   final Path path;
   final Offset center;

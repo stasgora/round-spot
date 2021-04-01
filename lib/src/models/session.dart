@@ -5,8 +5,8 @@ import '../utils/utils.dart';
 import 'event.dart';
 import 'output_info.dart';
 
-/// Represents a record of user interactions
-/// with a particular [area] on some [page].
+/// Holds information about user interactions with a particular
+/// [area] on some [page] during some period of time.
 class Session implements OutputInfo {
   final String? page;
   final String area;
