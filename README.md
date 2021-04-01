@@ -7,7 +7,8 @@
   <a href="https://github.com/tenhobi/effective_dart"><img src="https://img.shields.io/badge/style-effective_dart-40c4ff.svg" alt="style: effective dart"></a>
   <a href="https://github.com/stasgora/round-spot/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
 
-**Round Spot** simplifies the UI accessibility and behaviour analysis for Flutter applications by handling the data gathering and processing. It produces beautiful heat map visualizations that aim to make the UI improvement and troubleshooting easy and intuitive.
+**Round Spot** simplifies the UI accessibility and behaviour analysis for Flutter applications by handling the data gathering and processing.<br>
+It produces beautiful heat map visualizations that aim to make the UI improvement and troubleshooting easy and intuitive.
 </div>
 
 ## Examples
