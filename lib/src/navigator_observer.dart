@@ -10,9 +10,12 @@ import 'utils/components.dart';
 /// * using [named routes](https://flutter.dev/docs/cookbook/navigation/named-routes) and
 /// * pushing a [PageRoute] - using [RouteSettings]
 ///
-/// Without that the events will not get grouped correctly,
+/// Without that the events might not get grouped correctly,
 /// either resulting in multiple outputs per page/area
 /// or a single output that's a mix of multiple pages/areas
+///
+/// If the current route has no name set a unique
+/// identifier will be assigned in its place.
 class Observer extends RouteObserver<PageRoute<dynamic>> {
   final _manager = S.get<SessionManager>();
 

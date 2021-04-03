@@ -18,8 +18,9 @@ class GraphicalProcessor extends SessionProcessor {
     final canvas = Canvas(pictureRecorder);
     canvas.drawImage(image, Offset.zero, Paint());
 
+    var alpha = (config.heatMapTransparency * 255).toInt();
     canvas.saveLayer(null,
-        Paint()..color = Color.fromARGB(config.heatMapTransparency, 0, 0, 0));
+        Paint()..color = Color.fromARGB(alpha, 0, 0, 0));
     drawHeatMap(canvas, session);
     canvas.restore();
 
@@ -41,7 +42,7 @@ class GraphicalProcessor extends SessionProcessor {
     calcBlur(double val) => (4 * val * val + 2) * config.uiElementSize / 10;
     for (var i = 1; i <= layerCount(); i++) {
       var fraction = calcFraction(i);
-      var paint = Paint()..color = _getSpectrumColor(fraction, alpha: .6);
+      var paint = Paint()..color = _getSpectrumColor(fraction);
       if (config.heatMapStyle == HeatMapStyle.smooth) {
         paint.maskFilter =
             MaskFilter.blur(BlurStyle.normal, calcBlur(1 - fraction));

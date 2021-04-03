@@ -20,7 +20,7 @@ typedef HeatMapCallback = void Function(Uint8List data, OutputInfo info);
 /// to create heat maps in a form of a json file.
 typedef RawDataCallback = void Function(String data);
 
-/// Initializes the **Round Spot** library.
+/// Initializes the _Round Spot_ library.
 ///
 /// Takes a [child] which is contains the application, an optional [config]
 /// and output callbacks ([heatMapCallback] and [rawDataCallback])

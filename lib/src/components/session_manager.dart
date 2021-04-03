@@ -27,6 +27,7 @@ class SessionManager {
   final Map<String, Session> _pages = {};
   final Set<int> _processedEventIDs = {};
   String? _currentPage;
+  bool _currentPageDisabled = false;
   Timer? _idleTimer;
 
   SessionManager(this.heatMapCallback, this.rawDataCallback);
@@ -41,8 +42,7 @@ class SessionManager {
   }
 
   void onRouteOpened({String? name}) {
-    var routes = _config.disabledRoutes;
-    if (routes != null && routes.contains(name)) return;
+    _currentPageDisabled = _config.disabledRoutes.contains(name);
     _currentPage = name ?? '${DateTime.now()}';
   }
 
@@ -52,6 +52,7 @@ class SessionManager {
       _endSessions();
       return;
     }
+    if (_currentPageDisabled && !detector.hasGlobalScope) return;
     var sessionKey = detector.areaID;
     if (!detector.hasGlobalScope) sessionKey += _currentPage!;
 
