@@ -17,6 +17,7 @@ dependencies:
   tuple: ^2.0.0
   logging: ^1.0.0
   simple_cluster: ^0.3.0
+  enum_to_string: ^2.0.1
 
 dev_dependencies:
   flutter_test:

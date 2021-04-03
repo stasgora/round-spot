@@ -14,3 +14,12 @@ Future exportNumericData(Map<String, dynamic> data) async =>
 
 /// Provides a current timestamp in milliseconds.
 int getTimestamp() => DateTime.now().millisecondsSinceEpoch;
+
+/// Filters only the non null values from a list.
+List<T> filterNotNull<T>(List<T?> list) {
+  var filtered = <T>[];
+  for (var e in list) {
+    if (e != null) filtered.add(e);
+  }
+  return filtered;
+}

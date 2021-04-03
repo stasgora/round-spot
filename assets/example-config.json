@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "uiElementSize": 10,
+  "disabledRoutes": [
+    "some-unimportant-route"
+  ],
+  "outputTypes": [
+    "graphicalRender"
+  ],
+  "session": {
+    "minEventCount": 1,
+    "maxIdleTime": 2
+  },
+  "heatMap": {
+    "style": "smooth",
+    "transparency": 0.6
+  }
+}

@@ -19,8 +19,7 @@ class GraphicalProcessor extends SessionProcessor {
     canvas.drawImage(image, Offset.zero, Paint());
 
     var alpha = (config.heatMapTransparency * 255).toInt();
-    canvas.saveLayer(null,
-        Paint()..color = Color.fromARGB(alpha, 0, 0, 0));
+    canvas.saveLayer(null, Paint()..color = Color.fromARGB(alpha, 0, 0, 0));
     drawHeatMap(canvas, session);
     canvas.restore();
 

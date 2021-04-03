@@ -1,4 +1,7 @@
+import 'package:enum_to_string/enum_to_string.dart';
+
 import '../../entry_point.dart';
+import '../../utils/utils.dart';
 import '../../widgets/detector.dart';
 import 'heat_map_style.dart';
 import 'output_type.dart';
@@ -23,11 +26,20 @@ class Config {
   /// Suggested range for mobile phones is between 5 and 20.
   /// The default value is 10.
   double uiElementSize;
+
   /// Holds the route names on which event collection is disabled.
   ///
   /// This does not apply to areas marked as global
   /// through [Detector.hasGlobalScope] flag.
   Set<String> disabledRoutes;
+
+  /// Specifies what output data forms should be generated.
+  ///
+  /// This corresponds to the [HeatMapCallback] and [RawDataCallback]
+  /// callbacks passed during [initialize()].
+  ///
+  /// The default value contains [OutputType.graphicalRender].
+  Set<OutputType> outputTypes;
 
   // Session
 
@@ -40,14 +52,6 @@ class Config {
   ///
   /// It's set to 1 by default which is the minimum supported value.
   int minSessionEventCount;
-
-  /// Specifies what output data forms should be generated.
-  ///
-  /// This corresponds to the [HeatMapCallback] and [RawDataCallback]
-  /// callbacks passed during [initialize()].
-  ///
-  /// The default value contains [OutputType.graphicalRender].
-  Set<OutputType> outputTypes;
 
   // Visuals
 
@@ -65,7 +69,7 @@ class Config {
   Config({
     bool? enabled,
     double? uiElementSize,
-    this.disabledRoutes = const {},
+    Set<String>? disabledRoutes,
     this.maxSessionIdleTime,
     int? minSessionEventCount,
     Set<OutputType>? outputTypes,
@@ -77,6 +81,7 @@ class Config {
             heatMapTransparency >= 0 && heatMapTransparency <= 255),
         enabled = enabled ?? true,
         uiElementSize = uiElementSize ?? 10,
+        disabledRoutes = disabledRoutes ?? {},
         minSessionEventCount = minSessionEventCount ?? 1,
         outputTypes = outputTypes ?? {OutputType.graphicalRender},
         heatMapStyle = heatMapStyle ?? HeatMapStyle.smooth,
@@ -85,23 +90,24 @@ class Config {
 
   /// Creates the configuration from a json map.
   ///
-  /// Allows to easily fetch it from a remote configuration.
+  /// Allows for easy parsing when fetching the config from a remote location.
   Config.fromJson(Map<String, dynamic> json)
       : this(
           enabled: json['enabled'],
           uiElementSize: json['uiElementSize'],
           disabledRoutes: json['disabledRoutes']
               ? (json['disabledRoutes'] as List<String>).toSet()
-              : {},
-          maxSessionIdleTime: json['maxSessionIdleTime'],
-          minSessionEventCount: json['minSessionEventCount'],
+              : null,
+          maxSessionIdleTime: json['session']?['maxIdleTime'],
+          minSessionEventCount: json['session']?['minEventCount'],
           outputTypes: json['outputTypes']
-              ? (json['outputTypes'] as List<int>)
-                  .map((type) => OutputType.values[type])
+              ? filterNotNull(EnumToString.fromList(
+                      OutputType.values, json['outputTypes']))
                   .toSet()
               : null,
-          heatMapStyle: json['heatMap']?['style'] != null
-              ? HeatMapStyle.values[json['outputTypes']]
+          heatMapStyle: json['heatMap']?['style']
+              ? EnumToString.fromString(
+                  HeatMapStyle.values, json['heatMap']?['style'])
               : null,
           heatMapTransparency: json['heatMap']?['transparency'],
         );
