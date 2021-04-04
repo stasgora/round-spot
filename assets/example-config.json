@@ -9,7 +9,7 @@
   ],
   "session": {
     "minEventCount": 1,
-    "maxIdleTime": 2
+    "maxIdleTime": 60
   },
   "heatMap": {
     "style": "smooth",

@@ -1,4 +1,61 @@
 /// Customizable heat map interface analysis library
+///
+/// ## Usage
+///
+/// ### Setup
+/// Wrap your [MaterialApp] widget to [initialize()] the library:
+/// ```dart
+/// void main() {
+///   runApp(round_spot.initialize(
+///     child: Application()
+///   ));
+/// }
+/// ```
+/// Add an [Observer] for monitoring the navigator:
+/// ```dart
+/// MaterialApp(
+///   navigatorObservers: [ round_spot.Observer() ]
+/// )
+/// ```
+///
+/// ### Configuration
+/// Provide the callbacks for saving the processed output:
+/// ```dart
+/// round_spot.initialize(
+///   heatMapCallback: (data) => sendHeatMapImage(data)
+/// )
+/// ```
+/// Use [Config] to make the tool better fit your needs:
+/// ```dart
+/// round_spot.initialize(
+///   config: round_spot.Config(
+///     minSessionEventCount: 30,
+///     outputTypes: { round_spot.OutputType.graphicalRender },
+///     heatMapStyle: round_spot.HeatMapStyle.smooth
+///   )
+/// )
+/// ```
+///
+/// ## Important aspects
+///
+/// ### Route naming
+/// Route names are used to differentiate between pages.
+/// Read about their usage in relation to this library at [Observer] page.
+///
+/// ### Scrollable widgets
+/// Scrollable spaces need manual instrumentation to be correctly monitored.
+/// Read about the use of a [Detector] widget to learn more.
+///
+/// ## Commonly used terms
+///
+/// ### Area
+/// A visual space taken by a particular widget and its children.
+/// Can be portion or the whole screen.
+///
+/// ### Session
+/// A collection of user interactions recorded in
+/// a particular area during some period of time.
+/// It is a base for a single heat map output.
 library round_spot;
 
 export 'src/entry_point.dart';

@@ -26,9 +26,7 @@ It produces beautiful heat map visualizations that aim to make the UI improvemen
 This tool is still in active development - the core functionality is mostly working but many important features are still missing.
 
 ## Usage
-> **⚠️ Note:** This package is not yet published to `pub.dev`
-
-To start using **Round Spot** within your app, import it in your main file:
+Import the package in your main file:
 ```dart
 import 'package:round_spot/round_spot.dart' as round_spot;
 ```
@@ -57,7 +55,7 @@ round_spot.initialize(
   heatMapCallback: (data) => sendHeatMapImage(data)
 )
 ```
-Configure the tool to fit your needs:
+Configure the tool to better fit your needs:
 ```dart
 round_spot.initialize(
   config: round_spot.Config(
@@ -77,7 +75,7 @@ Make sure you are consistently specifying them both when:
 using [RouteSetting](https://api.flutter.dev/flutter/widgets/RouteSettings-class.html)
 
 #### Scrollable widgets
-To correctly monitor interactions with any scrollable space a `Detector` 
+To correctly monitor interactions with any scrollable space a `Detector` or a `ListDetector` 
 has to be placed between the scrollable widget and the widgets being scrolled:
 ```dart
 SingleChildScrollView(
