@@ -53,8 +53,3 @@ class GraphicalProcessor extends SessionProcessor {
   Color _getSpectrumColor(double value, {double alpha = 1}) =>
       HSVColor.fromAHSV(alpha, (1 - value) * 225, 1, 1).toColor();
 }
-
-extension HeatMapLayerMultiplier on HeatMapStyle {
-  int get multiplier =>
-      const {HeatMapStyle.smooth: 3, HeatMapStyle.layered: 2}[this]!;
-}

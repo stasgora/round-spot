@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 
 import 'models/config/config.dart';
+import 'models/log_level.dart';
 import 'models/output_info.dart';
 import 'utils/components.dart';
 import 'widgets/detector.dart';
@@ -22,7 +24,8 @@ typedef RawDataCallback = void Function(String data);
 
 /// Initializes the _Round Spot_ library.
 ///
-/// Takes a [child] which is contains the application, an optional [config]
+/// Takes a [child] widget, an optional [config],
+/// a [loggingLevel] which defaults to [LogLevel.off]
 /// and output callbacks ([heatMapCallback] and [rawDataCallback])
 /// that must be set depending on the [Config.outputTypes] requested.
 ///
@@ -46,11 +49,22 @@ typedef RawDataCallback = void Function(String data);
 Widget initialize({
   required Widget child,
   Config? config,
+  LogLevel loggingLevel = LogLevel.off,
   HeatMapCallback? heatMapCallback,
   RawDataCallback? rawDataCallback,
 }) {
+  _initializeLogger(loggingLevel);
   initializeComponents(config, heatMapCallback, rawDataCallback);
   return LifecycleObserver(child: Detector(child: child, areaID: ''));
+}
+
+void _initializeLogger(LogLevel level) {
+  hierarchicalLoggingEnabled = true;
+  Logger('RoundSpot').level = level.toLoggerLevel;
+  Logger('RoundSpot').onRecord.listen((record) {
+    var prefix = '${record.level.name} [${record.time}] ${record.loggerName}';
+    print('$prefix: ${record.message}');
+  });
 }
 
 /// Provides access to current [Config] and allows to change it.

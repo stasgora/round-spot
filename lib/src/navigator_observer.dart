@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:logging/logging.dart';
 
 import 'components/session_manager.dart';
 import 'utils/components.dart';
@@ -19,17 +20,25 @@ import 'utils/components.dart';
 class Observer extends RouteObserver<PageRoute<dynamic>> {
   final _manager = S.get<SessionManager>();
 
+  final _logger = Logger('RoundSpot.Observer');
+
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
-    if (route is! PageRoute) return;
-    _manager.onRouteOpened(name: route.settings.name);
+    _onRouteOpened(route);
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPop(route, previousRoute);
-    if (previousRoute is! PageRoute) return;
-    _manager.onRouteOpened(name: previousRoute.settings.name);
+    _onRouteOpened(route);
+  }
+
+  void _onRouteOpened(Route<dynamic> route) {
+    if (route is! PageRoute) return;
+    if (route.settings.name == null) {
+      _logger.log(Level.WARNING, 'Current PageRoute has no name set.');
+    }
+    _manager.onRouteOpened(name: route.settings.name);
   }
 }

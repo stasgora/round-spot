@@ -60,8 +60,9 @@ library round_spot;
 
 export 'src/entry_point.dart';
 export 'src/models/config/config.dart';
-export 'src/models/config/heat_map_style.dart';
+export 'src/models/config/heat_map_style.dart' hide HeatMapLayerMultiplier;
 export 'src/models/config/output_type.dart';
+export 'src/models/log_level.dart' hide LogLevelLoggingMap;
 export 'src/models/output_info.dart';
 export 'src/navigator_observer.dart';
 export 'src/widgets/detector.dart';

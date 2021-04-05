@@ -1,7 +1,7 @@
 name: round_spot
-description: An easy to use heatmap interface analysis library
-author: Stanisław Góra <contact@sgora.dev>
+description: Customizable heatmap interface analysis library
 repository: https://github.com/stasgora/round-spot
+issue_tracker: https://github.com/stasgora/round-spot/issues
 
 version: 0.1.0-dev
 
@@ -23,5 +23,4 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  pedantic: ^1.11.0
   effective_dart: ^1.3.1
