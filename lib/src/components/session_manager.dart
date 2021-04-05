@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 
@@ -81,19 +82,20 @@ class SessionManager {
     for (var key in _pages.keys) {
       if (!skipSession(_pages[key]!)) _exportSession(key);
     }
-    //_pages.removeWhere((key, session) => !skipSession(session));
+    _pages.removeWhere((key, session) => !skipSession(session));
   }
 
   void _exportSession(String key) {
     if (!_pages.containsKey(key)) return;
     for (var type in _config.outputTypes) {
+      var typeName = EnumToString.convertToString(type, camelCase: true);
       runZonedGuarded(() async {
         if ((type == OutputType.graphicalRender
                 ? heatMapCallback
                 : rawDataCallback) ==
             null) {
           _logger.warning(
-            'Requested $type generation but the callback is null, skipping.',
+            'Requested $typeName output but the callback is not set, skipping.',
           );
           return;
         }
@@ -106,7 +108,7 @@ class SessionManager {
         }
       }, (e, stackTrace) {
         _logger.severe(
-          'Error occurred while generating $type, please report at: https://github.com/stasgora/round-spot/issues',
+          'Error occurred while generating $typeName',
           e,
           stackTrace,
         );
