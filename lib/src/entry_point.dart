@@ -62,12 +62,12 @@ void _initializeLogger(LogLevel level) {
   hierarchicalLoggingEnabled = true;
   Logger('RoundSpot').level = level.toLoggerLevel;
   Logger('RoundSpot').onRecord.listen((record) {
-    var prefix = '${record.level.name} [${record.time}] ${record.loggerName}';
+    var prefix = '${record.level.name} - ${record.loggerName}';
     print('$prefix: ${record.message}');
   });
 }
 
-/// Provides access to current [Config] and allows to change it.
+/// Provides access to the current [Config] and allows to change it.
 Config get config => S.get<Config>();
 
 /// A shortcut to [Config.enabled] for easy access.

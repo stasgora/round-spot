@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
+import 'package:logging/logging.dart';
 
 import '../../models/config/heat_map_style.dart';
 import '../../models/session.dart';
@@ -11,8 +12,14 @@ import 'session_processor.dart';
 
 /// Processes sessions into heat maps
 class GraphicalProcessor extends SessionProcessor {
+  final _logger = Logger('RoundSpot.GraphicalProcessor');
+
   @override
   Future process(Session session) async {
+    if (session.screenSnap == null) {
+      _logger.warning('Got session with no image attached, skipping.');
+      return;
+    }
     var image = session.screenSnap!;
     final pictureRecorder = PictureRecorder();
     final canvas = Canvas(pictureRecorder);

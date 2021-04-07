@@ -101,6 +101,7 @@ class SessionManager {
         }
         var session = _pages[key]!;
         var output = await _processors[type]!.process(session);
+        if (output == null) return;
         if (type == OutputType.graphicalRender) {
           heatMapCallback!(output, session);
         } else {

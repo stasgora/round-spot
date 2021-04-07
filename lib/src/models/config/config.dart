@@ -62,7 +62,7 @@ class Config {
 
   /// Sets the transparency of the heat map overlay.
   ///
-  /// Takes values between 0 and 1, it's set to 0.6 by default.
+  /// Takes values between 0 and 1, it's set to 0.75 by default.
   double heatMapTransparency;
 
   /// Initializes the configuration.
@@ -74,7 +74,7 @@ class Config {
     int? minSessionEventCount,
     Set<OutputType>? outputTypes,
     HeatMapStyle? heatMapStyle,
-    int? heatMapTransparency,
+    double? heatMapTransparency,
   })  : assert(minSessionEventCount == null || minSessionEventCount >= 1),
         assert(maxSessionIdleTime == null || maxSessionIdleTime >= 1),
         assert(heatMapTransparency == null ||
@@ -86,7 +86,7 @@ class Config {
         outputTypes = outputTypes ?? {OutputType.graphicalRender},
         heatMapStyle = heatMapStyle ?? HeatMapStyle.smooth,
         heatMapTransparency =
-            (heatMapTransparency ?? 0.6).clamp(0, 1).toDouble();
+            (heatMapTransparency ?? 0.75).clamp(0, 1).toDouble();
 
   /// Creates the configuration from a json map.
   ///
@@ -94,21 +94,21 @@ class Config {
   Config.fromJson(Map<String, dynamic> json)
       : this(
           enabled: json['enabled'],
-          uiElementSize: json['uiElementSize'],
-          disabledRoutes: json['disabledRoutes']
+          uiElementSize: json['uiElementSize'].toDouble(),
+          disabledRoutes: json['disabledRoutes'] != null
               ? (json['disabledRoutes'] as List<String>).toSet()
               : null,
           maxSessionIdleTime: json['session']?['maxIdleTime'],
           minSessionEventCount: json['session']?['minEventCount'],
-          outputTypes: json['outputTypes']
+          outputTypes: json['outputTypes'] != null
               ? filterNotNull(EnumToString.fromList(
                       OutputType.values, json['outputTypes']))
                   .toSet()
               : null,
-          heatMapStyle: json['heatMap']?['style']
+          heatMapStyle: json['heatMap']?['style'] != null
               ? EnumToString.fromString(
                   HeatMapStyle.values, json['heatMap']?['style'])
               : null,
-          heatMapTransparency: json['heatMap']?['transparency'],
+          heatMapTransparency: json['heatMap']?['transparency'].toDouble(),
         );
 }

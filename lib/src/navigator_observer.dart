@@ -37,7 +37,7 @@ class Observer extends RouteObserver<PageRoute<dynamic>> {
   void _onRouteOpened(Route<dynamic> route) {
     if (route is! PageRoute) return;
     if (route.settings.name == null) {
-      _logger.log(Level.WARNING, 'Current PageRoute has no name set.');
+      _logger.warning('Current PageRoute has no name set.');
     }
     _manager.onRouteOpened(name: route.settings.name);
   }

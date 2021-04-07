@@ -10,10 +10,7 @@ class ScreenshotProvider {
 
   Future<ui.Image?> takeScreenshot(GlobalKey areaKey) async {
     if (areaKey.currentContext == null) {
-      _logger.log(
-        Level.SEVERE,
-        'Could not take a screenshot of the current page.',
-      );
+      _logger.severe('Could not take a screenshot of the current page.');
       return null;
     }
     var screen =
