@@ -91,6 +91,10 @@ class Config {
   /// Creates the configuration from a json map.
   ///
   /// Allows for easy parsing when fetching the config from a remote location.
+  ///
+  /// ### References
+  /// * [Example config file](https://github.com/stasgora/round-spot/blob/master/assets/example-config.json)
+  /// * [Schema for config validation](https://github.com/stasgora/round-spot/blob/master/assets/config-schema.json)
   Config.fromJson(Map<String, dynamic> json)
       : this(
           enabled: json['enabled'],

@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Round Spot configuration",
+  "description": "Holds the configuration relating to the specifics of data gathering and processing",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "enabled": {
+      "description": "Specifies whether the library is currently active and collecting data",
+      "type": "boolean"
+    },
+    "uiElementSize": {
+      "description": "Allows to adjust for the general UI size",
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "disabledRoutes": {
+      "description": "Holds the route names on which event collection is disabled",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "outputTypes": {
+      "description": "Specifies what output data forms should be generated",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "graphicalRender",
+          "rawData"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "session": {
+      "description": "Holds properties connected to sessions",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "maxIdleTime": {
+          "description": "Sets the time in seconds after which all current sessions will be closed",
+          "type": "integer",
+          "minimum": 1
+        },
+        "minEventCount": {
+          "description": "Sets the minimum event count for a session to be closed",
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "heatMap": {
+      "description": "Holds properties connected to heat maps",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "style": {
+          "description": "Determines the style of the generated heat maps",
+          "type": "string",
+          "enum": [
+            "smooth",
+            "layered"
+          ]
+        },
+        "transparency": {
+          "description": "Sets the transparency of the heat map overlay",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}
