@@ -29,21 +29,13 @@ typedef RawDataCallback = void Function(String data);
 /// and output callbacks ([heatMapCallback] and [rawDataCallback])
 /// that must be set depending on the [Config.outputTypes] requested.
 ///
-/// Must be invoked either in `main()`:
+/// Should be invoked in `main()` or otherwise wrap the [MaterialApp] widget:
 /// ```dart
 /// void main() {
 ///   runApp(round_spot.initialize(
 ///     child: Application()
 ///   ));
 /// }
-/// ```
-/// or in [MaterialApp.builder] method:
-/// ```dart
-/// MaterialApp(
-///   builder: (context, child) => round_spot.initialize(
-///     child: child
-///   )
-/// );
 /// ```
 ///
 Widget initialize({

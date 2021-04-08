@@ -56,6 +56,10 @@
 /// A collection of user interactions recorded in
 /// a particular area during some period of time.
 /// It is a base for a single heat map output.
+///
+/// All current sessions are ended when user puts the application
+/// into background, as defined by the [AppLifecycleState.paused] state.
+/// You can additionally control it by setting the [Config.maxSessionIdleTime].
 library round_spot;
 
 export 'src/entry_point.dart';

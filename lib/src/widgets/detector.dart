@@ -40,15 +40,17 @@ import '../utils/components.dart';
 /// Detectors can either have a _local_ or a _global_ scope:
 /// * The default _local_ scope should generally be used whenever a unique area
 /// that only exist in one place on a single screen needs to be observed.
-/// * The _global_ scope is great for monitoring interactions with
+/// * The _global_ scope is designed to allow for monitoring interactions with
 /// elements that appear in the same form on multiple pages.
 ///
 /// As a result of a global scope events from all of the detectors grouped
 /// by the same [areaID] will contribute to the same heat maps.
-/// This is very useful in situations where a common interface element
-/// (like a navigation bar or a menu) is being monitored.
-/// Generating separate heat maps for each screen makes little sense
-/// when trying to analyse all interactions with that element.
+/// This is useful in situations where want to monitor
+/// the cumulative use of a common interface element that's
+/// shared between pages, like a navigation bar or a menu.
+///
+/// By default (with no additional _global_ scoped [Detector]) you only
+/// get the information about how the user exits every page.
 /// {@endtemplate}
 class Detector extends StatefulWidget {
   /// The widget below this widget to be observed.
@@ -123,10 +125,10 @@ class _DetectorState extends State<Detector> {
 
 /// Detects user interactions in [children] widgets.
 ///
-/// {@macro Detector.description}
-///
 /// _This is a proxy for a [Detector] widget
 /// that places its children in a [Column]_
+///
+/// {@macro Detector.description}
 class ListDetector extends StatelessWidget {
   /// The widgets below this widget to be observed.
   ///
