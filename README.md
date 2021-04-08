@@ -22,9 +22,6 @@ It produces beautiful heat map visualizations that aim to make the UI improvemen
 (Screens taken from the **[Fokus](https://github.com/fokus-team/fokus)** application)
 </div>
 
-## 🚧 State 🚧
-This tool is still in active development - the core functionality is mostly working but many important features are still missing.
-
 ## Usage
 Import the package in your main file:
 ```dart
