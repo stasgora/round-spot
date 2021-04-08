@@ -32,7 +32,8 @@
 ///     minSessionEventCount: 30,
 ///     outputTypes: { round_spot.OutputType.graphicalRender },
 ///     heatMapStyle: round_spot.HeatMapStyle.smooth
-///   )
+///   ),
+///   loggingLevel: round_spot.LogLevel.warning // recommended for integration testing
 /// )
 /// ```
 ///

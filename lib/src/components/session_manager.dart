@@ -25,7 +25,7 @@ class SessionManager {
   final _config = S.get<Config>();
   final _screenshotProvider = S.get<ScreenshotProvider>();
 
-  final Map<String, Session> _pages = {};
+  final Map<String, Session> _sessions = {};
   final Set<int> _processedEventIDs = {};
   String? _currentPage;
   bool _currentPageDisabled = false;
@@ -52,6 +52,13 @@ class SessionManager {
   }
 
   void onEvent({required Event event, required DetectorConfig detector}) async {
+    if (_currentPage == null) {
+      _logger.warning(
+        'The current page route was not detected. '
+        'Make sure the navigation Observer is setup correctly.',
+      );
+      return;
+    }
     if (_currentPage == null || _processedEventIDs.contains(event.id)) return;
     if (!_config.enabled) {
       _endSessions();
@@ -64,7 +71,7 @@ class SessionManager {
       _processedEventIDs.add(event.id);
     }
 
-    var session = (_pages[sessionKey] ??= Session(
+    var session = (_sessions[sessionKey] ??= Session(
       page: detector.hasGlobalScope ? null : _currentPage,
       area: detector.areaID,
     ));
@@ -85,14 +92,14 @@ class SessionManager {
   void _endSessions() {
     bool skipSession(Session session) =>
         session.events.length < _config.minSessionEventCount;
-    for (var key in _pages.keys) {
-      if (!skipSession(_pages[key]!)) _exportSession(key);
+    for (var key in _sessions.keys) {
+      if (!skipSession(_sessions[key]!)) _exportSession(key);
     }
-    _pages.removeWhere((key, session) => !skipSession(session));
+    _sessions.removeWhere((key, session) => !skipSession(session));
   }
 
   void _exportSession(String key) {
-    if (!_pages.containsKey(key)) return;
+    if (!_sessions.containsKey(key)) return;
     for (var type in _config.outputTypes) {
       var typeName = EnumToString.convertToString(type, camelCase: true);
       runZonedGuarded(() async {
@@ -105,7 +112,7 @@ class SessionManager {
           );
           return;
         }
-        var session = _pages[key]!;
+        var session = _sessions[key]!;
         var output = await _processors[type]!.process(session);
         if (output == null) return;
         if (type == OutputType.graphicalRender) {
