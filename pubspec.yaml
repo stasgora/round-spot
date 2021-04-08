@@ -14,7 +14,6 @@ dependencies:
     sdk: flutter
 
   get_it: ^6.0.0
-  tuple: ^2.0.0
   logging: ^1.0.0
   simple_cluster: ^0.3.0
   enum_to_string: ^2.0.1
