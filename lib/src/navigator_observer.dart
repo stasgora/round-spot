@@ -31,14 +31,16 @@ class Observer extends RouteObserver<PageRoute<dynamic>> {
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPop(route, previousRoute);
-    _onRouteOpened(route);
+    _onRouteOpened(previousRoute);
   }
 
-  void _onRouteOpened(Route<dynamic> route) {
-    if (route is! PageRoute) return;
-    if (route.settings.name == null) {
-      _logger.warning('Current PageRoute has no name set.');
+  void _onRouteOpened(Route<dynamic>? route) {
+    if (route != null) {
+      if (route is! PageRoute) return;
+      if (route.settings.name == null) {
+        _logger.warning('Current PageRoute has no name set.');
+      }
     }
-    _manager.onRouteOpened(name: route.settings.name);
+    _manager.onRouteOpened(settings: route?.settings);
   }
 }

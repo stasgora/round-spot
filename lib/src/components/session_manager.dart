@@ -42,9 +42,13 @@ class SessionManager {
     if (state == AppLifecycleState.paused) _endSessions();
   }
 
-  void onRouteOpened({String? name}) {
-    _currentPageDisabled = _config.disabledRoutes.contains(name);
-    _currentPage = name ?? '${DateTime.now()}';
+  void onRouteOpened({RouteSettings? settings}) {
+    if (settings == null) {
+      _currentPage = null;
+      return;
+    }
+    _currentPageDisabled = _config.disabledRoutes.contains(settings.name);
+    _currentPage = settings.name ?? '${DateTime.now()}';
   }
 
   void onEvent({required Event event, required DetectorConfig detector}) async {
@@ -55,14 +59,16 @@ class SessionManager {
     }
     if (_currentPageDisabled && !detector.hasGlobalScope) return;
     var sessionKey = detector.areaID;
-    if (!detector.hasGlobalScope) sessionKey += _currentPage!;
+    if (!detector.hasGlobalScope) {
+      sessionKey += _currentPage!;
+      _processedEventIDs.add(event.id);
+    }
 
     var session = (_pages[sessionKey] ??= Session(
       page: detector.hasGlobalScope ? null : _currentPage,
       area: detector.areaID,
     ));
     session.addEvent(event);
-    _processedEventIDs.add(event.id);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
       _idleTimer = Timer(
