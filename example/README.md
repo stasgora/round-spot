@@ -17,7 +17,7 @@
 - tap some of its items
 
 ### Getting the heat maps
-- exit the app or put it in background - **do not kill it immediately** to allow the heat maps to be generated
+- exit the app or put it in background - **do not kill it immediately** as this might prevent the heat maps from being generated
 - heat maps are saved under a path returned by
 [`getApplicationDocumentsDirectory()`](https://pub.dev/documentation/path_provider/latest/path_provider/getApplicationDocumentsDirectory.html)
 - depending on your interactions the following files can be present:
