@@ -6,7 +6,7 @@
   - `round_spot`
   - `path_provider`
 - replace the content of `lib/main.dart` with the 
-[`example.dart`](https://github.com/stasgora/round-spot/blob/master/example/example.dart)
+[`example.dart`](https://github.com/stasgora/round-spot/blob/master/example/simple.dart)
 - connect a device or start an emulator
 - run `flutter run`
 
