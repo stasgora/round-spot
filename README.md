@@ -29,7 +29,7 @@ Import the package in your main file:
 ```dart
 import 'package:round_spot/round_spot.dart' as round_spot;
 ```
-> **⚠️ Note:** Using a `round_spot` prefix is highly recommended due to potential name collisions and better readability
+> **⚠️ Note:** Using a `round_spot` prefix is highly recommended to avoid potential name collisions and improve readability
 
 ### Setup
 Wrap your `MaterialApp` widget to initialize the library:
