@@ -6,8 +6,10 @@ import '../utils/components.dart';
 
 /// Detects when the application is put in the background.
 class LifecycleObserver extends StatefulWidget {
+  /// The widget below this widget
   final Widget child;
 
+  /// Creates a [LifecycleObserver] that report to the [SessionManager]
   LifecycleObserver({required this.child});
 
   @override

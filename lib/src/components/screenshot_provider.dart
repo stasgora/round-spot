@@ -8,6 +8,7 @@ import 'package:logging/logging.dart';
 class ScreenshotProvider {
   final _logger = Logger('RoundSpot.ScreenshotProvider');
 
+  /// Captures a screenshot from a [RepaintBoundary] using its [GlobalKey]
   Future<ui.Image?> takeScreenshot(GlobalKey areaKey) async {
     if (areaKey.currentContext == null) {
       _logger.severe('Could not take a screenshot of the current page.');

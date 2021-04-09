@@ -17,8 +17,8 @@ import 'screenshot_provider.dart';
 
 /// Coordinates and manages data gathering, processing and reporting.
 class SessionManager {
-  final HeatMapCallback? heatMapCallback;
-  final RawDataCallback? rawDataCallback;
+  final HeatMapCallback? _heatMapCallback;
+  final RawDataCallback? _rawDataCallback;
 
   final _logger = Logger('RoundSpot.SessionManager');
 
@@ -31,17 +31,20 @@ class SessionManager {
   bool _currentPageDisabled = false;
   Timer? _idleTimer;
 
-  SessionManager(this.heatMapCallback, this.rawDataCallback);
+  /// Creates a [SessionManager] that manages the data flow
+  SessionManager(this._heatMapCallback, this._rawDataCallback);
 
   final Map<OutputType, SessionProcessor> _processors = {
     OutputType.graphicalRender: S.get<GraphicalProcessor>(),
     OutputType.rawData: S.get<RawDataProcessor>()
   };
 
+  /// Handles application lifecycle state changes
   void onLifecycleStateChanged(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) _endSessions();
   }
 
+  /// Handles application [PageRoute] changes
   void onRouteOpened({RouteSettings? settings}) {
     if (settings == null) {
       _currentPage = null;
@@ -51,6 +54,7 @@ class SessionManager {
     _currentPage = settings.name ?? '${DateTime.now()}';
   }
 
+  /// Handles processing user interactions
   void onEvent({required Event event, required DetectorConfig detector}) async {
     if (_currentPage == null) {
       _logger.warning(
@@ -104,8 +108,8 @@ class SessionManager {
       var typeName = EnumToString.convertToString(type, camelCase: true);
       runZonedGuarded(() async {
         if ((type == OutputType.graphicalRender
-                ? heatMapCallback
-                : rawDataCallback) ==
+                ? _heatMapCallback
+                : _rawDataCallback) ==
             null) {
           _logger.warning(
             'Requested $typeName output but the callback is not set, skipping.',
@@ -116,9 +120,9 @@ class SessionManager {
         var output = await _processors[type]!.process(session);
         if (output == null) return;
         if (type == OutputType.graphicalRender) {
-          heatMapCallback!(output, session);
+          _heatMapCallback!(output, session);
         } else {
-          rawDataCallback!(output);
+          _rawDataCallback!(output);
         }
       }, (e, stackTrace) {
         _logger.severe(

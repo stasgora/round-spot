@@ -27,7 +27,7 @@ class GraphicalProcessor extends SessionProcessor {
 
     var alpha = (config.heatMapTransparency * 255).toInt();
     canvas.saveLayer(null, Paint()..color = Color.fromARGB(alpha, 0, 0, 0));
-    drawHeatMap(canvas, session);
+    _drawHeatMap(canvas, session);
     canvas.restore();
 
     var canvasPicture = pictureRecorder.endRecording();
@@ -35,7 +35,7 @@ class GraphicalProcessor extends SessionProcessor {
     return exportHeatMap(sessionImage);
   }
 
-  void drawHeatMap(Canvas canvas, Session session) {
+  void _drawHeatMap(Canvas canvas, Session session) {
     var heatMap =
         HeatMap(session: session, pointProximity: config.uiElementSize);
 

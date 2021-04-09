@@ -7,36 +7,47 @@ import 'package:simple_cluster/simple_cluster.dart';
 import '../models/cluster_path.dart';
 import '../models/session.dart';
 
+/// Signature for the cluster layer scaling function
 typedef ScaleFunction = double Function(double level, double scaleFactor);
 
 /// Processes touch events into drawable path layers using clustering
 class HeatMap {
-  double pointProximity;
-  double clusterScale; // 0.5 - 1.5
-  DBSCAN dbScan;
-  Session session;
-  final _paths = <ClusterPath>[];
+  /// [Config.uiElementSize]
+  final double pointProximity;
 
+  /// Specifies the cluster [Path] scale in relation to the [pointProximity]
+  final double clusterScale; // 0.5 - 1.5
+  /// [Session] being processed
+  final Session session;
+
+  final _paths = <ClusterPath>[];
+  final DBSCAN _dbScan;
+
+  /// Size of the largest cluster in this [Session]
   late int largestCluster;
+
+  /// Size of the smallest cluster in this [Session]
   late int smallestCluster;
 
+  /// Creates a [HeatMap] that processes events into paths
   HeatMap({
     required this.session,
     required this.pointProximity,
     this.clusterScale = 0.5,
-  }) : dbScan = DBSCAN(epsilon: pointProximity) {
+  }) : _dbScan = DBSCAN(epsilon: pointProximity) {
     var dbPoints = session.events.map<List<double>>((e) => e.locationAsList);
-    dbScan.run(dbPoints.toList());
+    _dbScan.run(dbPoints.toList());
     _createClusterPaths();
 
-    var sizes = dbScan.cluster.map((e) => e.length);
+    var sizes = _dbScan.cluster.map((e) => e.length);
     largestCluster = sizes.isNotEmpty ? sizes.reduce(max) : 1;
-    smallestCluster = dbScan.noise.isNotEmpty ? 1 : sizes.reduce(min);
+    smallestCluster = _dbScan.noise.isNotEmpty ? 1 : sizes.reduce(min);
   }
 
+  /// Creates a path for the given [layer] using a [scaleFunc]
   Path getPathLayer(
     double layer, {
-    ScaleFunction scaleFunc = logBasedLevelScale,
+    ScaleFunction scaleFunc = _logBasedLevelScale,
   }) {
     var joinedPath = Path();
     var paths = _paths.where((p) => p.clusterSize / largestCluster >= layer);
@@ -54,7 +65,7 @@ class HeatMap {
 
   void _createClusterPaths() {
     var pointRadius = pointProximity * 0.75;
-    for (var cluster in dbScan.cluster) {
+    for (var cluster in _dbScan.cluster) {
       var clusterPath = Path();
       for (var pointIndex in cluster) {
         var pointPath = session.events[pointIndex].asPath(pointRadius);
@@ -67,9 +78,9 @@ class HeatMap {
     simpleCluster(index) => ClusterPath(
         path: session.events[index].asPath(pointRadius),
         points: [session.events[index].location]);
-    _paths.addAll(dbScan.noise.map(simpleCluster));
+    _paths.addAll(_dbScan.noise.map(simpleCluster));
   }
 
-  static double logBasedLevelScale(double level, double scaleFactor) =>
+  static double _logBasedLevelScale(double level, double scaleFactor) =>
       1 + log(level + 0.5 / scaleFactor) / scaleFactor;
 }

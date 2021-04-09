@@ -13,19 +13,25 @@ class Session implements OutputInfo {
   final int startTime;
   int endTime;
 
+  /// Holds the [area] widget screenshot
   Image? screenSnap;
   final List<Event> _events = [];
+
+  /// Events registered in this [Session]
   List<Event> get events => _events;
 
+  /// Creates a [Session] for a particular [area] on some [page]
   Session({this.page, required this.area})
       : startTime = getTimestamp(),
         endTime = getTimestamp();
 
+  /// Registers an [event] in this session
   void addEvent(Event event) {
     _events.add(event);
     endTime = max(endTime, event.timestamp);
   }
 
+  /// Converts this [Session] to a json map
   Map<String, dynamic> toJson() => {
         'page': page,
         'area': area,

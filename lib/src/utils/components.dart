@@ -8,8 +8,11 @@ import '../entry_point.dart';
 import '../models/config/config.dart';
 
 final GetIt _instance = GetIt.asNewInstance();
+
+/// Library internal [GetIt] instance holding each of its components
 GetIt get S => _instance;
 
+/// Initializes all of the internal library components
 void initializeComponents(Config? config, HeatMapCallback? heatMapCallback,
     RawDataCallback? rawDataCallback) {
   S.registerSingleton<Config>(config ?? Config());

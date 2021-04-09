@@ -7,7 +7,9 @@ enum HeatMapStyle {
   layered
 }
 
+/// An extensions specifying the [multiplier]
 extension HeatMapLayerMultiplier on HeatMapStyle {
+  /// A layer number multiplier used by the [GraphicalProcessor]
   int get multiplier {
     return const {
       HeatMapStyle.smooth: 3,
