@@ -24,7 +24,7 @@ class Config {
   /// Permitted values range from above 0 for large screens and very small
   /// UI elements to around 30 for tiny screens with few large elements.
   /// Suggested range for mobile phones is between 5 and 20.
-  /// The default value is 10.
+  /// The default value is 12.
   double uiElementSize;
 
   /// Holds the route names on which event collection is disabled.
@@ -80,7 +80,7 @@ class Config {
         assert(heatMapTransparency == null ||
             heatMapTransparency >= 0 && heatMapTransparency <= 255),
         enabled = enabled ?? true,
-        uiElementSize = uiElementSize ?? 10,
+        uiElementSize = uiElementSize ?? 12,
         disabledRoutes = disabledRoutes ?? {},
         minSessionEventCount = minSessionEventCount ?? 1,
         outputTypes = outputTypes ?? {OutputType.graphicalRender},

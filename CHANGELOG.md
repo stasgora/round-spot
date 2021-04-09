@@ -1,5 +1,6 @@
 # 0.1.1
 
+- Example application
 - Private API documentation
 
 # 0.1.0
