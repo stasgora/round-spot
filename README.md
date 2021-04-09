@@ -4,7 +4,7 @@
   Customizable heat map interface analysis library
   
   
-  <a href="https://pub.dev/packages/round_spot"><img src="https://img.shields.io/pub/v/round_spot.svg" alt="Pub"></a>
+  <a href="https://pub.dev/packages/round_spot"><img src="https://img.shields.io/pub/v/round_spot.svg?color=blueviolet" alt="Pub"></a>
   <a href="https://github.com/stasgora/round-spot/actions"><img src="https://github.com/stasgora/round-spot/workflows/build/badge.svg" alt="build"></a>
   <a href="https://github.com/tenhobi/effective_dart"><img src="https://img.shields.io/badge/style-effective_dart-40c4ff.svg" alt="style: effective dart"></a>
   <a href="https://github.com/stasgora/round-spot/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
