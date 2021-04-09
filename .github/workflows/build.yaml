@@ -12,4 +12,4 @@ jobs:
       - name: Format
         run: flutter format --set-exit-if-changed lib
       - name: Analyze
-        run: flutter analyze lib
+        run: flutter analyze
