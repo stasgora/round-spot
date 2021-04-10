@@ -13,8 +13,8 @@ final GetIt _instance = GetIt.asNewInstance();
 GetIt get S => _instance;
 
 /// Initializes all of the internal library components
-void initializeComponents(Config? config, HeatMapCallback? heatMapCallback,
-    RawDataCallback? rawDataCallback) {
+void initializeComponents(Config? config, OutputCallback? heatMapCallback,
+    OutputCallback? rawDataCallback) {
   S.registerSingleton<Config>(config ?? Config());
   S.registerSingleton<ScreenshotProvider>(ScreenshotProvider());
   S.registerSingleton<GraphicalProcessor>(GraphicalProcessor());

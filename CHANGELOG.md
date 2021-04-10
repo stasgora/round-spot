@@ -1,3 +1,7 @@
+# 0.2.0
+
+- Unified output callbacks signatures
+
 # 0.1.1
 
 - Example application

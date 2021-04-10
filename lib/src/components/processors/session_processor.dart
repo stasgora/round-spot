@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/foundation.dart';
 import '../../models/config/config.dart';
 import '../../models/session.dart';
@@ -10,5 +12,5 @@ abstract class SessionProcessor {
   final config = S.get<Config>();
 
   /// Processes a [Session] into a certain [OutputType]
-  Future process(Session session);
+  Future<Uint8List?> process(Session session);
 }

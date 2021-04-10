@@ -17,9 +17,6 @@ import 'screenshot_provider.dart';
 
 /// Coordinates and manages data gathering, processing and reporting.
 class SessionManager {
-  final HeatMapCallback? _heatMapCallback;
-  final RawDataCallback? _rawDataCallback;
-
   final _logger = Logger('RoundSpot.SessionManager');
 
   final _config = S.get<Config>();
@@ -32,12 +29,19 @@ class SessionManager {
   Timer? _idleTimer;
 
   /// Creates a [SessionManager] that manages the data flow
-  SessionManager(this._heatMapCallback, this._rawDataCallback);
+  SessionManager(
+      OutputCallback? _heatMapCallback, OutputCallback? _rawDataCallback)
+      : _callbacks = {
+          OutputType.graphicalRender: _heatMapCallback,
+          OutputType.rawData: _rawDataCallback,
+        };
 
   final Map<OutputType, SessionProcessor> _processors = {
     OutputType.graphicalRender: S.get<GraphicalProcessor>(),
     OutputType.rawData: S.get<RawDataProcessor>()
   };
+
+  final Map<OutputType, OutputCallback?> _callbacks;
 
   /// Handles application lifecycle state changes
   void onLifecycleStateChanged(AppLifecycleState state) {
@@ -107,10 +111,7 @@ class SessionManager {
     for (var type in _config.outputTypes) {
       var typeName = EnumToString.convertToString(type, camelCase: true);
       runZonedGuarded(() async {
-        if ((type == OutputType.graphicalRender
-                ? _heatMapCallback
-                : _rawDataCallback) ==
-            null) {
+        if (_callbacks[type] == null) {
           _logger.warning(
             'Requested $typeName output but the callback is not set, skipping.',
           );
@@ -119,11 +120,7 @@ class SessionManager {
         var session = _sessions[key]!;
         var output = await _processors[type]!.process(session);
         if (output == null) return;
-        if (type == OutputType.graphicalRender) {
-          _heatMapCallback!(output, session);
-        } else {
-          _rawDataCallback!(output);
-        }
+        _callbacks[type]!(output, session);
       }, (e, stackTrace) {
         _logger.severe(
           'Error occurred while generating $typeName',

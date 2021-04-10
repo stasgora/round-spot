@@ -10,17 +10,10 @@ import 'utils/components.dart';
 import 'widgets/detector.dart';
 import 'widgets/lifecycle_observer.dart';
 
-/// Signature for the [initialize] heat map output callback.
+/// Signature for the [initialize] data output callbacks.
 ///
-/// Provides a heat map in the form of png image [data]
-/// and some additional [info] about it.
-typedef HeatMapCallback = void Function(Uint8List data, OutputInfo info);
-
-/// Signature for the [initialize] raw data output callback.
-///
-/// Provides the raw [data] that is used
-/// to create heat maps in a form of a json file.
-typedef RawDataCallback = void Function(String data);
+/// Provides the [data] along with some additional [info] about it.
+typedef OutputCallback = void Function(Uint8List data, OutputInfo info);
 
 /// Initializes the _Round Spot_ library.
 ///
@@ -42,8 +35,8 @@ Widget initialize({
   required Widget child,
   Config? config,
   LogLevel loggingLevel = LogLevel.off,
-  HeatMapCallback? heatMapCallback,
-  RawDataCallback? rawDataCallback,
+  OutputCallback? heatMapCallback,
+  OutputCallback? rawDataCallback,
 }) {
   _initializeLogger(loggingLevel);
   initializeComponents(config, heatMapCallback, rawDataCallback);

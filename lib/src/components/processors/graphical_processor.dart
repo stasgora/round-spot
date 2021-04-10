@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/painting.dart';
@@ -15,10 +16,10 @@ class GraphicalProcessor extends SessionProcessor {
   final _logger = Logger('RoundSpot.GraphicalProcessor');
 
   @override
-  Future process(Session session) async {
+  Future<Uint8List?> process(Session session) async {
     if (session.screenSnap == null) {
       _logger.warning('Got session with no image attached, skipping.');
-      return;
+      return null;
     }
     var image = session.screenSnap!;
     final pictureRecorder = PictureRecorder();
