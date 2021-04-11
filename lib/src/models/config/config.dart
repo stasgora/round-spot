@@ -1,6 +1,5 @@
 import 'package:enum_to_string/enum_to_string.dart';
 
-import '../../entry_point.dart';
 import '../../utils/utils.dart';
 import '../../widgets/detector.dart';
 import 'heat_map_style.dart';
@@ -35,9 +34,8 @@ class Config {
 
   /// Specifies what output data forms should be generated.
   ///
-  /// This corresponds to the [HeatMapCallback] and [RawDataCallback]
-  /// callbacks passed during [initialize()].
-  ///
+  /// This corresponds to the `heatMapCallback` and
+  /// `rawDataCallback` passed during [initialize()].
   /// The default value contains [OutputType.graphicalRender].
   Set<OutputType> outputTypes;
 

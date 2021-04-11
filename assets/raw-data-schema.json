@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "Raw session data",
+  "description": "Information about user interactions captured during a single session",
+  "type": "object",
+  "properties": {
+    "page": {
+      "description": "A page where the data was captured",
+      "type": "string"
+    },
+    "area": {
+      "description": "The visual region identifier provided to the Detector",
+      "type": "string"
+    },
+    "span": {
+      "description": "Time period in which this session was recorded",
+      "type": "object",
+      "properties": {
+        "start": {
+          "description": "Timestamp of the first event included in the heat map (in ms)",
+          "type": "integer"
+        },
+        "end": {
+          "description": "Timestamp of the last event included in the heat map (in ms)",
+          "type": "integer"
+        }
+      }
+    },
+    "events": {
+      "description": "List of events captured during this session",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "description": "Information about a single user interaction",
+        "type": "object",
+        "properties": {
+          "location": {
+            "description": "Area relative touch screen coordinates",
+            "type": "object",
+            "properties": {
+              "z": {
+                "description": "X axis component",
+                "type": "number"
+              },
+              "y": {
+                "description": "Y axis component",
+                "type": "number"
+              }
+            }
+          },
+          "time": {
+            "description": "Timestamp of when this event was recorded (in ms)",
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
