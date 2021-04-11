@@ -9,13 +9,13 @@ class ScreenshotProvider {
   final _logger = Logger('RoundSpot.ScreenshotProvider');
 
   /// Captures a screenshot from a [RepaintBoundary] using its [GlobalKey]
-  Future<ui.Image?> takeScreenshot(GlobalKey areaKey) async {
+  Future<ui.Image?> takeScreenshot(GlobalKey areaKey, double pixelRatio) async {
     if (areaKey.currentContext == null) {
       _logger.severe('Could not take a screenshot of the current page.');
       return null;
     }
     var screen =
         areaKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-    return screen.toImage();
+    return screen.toImage(pixelRatio: pixelRatio);
   }
 }

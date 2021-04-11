@@ -63,6 +63,17 @@ class Config {
   /// Takes values between 0 and 1, it's set to 0.75 by default.
   double heatMapTransparency;
 
+  /// Determines the heat map image resolution.
+  ///
+  /// This parameter describes the scale between the
+  /// logical pixels and the size of the output image.
+  /// By default it is equal to one which means the image resolution
+  /// will be equal to the logical device resolution.
+  ///
+  /// As an example in order to generate heat maps in the screen resolution
+  /// you should pass the [FlutterView.devicePixelRatio] here.
+  double heatMapPixelRatio;
+
   /// Initializes the configuration.
   Config({
     bool? enabled,
@@ -73,6 +84,7 @@ class Config {
     Set<OutputType>? outputTypes,
     HeatMapStyle? heatMapStyle,
     double? heatMapTransparency,
+    double? heatMapPixelRatio,
   })  : assert(minSessionEventCount == null || minSessionEventCount >= 1),
         assert(maxSessionIdleTime == null || maxSessionIdleTime >= 1),
         assert(heatMapTransparency == null ||
@@ -84,7 +96,8 @@ class Config {
         outputTypes = outputTypes ?? {OutputType.graphicalRender},
         heatMapStyle = heatMapStyle ?? HeatMapStyle.smooth,
         heatMapTransparency =
-            (heatMapTransparency ?? 0.75).clamp(0, 1).toDouble();
+            (heatMapTransparency ?? 0.75).clamp(0, 1).toDouble(),
+        heatMapPixelRatio = heatMapPixelRatio ?? 1;
 
   /// Creates the configuration from a json map.
   ///
@@ -112,5 +125,6 @@ class Config {
                   HeatMapStyle.values, json['heatMap']?['style'])
               : null,
           heatMapTransparency: json['heatMap']?['transparency'].toDouble(),
+          heatMapPixelRatio: json['heatMap']?['pixelRatio'].toDouble(),
         );
 }

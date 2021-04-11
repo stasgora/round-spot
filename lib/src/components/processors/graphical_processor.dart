@@ -37,8 +37,8 @@ class GraphicalProcessor extends SessionProcessor {
   }
 
   void _drawHeatMap(Canvas canvas, Session session) {
-    var heatMap =
-        HeatMap(session: session, pointProximity: config.uiElementSize);
+    var clusterScale = config.uiElementSize * config.heatMapPixelRatio;
+    var heatMap = HeatMap(session: session, pointProximity: clusterScale);
 
     layerCount() {
       if (heatMap.largestCluster == 1) return 1;
@@ -46,7 +46,7 @@ class GraphicalProcessor extends SessionProcessor {
     }
 
     calcFraction(int i) => (i - 1) / max((layerCount() - 1), 1);
-    calcBlur(double val) => (4 * val * val + 2) * config.uiElementSize / 10;
+    calcBlur(double val) => (4 * val * val + 2) * clusterScale / 10;
     for (var i = 1; i <= layerCount(); i++) {
       var fraction = calcFraction(i);
       var paint = Paint()..color = _getSpectrumColor(fraction);

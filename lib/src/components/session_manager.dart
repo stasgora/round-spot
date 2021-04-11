@@ -92,8 +92,10 @@ class SessionManager {
       );
     }
     if (session.screenSnap == null) {
-      session.screenSnap =
-          await _screenshotProvider.takeScreenshot(detector.areaKey);
+      session.screenSnap = await _screenshotProvider.takeScreenshot(
+        detector.areaKey,
+        _config.heatMapPixelRatio,
+      );
     }
   }
 

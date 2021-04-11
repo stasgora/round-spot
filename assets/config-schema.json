@@ -73,6 +73,11 @@
           "type": "number",
           "minimum": 0,
           "maximum": 1
+        },
+        "pixelRatio": {
+          "description": "Determines the heat map image resolution",
+          "type": "number",
+          "exclusiveMinimum": 0
         }
       }
     }

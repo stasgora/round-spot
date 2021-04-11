@@ -13,6 +13,7 @@
   },
   "heatMap": {
     "style": "smooth",
-    "transparency": 0.6
+    "transparency": 0.6,
+    "pixelRatio": 2
   }
 }

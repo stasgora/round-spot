@@ -1,5 +1,6 @@
 # 0.2.0
 
+- Adjustable heat map resolution
 - Unified output callbacks signatures
 
 # 0.1.1
