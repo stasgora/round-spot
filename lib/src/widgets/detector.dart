@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import '../components/session_manager.dart';
-import '../models/detector_config.dart';
+import '../models/detector_status.dart';
 import '../models/event.dart';
 import '../utils/components.dart';
 
@@ -11,30 +12,24 @@ import '../utils/components.dart';
 /// {@template Detector.description}
 /// ## Scrollable widgets
 /// To correctly monitor interactions with any scrollable space a [Detector]
-/// has to be placed between the scrollable widget
-/// and the widgets being scrolled.
-///
-/// Using a [Detector] with a single child:
+/// has to be placed as a direct parent of that widget:
 /// ```dart
-/// SingleChildScrollView(
-///   child: round_spot.Detector(
-///     child: /* child */,
-///     areaID: id
-///   )
+/// round_spot.Detector(
+///   areaID: id,
+///   child: ListView(
+///     children: /* children */,
+///   ),
 /// )
 /// ```
 ///
-/// Using a [ListDetector] with a list of children:
-/// ```dart
-/// SingleChildScrollView(
-///   child: round_spot.ListDetector(
-///     children: [
-///       // children
-///     ],
-///     areaID: id
-///   )
-/// )
-/// ```
+/// Widgets provided by Flutter, like [ListView], [SingleChildScrollView],
+/// [GridView] or [CustomScrollView] are recognised automatically.
+/// In case you are using a custom scrolling widget from external package,
+/// and cannot put the [Detector] directly around one of the widgets
+/// listed above, provide the [customScrollWidgetAxis] parameter.
+///
+/// Nested scroll views are currently not supported and can impact
+/// the way that the outer scroll area is reported.
 ///
 /// ## Detector scope
 /// Detectors can either have a _local_ or a _global_ scope:
@@ -79,6 +74,13 @@ class Detector extends StatefulWidget {
   /// {@endtemplate}
   final bool hasGlobalScope;
 
+  /// Signals to the [Detector] that it's monitoring a custom scrolling widget.
+  ///
+  /// In that case that widget scrolling [Axis] must be provided.
+  final Axis? customScrollWidgetAxis;
+
+  late final bool _isScrollDetector;
+
   /// {@template Detector.constructor}
   /// Creates a widget detector
   ///
@@ -88,72 +90,78 @@ class Detector extends StatefulWidget {
     required this.child,
     required this.areaID,
     this.hasGlobalScope = false,
-  });
+    this.customScrollWidgetAxis,
+  }) {
+    _isScrollDetector = customScrollWidgetAxis != null ||
+        child is ScrollView ||
+        child is SingleChildScrollView ||
+        child is PageView ||
+        child is ListWheelScrollView;
+  }
 
   @override
   _DetectorState createState() => _DetectorState();
 }
 
 class _DetectorState extends State<Detector> {
-  final GlobalKey _areaKey = GlobalKey();
+  late final DetectorStatus _status;
 
   final _manager = S.get<SessionManager>();
+
+  @override
+  void initState() {
+    super.initState();
+    _status = widget._isScrollDetector
+        ? ScrollDetectorStatus(
+            areaKey: GlobalKey(),
+            areaID: widget.areaID,
+            hasGlobalScope: widget.hasGlobalScope,
+            scrollAxis: widget.customScrollWidgetAxis ?? _getScrollAxis()!,
+          )
+        : DetectorStatus(
+            areaKey: GlobalKey(),
+            areaID: widget.areaID,
+            hasGlobalScope: widget.hasGlobalScope,
+          );
+  }
 
   void _onTap(PointerDownEvent event) {
     _manager.onEvent(
       event: Event.fromPointer(event),
-      detector: DetectorConfig(
-        areaKey: _areaKey,
-        areaID: widget.areaID,
-        hasGlobalScope: widget.hasGlobalScope,
-      ),
+      status: _status,
     );
+  }
+
+  bool _onNotification(ScrollNotification notification) {
+    var status = _status as ScrollDetectorStatus;
+    status.scrollPosition = notification.metrics.pixels;
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      key: _areaKey,
-      child: Listener(
-        onPointerDown: _onTap,
-        behavior: HitTestBehavior.translucent,
+    Widget detector = Listener(
+      onPointerDown: _onTap,
+      behavior: HitTestBehavior.translucent,
+      child: RepaintBoundary(
+        key: _status.areaKey,
         child: widget.child,
       ),
     );
+    if (widget._isScrollDetector) {
+      detector = NotificationListener(
+        onNotification: _onNotification,
+        child: detector,
+      );
+    }
+    return detector;
   }
-}
 
-/// Detects user interactions in [children] widgets.
-///
-/// _This is a proxy for a [Detector] widget
-/// that places its children in a [Column]_
-///
-/// {@macro Detector.description}
-class ListDetector extends StatelessWidget {
-  /// The widgets below this widget to be observed.
-  ///
-  /// If you only have a single child use [Detector].
-  final List<Widget> children;
-
-  /// {@macro Detector.areaID}
-  final String areaID;
-
-  /// {@macro Detector.hasGlobalScope}
-  final bool hasGlobalScope;
-
-  /// {@macro Detector.constructor}
-  ListDetector({
-    required this.children,
-    required this.areaID,
-    this.hasGlobalScope = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Detector(
-      child: Column(children: children),
-      areaID: areaID,
-      hasGlobalScope: hasGlobalScope,
-    );
+  Axis? _getScrollAxis() {
+    var child = widget.child;
+    if (child is ScrollView) return child.scrollDirection;
+    if (child is ListWheelScrollView) return Axis.vertical;
+    if (child is SingleChildScrollView) return child.scrollDirection;
+    if (child is PageView) child.scrollDirection;
   }
 }

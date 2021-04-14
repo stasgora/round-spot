@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 
 import '../../round_spot.dart';
-import '../models/detector_config.dart';
+import '../models/detector_status.dart';
 import '../models/event.dart';
 import '../models/session.dart';
 import '../utils/components.dart';
@@ -59,7 +59,7 @@ class SessionManager {
   }
 
   /// Handles processing user interactions
-  void onEvent({required Event event, required DetectorConfig detector}) async {
+  void onEvent({required Event event, required DetectorStatus status}) async {
     if (_currentPage == null) {
       _logger.warning(
         'The current page route was not detected. '
@@ -72,17 +72,31 @@ class SessionManager {
       _endSessions();
       return;
     }
-    if (_currentPageDisabled && !detector.hasGlobalScope) return;
-    var sessionKey = detector.areaID;
-    if (!detector.hasGlobalScope) {
+    if (_currentPageDisabled && !status.hasGlobalScope) return;
+
+    var session = _recordEvent(event: event, status: status);
+    if (status is ScrollDetectorStatus || session.screenshots.isEmpty) {
+      session.screenshots.add(Screenshot(
+        await _screenshotProvider.takeScreenshot(
+          status.areaKey,
+          _config.heatMapPixelRatio,
+        ),
+        status is ScrollDetectorStatus ? status.asScrollOffset : Offset.zero,
+      ));
+    }
+  }
+
+  Session _recordEvent({required Event event, required DetectorStatus status}) {
+    var sessionKey = status.areaID;
+    if (!status.hasGlobalScope) {
       sessionKey += _currentPage!;
       _processedEventIDs.add(event.id);
     }
-
     var session = (_sessions[sessionKey] ??= Session(
-      page: detector.hasGlobalScope ? null : _currentPage,
-      area: detector.areaID,
+      page: status.hasGlobalScope ? null : _currentPage,
+      area: status.areaID,
     ));
+    if (status is ScrollDetectorStatus) event.location += status.asScrollOffset;
     session.addEvent(event);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
@@ -91,12 +105,7 @@ class SessionManager {
         _endSessions,
       );
     }
-    if (session.screenSnap == null) {
-      session.screenSnap = await _screenshotProvider.takeScreenshot(
-        detector.areaKey,
-        _config.heatMapPixelRatio,
-      );
-    }
+    return session;
   }
 
   void _endSessions() {

@@ -6,7 +6,7 @@ import '../utils/utils.dart';
 /// Holds information about a single user interaction
 class Event {
   /// Equals [PointerEvent.localPosition]
-  final Offset location;
+  Offset location;
 
   /// Timestamp of when the event fired
   final int timestamp;

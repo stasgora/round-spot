@@ -74,14 +74,14 @@ Make sure you are consistently specifying them both when:
 using [RouteSetting](https://api.flutter.dev/flutter/widgets/RouteSettings-class.html)
 
 #### Scrollable widgets
-To correctly monitor interactions with any scrollable space a `Detector` or a `ListDetector` 
-has to be placed between the scrollable widget and the widgets being scrolled:
+To correctly monitor interactions with any scrollable space a `Detector` 
+has to be placed as a direct parent of that widget:
 ```dart
-SingleChildScrollView(
-  child: round_spot.Detector(
-    child: /* child */,
-    areaID: id
-  )
+round_spot.Detector(
+  areaID: id,
+  child: ListView(
+    children: /* children */,
+  ),
 )
 ```
 
