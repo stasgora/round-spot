@@ -14,6 +14,6 @@ jobs:
       - name: Analyze
         run: flutter analyze
       - name: Run tests
-        run: flutter test --no-pub --coverage --test-randomize-ordering-seed
+        run: flutter test --no-pub --coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1.4.0
