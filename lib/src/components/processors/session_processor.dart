@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
+
 import '../../models/config/config.dart';
 import '../../models/session.dart';
 import '../../utils/components.dart';

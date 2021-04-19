@@ -17,8 +17,8 @@ class DetectorStatus {
   /// Creates a [DetectorStatus] used by a [SessionManager]
   DetectorStatus({
     required this.areaKey,
-    required this.areaID,
-    required this.hasGlobalScope,
+    this.areaID = '',
+    this.hasGlobalScope = false,
   });
 }
 
@@ -38,9 +38,9 @@ class ScrollDetectorStatus extends DetectorStatus {
   /// Creates a [ScrollDetectorStatus] used by a [SessionManager]
   ScrollDetectorStatus({
     required GlobalKey areaKey,
-    required String areaID,
-    required bool hasGlobalScope,
-    required this.scrollAxis,
+    String areaID = '',
+    bool hasGlobalScope = false,
+    this.scrollAxis = Axis.vertical,
   }) : super(
           areaKey: areaKey,
           areaID: areaID,
