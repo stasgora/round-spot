@@ -6,6 +6,7 @@ import 'package:simple_cluster/simple_cluster.dart';
 
 import '../models/cluster_path.dart';
 import '../models/session.dart';
+import '../utils/utils.dart';
 
 /// Signature for the cluster layer scaling function
 typedef ScaleFunction = double Function(double level, double scaleFactor);
@@ -35,7 +36,14 @@ class HeatMap {
     required this.pointProximity,
     this.clusterScale = 0.5,
   }) : _dbScan = DBSCAN(epsilon: pointProximity) {
-    var dbPoints = session.events.map<List<double>>((e) => e.locationAsList);
+    var strips = session.screenshotStrips;
+    var pointOffset = Offset.zero;
+    if (strips.isNotEmpty && session.axis != null) {
+      pointOffset = Offsets.fromAxis(session.axis!, strips.first.offset);
+    }
+    var dbPoints = session.events.map<List<double>>(
+      (e) => e.locationAsList(pointOffset),
+    );
     _dbScan.run(dbPoints.toList());
     _createClusterPaths();
 

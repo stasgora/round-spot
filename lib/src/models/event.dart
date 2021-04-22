@@ -16,7 +16,10 @@ class Event {
   final int id;
 
   /// Converts the [location] to a coordinate list
-  List<double> get locationAsList => [location.dx, location.dy];
+  List<double> locationAsList([Offset offset = Offset.zero]) {
+    var location = this.location + offset;
+    return [location.dx, location.dy];
+  }
 
   /// Creates an [Event] with a given [location] and [id]
   @visibleForTesting

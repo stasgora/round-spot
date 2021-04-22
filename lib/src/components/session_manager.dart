@@ -75,15 +75,7 @@ class SessionManager {
     if (_currentPageDisabled && !status.hasGlobalScope) return;
 
     var session = _recordEvent(event: event, status: status);
-    if (status is ScrollDetectorStatus || session.screenshots.isEmpty) {
-      session.screenshots.add(Screenshot(
-        await _screenshotProvider.takeScreenshot(
-          status.areaKey,
-          _config.heatMapPixelRatio,
-        ),
-        status is ScrollDetectorStatus ? status.asScrollOffset : Offset.zero,
-      ));
-    }
+    _screenshotProvider.takeScreenshot(session, status);
   }
 
   Session _recordEvent({required Event event, required DetectorStatus status}) {
@@ -95,6 +87,8 @@ class SessionManager {
     var session = (_sessions[sessionKey] ??= Session(
       page: status.hasGlobalScope ? null : _currentPage,
       area: status.areaID,
+      pixelRatio: _config.heatMapPixelRatio,
+      axis: status is ScrollDetectorStatus ? status.scrollAxis : null,
     ));
     if (status is ScrollDetectorStatus) event.location += status.asScrollOffset;
     session.addEvent(event);

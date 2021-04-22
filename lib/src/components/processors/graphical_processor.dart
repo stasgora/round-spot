@@ -17,13 +17,14 @@ class GraphicalProcessor extends SessionProcessor {
 
   @override
   Future<Uint8List?> process(Session session) async {
-    if (session.screenshots.every((snap) => snap.image == null)) {
+    if (session.screenshot == null) {
       _logger.warning('Got session with no image attached, skipping.');
       return null;
     }
+    var image = session.screenshot!;
     final pictureRecorder = PictureRecorder();
     final canvas = Canvas(pictureRecorder);
-    var outputSize = _drawScreenshot(canvas, session);
+    canvas.drawImage(image, Offset.zero, Paint());
 
     var alpha = (config.heatMapTransparency * 255).toInt();
     canvas.saveLayer(null, Paint()..color = Color.fromARGB(alpha, 0, 0, 0));
@@ -31,29 +32,12 @@ class GraphicalProcessor extends SessionProcessor {
     canvas.restore();
 
     var canvasPicture = pictureRecorder.endRecording();
-    var sessionImage = await canvasPicture.toImage(
-      outputSize.width.toInt(),
-      outputSize.height.toInt(),
-    );
+    var sessionImage = await canvasPicture.toImage(image.width, image.height);
     return exportHeatMap(sessionImage);
   }
 
-  Size _drawScreenshot(Canvas canvas, Session session) {
-    var outputSize = Size.zero;
-    for (var screenshot in session.screenshots) {
-      if (screenshot.image == null) continue;
-      var image = screenshot.image!;
-      canvas.drawImage(image, screenshot.offset, Paint());
-      outputSize = Size(
-        max(outputSize.width, screenshot.offset.dx + image.width),
-        max(outputSize.height, screenshot.offset.dy + image.height),
-      );
-    }
-    return outputSize;
-  }
-
   void _drawHeatMap(Canvas canvas, Session session) {
-    var clusterScale = config.uiElementSize * config.heatMapPixelRatio;
+    var clusterScale = config.uiElementSize * session.pixelRatio;
     var heatMap = HeatMap(session: session, pointProximity: clusterScale);
 
     layerCount() {

@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/widgets.dart' hide Image;
+
 import '../utils/utils.dart';
 import 'event.dart';
 import 'output_info.dart';
@@ -13,16 +15,30 @@ class Session implements OutputInfo {
   final int startTime;
   int endTime;
 
-  /// Holds the screenshots captured during this session
-  List<Screenshot> screenshots = [];
   final List<Event> _events = [];
 
   /// Events registered in this [Session]
   List<Event> get events => _events;
 
+  /// Holds the screenshots captured during this session
+  Image? screenshot;
+
+  /// Keep track of the already captured parts of this session screen [area]
+  final List<ImageStrip> screenshotStrips = [];
+
+  /// Axis along which this session [area] scrolls, if any
+  final Axis? axis;
+
+  /// Determines this session output resolution
+  final double pixelRatio;
+
   /// Creates a [Session] for a particular [area] on some [page]
-  Session({this.page, required this.area})
-      : startTime = getTimestamp(),
+  Session({
+    this.page,
+    required this.area,
+    required this.pixelRatio,
+    this.axis,
+  })  : startTime = getTimestamp(),
         endTime = getTimestamp();
 
   /// Registers an [event] in this session
@@ -40,14 +56,18 @@ class Session implements OutputInfo {
       };
 }
 
-/// Represents a screen area [image] taken with an optional [offset].
-class Screenshot {
-  /// Screenshot pixel data
-  final Image? image;
+/// Represents a captured part of sessions
+/// screen [Session.area] along the [Session.axis]
+class ImageStrip {
+  /// Offset from the origin at which this strip starts
+  final double offset;
 
-  /// Screenshot origin in relation to the [Detector] area
-  final Offset offset;
+  /// Length of this strip
+  final double length;
 
-  /// Creates a [Screenshot] representation for a particular [Session]
-  Screenshot(this.image, [this.offset = Offset.zero]);
+  /// Offset from the origin at which this strip ends
+  double get end => offset + length;
+
+  /// Creates a [ImageStrip] from [offset] and [length]
+  ImageStrip(this.offset, this.length);
 }

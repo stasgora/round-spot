@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
+
 import '../components/screenshot_provider.dart';
 import '../components/session_manager.dart';
+import '../utils/utils.dart';
 import '../widgets/detector.dart';
 
 /// Holds the [Detector] status for [SessionManager] use.
@@ -31,9 +33,7 @@ class ScrollDetectorStatus extends DetectorStatus {
   Axis scrollAxis;
 
   /// Transforms the scroll information into an [Offset]
-  Offset get asScrollOffset => scrollAxis == Axis.vertical
-      ? Offset(0, scrollPosition)
-      : Offset(scrollPosition, 0);
+  Offset get asScrollOffset => Offsets.fromAxis(scrollAxis, scrollPosition);
 
   /// Creates a [ScrollDetectorStatus] used by a [SessionManager]
   ScrollDetectorStatus({

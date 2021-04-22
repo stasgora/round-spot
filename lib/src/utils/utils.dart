@@ -1,6 +1,29 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
+
+import 'package:flutter/widgets.dart' show Axis;
+
+/// [Offset] axis utility extension
+extension Offsets on Offset {
+  /// Constructs [Offset] from an [offset] along [axis]
+  static Offset fromAxis(Axis axis, double offset, [double other = 0]) =>
+      axis == Axis.vertical ? Offset(other, offset) : Offset(offset, other);
+}
+
+/// [Size] utility extension
+extension Sizes on Size {
+  /// Returns [max] (OR) of the two [Size] objects
+  Size operator |(Size other) => Size(
+        max(width, other.width),
+        max(height, other.height),
+      );
+
+  /// Constructs [Offset] from an [size] along [axis]
+  static Size fromAxis(Axis axis, double size, [double other = 0]) =>
+      axis == Axis.vertical ? Size(other, size) : Size(size, other);
+}
 
 /// Converts an [Image] into a list of png file bytes.
 Future<Uint8List> exportHeatMap(Image image) async {
