@@ -23,8 +23,8 @@ class Session implements OutputInfo {
   /// Holds the screenshots captured during this session
   Image? screenshot;
 
-  /// Keep track of the already captured parts of this session screen [area]
-  final List<ImageStrip> screenshotStrips = [];
+  /// Holds the offset of the [screenshot] image
+  double? screenshotOffset;
 
   /// Axis along which this session [area] scrolls, if any
   final Axis? axis;

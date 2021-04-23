@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
@@ -13,71 +14,36 @@ class ScreenshotProvider {
   final _logger = Logger('RoundSpot.ScreenshotProvider');
 
   /// Captures a screenshot from a [RepaintBoundary] using its [GlobalKey]
+  /// It than joins it with the already assembled image
+  /// replacing the part that's underneath it
   void takeScreenshot(Session session, DetectorStatus status) async {
     if (session.screenshot != null && status is! ScrollDetectorStatus) return;
+    var imageOffset =
+        status is ScrollDetectorStatus ? status.scrollPosition.ceil() : 0;
     var image = await _capture(status.areaKey, session.pixelRatio);
     if (image == null) return;
-    if (session.screenshot == null && status is! ScrollDetectorStatus) {
-      session.screenshot = image;
-      return;
-    }
-    var axis = (status as ScrollDetectorStatus).scrollAxis;
-    var imgStart = status.scrollPosition;
-    var imgEnd = imgStart + image.axisSize(axis);
-    double? paintBegin, paintEnd;
-    double? stripBegin, stripEnd;
-    var dirtyStripCount = 0;
-    int? stripIndex;
-    for (var i = 0; i < session.screenshotStrips.length; i++) {
-      var strip = session.screenshotStrips[i];
-      var startsBefore = imgStart < strip.offset;
-      var endsBefore = imgEnd < strip.offset;
-      if (paintBegin == null && startsBefore) {
-        paintBegin = stripBegin = imgStart;
-        stripIndex = i;
-      }
-      if (paintBegin == null && !startsBefore && imgStart < strip.end) {
-        paintBegin = strip.end;
-        stripBegin = strip.offset;
-        stripIndex = i;
-        dirtyStripCount++;
-      }
-      if (paintEnd == null && endsBefore) paintEnd = stripEnd = imgEnd;
-      if (paintEnd == null && !endsBefore && imgEnd < strip.end) {
-        paintEnd = strip.offset;
-        stripEnd = strip.end;
-        if (stripIndex == null || stripIndex < i) dirtyStripCount++;
-        if (stripIndex == null) stripIndex = i;
-      }
-      if (paintEnd != null) break;
-    }
-    if (paintBegin == null) {
-      paintBegin = stripBegin = imgStart;
-      stripIndex = session.screenshotStrips.length;
-    }
-    if (paintEnd == null) paintEnd = stripEnd = imgEnd;
     if (session.screenshot == null) {
       session.screenshot = image;
+      session.screenshotOffset = imageOffset.toDouble();
     } else {
+      var axis = (status as ScrollDetectorStatus).scrollAxis;
+      double adjustForAxis(Axis currentAxis) => axis == currentAxis ? 1 : 0;
+      // Decrease the drawn image by 1 pixel in the main axis direction
+      // to account for the scroll position being rounded to nearest pixel
+      var imageSize = Size(
+        image.width - adjustForAxis(Axis.horizontal),
+        image.height - adjustForAxis(Axis.vertical),
+      );
       session.screenshot = await image.drawOnto(
         session.screenshot!,
-        Offsets.fromAxis(axis, paintBegin - imgStart) &
-            Sizes.fromAxis(
-              axis,
-              paintEnd - paintBegin,
-              (axis == Axis.horizontal ? image.height : image.width).toDouble(),
-            ),
-        Offsets.fromAxis(
-            axis, paintBegin - session.screenshotStrips.first.offset),
+        Offsets.fromAxis(axis, imageOffset - session.screenshotOffset!),
+        imageSize,
+      );
+      session.screenshotOffset = min(
+        imageOffset.toDouble(),
+        session.screenshotOffset!,
       );
     }
-    for (var i = 0; i < dirtyStripCount; i++) {
-      session.screenshotStrips.removeAt(stripIndex!);
-    }
-    session.screenshotStrips.insert(
-      stripIndex!,
-      ImageStrip(stripBegin!, stripEnd! - stripBegin),
-    );
   }
 
   Future<Image?> _capture(GlobalKey areaKey, double pixelRatio) async {
@@ -92,16 +58,12 @@ class ScreenshotProvider {
 }
 
 /// An extension for drawing one [Image] onto another
-extension ResizableImage on Image {
+extension on Image {
   /// Returns the size of this image
   Size get size => Size(width.toDouble(), height.toDouble());
 
-  /// Returns the size component along a given [axis]
-  double axisSize(Axis axis) =>
-      (axis == Axis.horizontal ? width : height).toDouble();
-
-  /// Draws the [bounds] part of this [Image] onto the [base] at [position]
-  Future<Image> drawOnto(Image base, Rect bounds, Offset position) {
+  /// Draws this [Image] onto the [base] at [position]
+  Future<Image> drawOnto(Image base, Offset position, Size size) {
     final pictureRecorder = PictureRecorder();
     final canvas = Canvas(pictureRecorder);
     var origin = Offset.zero;
@@ -110,10 +72,11 @@ extension ResizableImage on Image {
       position = Offset.zero;
     }
     canvas.drawImage(base, origin, Paint());
-    var dst = position & bounds.size;
-    canvas.drawImageRect(this, bounds, dst, Paint());
+    var bounds = position & size;
+    canvas.drawRect(bounds, Paint()..blendMode = BlendMode.clear);
+    canvas.drawImageRect(this, Offset.zero & size, bounds, Paint());
     var canvasPicture = pictureRecorder.endRecording();
-    var size = (bounds.size + position) | (base.size + origin);
-    return canvasPicture.toImage(size.width.toInt(), size.height.toInt());
+    var output = (bounds.size + position) | (base.size + origin);
+    return canvasPicture.toImage(output.width.toInt(), output.height.toInt());
   }
 }

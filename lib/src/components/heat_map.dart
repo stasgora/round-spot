@@ -36,10 +36,9 @@ class HeatMap {
     required this.pointProximity,
     this.clusterScale = 0.5,
   }) : _dbScan = DBSCAN(epsilon: pointProximity) {
-    var strips = session.screenshotStrips;
     var pointOffset = Offset.zero;
-    if (strips.isNotEmpty && session.axis != null) {
-      pointOffset = Offsets.fromAxis(session.axis!, strips.first.offset);
+    if (session.screenshotOffset != null && session.axis != null) {
+      pointOffset = Offsets.fromAxis(session.axis!, session.screenshotOffset!);
     }
     var dbPoints = session.events.map<List<double>>(
       (e) => e.locationAsList(pointOffset),

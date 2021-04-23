@@ -19,10 +19,6 @@ extension Sizes on Size {
         max(width, other.width),
         max(height, other.height),
       );
-
-  /// Constructs [Offset] from an [size] along [axis]
-  static Size fromAxis(Axis axis, double size, [double other = 0]) =>
-      axis == Axis.vertical ? Size(other, size) : Size(size, other);
 }
 
 /// Converts an [Image] into a list of png file bytes.
