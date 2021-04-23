@@ -5,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart' hide Image;
 import 'package:logging/logging.dart';
 
-import '../models/detector_status.dart';
 import '../models/session.dart';
 import '../utils/utils.dart';
 
@@ -16,17 +15,19 @@ class ScreenshotProvider {
   /// Captures a screenshot from a [RepaintBoundary] using its [GlobalKey]
   /// It than joins it with the already assembled image
   /// replacing the part that's underneath it
-  void takeScreenshot(Session session, DetectorStatus status) async {
-    if (session.screenshot != null && status is! ScrollDetectorStatus) return;
-    var imageOffset =
-        status is ScrollDetectorStatus ? status.scrollPosition.ceil() : 0;
-    var image = await _capture(status.areaKey, session.pixelRatio);
+  void takeScreenshot(Session session, GlobalKey areaKey) async {
+    if (session.screenshot != null && !session.scrolling) return;
+    var scrollStatus = session.scrollStatus;
+    var imageOffset = session.scrolling ? scrollStatus!.position.ceil() : 0;
+    var image = await _capture(areaKey, session.pixelRatio);
     if (image == null) return;
     if (session.screenshot == null) {
       session.screenshot = image;
-      session.screenshotOffset = imageOffset.toDouble();
+      if (session.scrolling) {
+        scrollStatus!.screenshotPosition = imageOffset.toDouble();
+      }
     } else {
-      var axis = (status as ScrollDetectorStatus).scrollAxis;
+      var axis = scrollStatus!.axis;
       double adjustForAxis(Axis currentAxis) => axis == currentAxis ? 1 : 0;
       // Decrease the drawn image by 1 pixel in the main axis direction
       // to account for the scroll position being rounded to nearest pixel
@@ -36,12 +37,12 @@ class ScreenshotProvider {
       );
       session.screenshot = await image.drawOnto(
         session.screenshot!,
-        Offsets.fromAxis(axis, imageOffset - session.screenshotOffset!),
+        Offsets.fromAxis(axis, imageOffset - scrollStatus.screenshotPosition),
         imageSize,
       );
-      session.screenshotOffset = min(
+      scrollStatus.screenshotPosition = min(
         imageOffset.toDouble(),
-        session.screenshotOffset!,
+        scrollStatus.screenshotPosition,
       );
     }
   }

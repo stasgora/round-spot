@@ -47,6 +47,12 @@
 /// Scrollable spaces need manual instrumentation to be correctly monitored.
 /// Read about the use of a [Detector] widget to learn more.
 ///
+/// ### Current limitations
+/// Widgets that change their size (for example in response to a user action)
+/// during a session recording can potentially invalidate some
+/// or all of the gathered interactions causing them to be
+/// displaced in relation to the background and the rest of data.
+///
 /// ## Commonly used terms
 ///
 /// ### Area

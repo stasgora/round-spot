@@ -38,7 +38,7 @@ void main() {
       );
       await tester.press(find.byType(SingleChildScrollView));
       var status = _validate();
-      expect(status, isA<ScrollDetectorStatus>());
+      expect(status.scrollStatus, isNotNull);
     });
     testWidgets('tracks scroll amount', (tester) async {
       await tester.pumpWidget(
@@ -50,8 +50,8 @@ void main() {
         ),
       );
       await tester.press(find.byType(SingleChildScrollView));
-      var status = _validate() as ScrollDetectorStatus;
-      expect(status.scrollPosition, equals(20));
+      var status = _validate();
+      expect(status.scrollStatus!.position, equals(20));
     });
     testWidgets('determines the scroll axis', (tester) async {
       await tester.pumpWidget(
@@ -66,8 +66,8 @@ void main() {
         ),
       );
       await tester.press(find.byType(SingleChildScrollView));
-      var status = _validate() as ScrollDetectorStatus;
-      expect(status.scrollAxis, equals(Axis.horizontal));
+      var status = _validate();
+      expect(status.scrollStatus!.axis, equals(Axis.horizontal));
     });
   });
 }

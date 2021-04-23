@@ -1,11 +1,10 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter/widgets.dart' hide Image;
-
 import '../utils/utils.dart';
 import 'event.dart';
 import 'output_info.dart';
+import 'scrolling_status.dart';
 
 /// Holds information about user interactions with a particular
 /// [area] on some [page] during some period of time.
@@ -23,11 +22,14 @@ class Session implements OutputInfo {
   /// Holds the screenshots captured during this session
   Image? screenshot;
 
-  /// Holds the offset of the [screenshot] image
-  double? screenshotOffset;
+  /// Data used for scrollable [Session] processing
+  final ScrollingStatus? scrollStatus;
 
-  /// Axis along which this session [area] scrolls, if any
-  final Axis? axis;
+  /// Returns if this [Session] monitors a scrolling widget
+  bool get scrolling => scrollStatus != null;
+
+  /// Returns the scroll [Offset] if there is any
+  Offset get scrollOffset => scrollStatus?.scrollOffset ?? Offset.zero;
 
   /// Determines this session output resolution
   final double pixelRatio;
@@ -37,7 +39,7 @@ class Session implements OutputInfo {
     this.page,
     required this.area,
     required this.pixelRatio,
-    this.axis,
+    this.scrollStatus,
   })  : startTime = getTimestamp(),
         endTime = getTimestamp();
 
@@ -56,8 +58,7 @@ class Session implements OutputInfo {
       };
 }
 
-/// Represents a captured part of sessions
-/// screen [Session.area] along the [Session.axis]
+/// Represents a captured part of [Session] screen space
 class ImageStrip {
   /// Offset from the origin at which this strip starts
   final double offset;

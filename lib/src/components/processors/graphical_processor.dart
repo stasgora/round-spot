@@ -38,7 +38,9 @@ class GraphicalProcessor extends SessionProcessor {
 
   void _drawHeatMap(Canvas canvas, Session session) {
     var clusterScale = config.uiElementSize * session.pixelRatio;
-    var heatMap = HeatMap(session: session, pointProximity: clusterScale);
+    var events =
+        session.events.map((e) => e.location - session.scrollOffset).toList();
+    var heatMap = HeatMap(events: events, pointProximity: clusterScale);
 
     layerCount() {
       if (heatMap.largestCluster == 1) return 1;

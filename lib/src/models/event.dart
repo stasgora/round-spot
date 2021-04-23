@@ -15,28 +15,18 @@ class Event {
   /// Equals [PointerEvent.pointer]
   final int id;
 
-  /// Converts the [location] to a coordinate list
-  List<double> locationAsList([Offset offset = Offset.zero]) {
-    var location = this.location + offset;
-    return [location.dx, location.dy];
-  }
-
   /// Creates an [Event] with a given [location] and [id]
   @visibleForTesting
   Event({required this.location, required this.id})
       : timestamp = getTimestamp();
 
   /// Creates an [Event] from Flutters [PointerEvent]
-  Event.fromPointer(PointerEvent event)
-      : this(location: event.localPosition, id: event.pointer);
+  Event.fromPointer(PointerEvent event, Offset offset)
+      : this(location: event.localPosition + offset, id: event.pointer);
 
   /// Converts this [Event] to a json map
   Map<String, dynamic> toJson() => {
         'location': {'x': location.dx, 'y': location.dy},
         'time': timestamp,
       };
-
-  /// Creates a [Path] from this [Event]
-  Path asPath(double radius) =>
-      Path()..addOval(Rect.fromCircle(center: location, radius: radius));
 }

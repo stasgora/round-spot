@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import '../components/session_manager.dart';
 import '../models/detector_status.dart';
 import '../models/event.dart';
+import '../models/scrolling_status.dart';
 import '../utils/components.dart';
 
 /// Detects user interactions in the [child] widget tree.
@@ -24,12 +25,12 @@ import '../utils/components.dart';
 ///
 /// Widgets provided by Flutter, like [ListView], [SingleChildScrollView],
 /// [GridView] or [CustomScrollView] are recognised automatically.
-/// In case you are using a custom scrolling widget from external package,
-/// and cannot put the [Detector] directly around one of the widgets
-/// listed above, provide the [customScrollWidgetAxis] parameter.
+/// In case you are using a custom scrolling widget from an external package,
+/// and cannot put the [Detector] directly around one of the standard Flutter
+/// widgets listed above, provide the [customScrollWidgetAxis] parameter.
 ///
-/// Nested scroll views are currently not supported and can impact
-/// the way that the outer scroll area is reported.
+/// Nested scroll views are currently not supported and can
+/// potentially impact the way that the outer scroll area is reported.
 ///
 /// ## Detector scope
 /// Detectors can either have a _local_ or a _global_ scope:
@@ -111,30 +112,24 @@ class _DetectorState extends State<Detector> {
   @override
   void initState() {
     super.initState();
-    _status = widget._isScrollDetector
-        ? ScrollDetectorStatus(
-            areaKey: GlobalKey(),
-            areaID: widget.areaID,
-            hasGlobalScope: widget.hasGlobalScope,
-            scrollAxis: widget.customScrollWidgetAxis ?? _getScrollAxis()!,
-          )
-        : DetectorStatus(
-            areaKey: GlobalKey(),
-            areaID: widget.areaID,
-            hasGlobalScope: widget.hasGlobalScope,
-          );
+    _status = DetectorStatus(
+      areaKey: GlobalKey(),
+      areaID: widget.areaID,
+      hasGlobalScope: widget.hasGlobalScope,
+      scrollStatus:
+          widget._isScrollDetector ? ScrollingStatus(_getScrollAxis()!) : null,
+    );
   }
 
   void _onTap(PointerDownEvent event) {
     _manager.onEvent(
-      event: Event.fromPointer(event),
+      event: Event.fromPointer(event, _status.scrollOffset),
       status: _status,
     );
   }
 
   bool _onNotification(ScrollNotification notification) {
-    var status = _status as ScrollDetectorStatus;
-    status.scrollPosition = notification.metrics.pixels;
+    _status.scrollStatus!.position = notification.metrics.pixels;
     return false;
   }
 

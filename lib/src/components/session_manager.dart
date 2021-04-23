@@ -75,7 +75,7 @@ class SessionManager {
     if (_currentPageDisabled && !status.hasGlobalScope) return;
 
     var session = _recordEvent(event: event, status: status);
-    _screenshotProvider.takeScreenshot(session, status);
+    _screenshotProvider.takeScreenshot(session, status.areaKey);
   }
 
   Session _recordEvent({required Event event, required DetectorStatus status}) {
@@ -88,9 +88,8 @@ class SessionManager {
       page: status.hasGlobalScope ? null : _currentPage,
       area: status.areaID,
       pixelRatio: _config.heatMapPixelRatio,
-      axis: status is ScrollDetectorStatus ? status.scrollAxis : null,
+      scrollStatus: status.scrollStatus,
     ));
-    if (status is ScrollDetectorStatus) event.location += status.asScrollOffset;
     session.addEvent(event);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
