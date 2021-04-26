@@ -14,11 +14,30 @@ extension Offsets on Offset {
 
 /// [Size] utility extension
 extension Sizes on Size {
+  /// Returns [Size] component along [axis]
+  double alongAxis(Axis axis) => axis == Axis.vertical ? height : width;
+
+  /// Returns the size modified by [changeAmount] along [axis]
+  Size modifiedSize(Axis axis, double changeAmount) {
+    double adjustForAxis(Axis currentAxis) =>
+        axis == currentAxis ? changeAmount : 0;
+    return Size(
+      width + adjustForAxis(Axis.horizontal),
+      height + adjustForAxis(Axis.vertical),
+    );
+  }
+
   /// Returns [max] (OR) of the two [Size] objects
   Size operator |(Size other) => Size(
         max(width, other.width),
         max(height, other.height),
       );
+}
+
+/// [Image] utility extension
+extension ImageSize on Image {
+  /// Returns the size of this image
+  Size get size => Size(width.toDouble(), height.toDouble());
 }
 
 /// Converts an [Image] into a list of png file bytes.

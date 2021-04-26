@@ -24,7 +24,8 @@ class GraphicalProcessor extends SessionProcessor {
     var image = session.screenshot!;
     final pictureRecorder = PictureRecorder();
     final canvas = Canvas(pictureRecorder);
-    canvas.drawImage(image, Offset.zero, Paint());
+    var rect = _getClippedImageRect(session);
+    canvas.drawImageRect(image, rect, Offset.zero & rect.size, Paint());
 
     var alpha = (config.heatMapTransparency * 255).toInt();
     canvas.saveLayer(null, Paint()..color = Color.fromARGB(alpha, 0, 0, 0));
@@ -32,14 +33,38 @@ class GraphicalProcessor extends SessionProcessor {
     canvas.restore();
 
     var canvasPicture = pictureRecorder.endRecording();
-    var sessionImage = await canvasPicture.toImage(image.width, image.height);
+    var sessionImage = await canvasPicture.toImage(
+      rect.size.width.toInt(),
+      rect.size.height.toInt(),
+    );
     return exportHeatMap(sessionImage);
+  }
+
+  Rect _getClippedImageRect(Session session) {
+    var offset = Offset.zero;
+    var image = session.screenshot!;
+    var size = image.size;
+    if (session.scrolling) {
+      var status = session.scrollStatus!;
+      var diff = status.screenshotPosition - status.scrollExtent.dx;
+      if (diff < 0) {
+        offset = Offsets.fromAxis(status.axis, -diff);
+        size = size.modifiedSize(status.axis, diff);
+        status.screenshotPosition = status.scrollExtent.dx;
+      }
+      diff = status.scrollExtent.dy -
+          status.screenshotPosition -
+          size.alongAxis(status.axis);
+      if (diff < 0) size = size.modifiedSize(status.axis, diff);
+    }
+    return offset & size;
   }
 
   void _drawHeatMap(Canvas canvas, Session session) {
     var clusterScale = config.uiElementSize * session.pixelRatio;
-    var events =
-        session.events.map((e) => e.location - session.scrollOffset).toList();
+    var events = session.events
+        .map((e) => e.location - session.screenshotOffset)
+        .toList();
     var heatMap = HeatMap(events: events, pointProximity: clusterScale);
 
     layerCount() {

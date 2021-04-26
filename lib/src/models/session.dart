@@ -29,7 +29,7 @@ class Session implements OutputInfo {
   bool get scrolling => scrollStatus != null;
 
   /// Returns the scroll [Offset] if there is any
-  Offset get scrollOffset => scrollStatus?.scrollOffset ?? Offset.zero;
+  Offset get screenshotOffset => scrollStatus?.screenshotOffset ?? Offset.zero;
 
   /// Determines this session output resolution
   final double pixelRatio;

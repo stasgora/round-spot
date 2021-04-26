@@ -17,8 +17,14 @@ class ScrollingStatus {
   /// Axis along which this [Session] widget scrolls
   final Axis axis;
 
+  /// Viewport dimensions along the [axis]
+  Offset scrollExtent;
+
   /// Creates a [ScrollingStatus] with the given [axis]
-  ScrollingStatus([this.axis = Axis.vertical]);
+  ScrollingStatus([
+    this.axis = Axis.vertical,
+    this.scrollExtent = const Offset(double.negativeInfinity, double.infinity),
+  ]);
 
   /// Returns the [Offset] based on [screenshotPosition] and [axis]
   Offset get screenshotOffset => Offsets.fromAxis(axis, screenshotPosition);

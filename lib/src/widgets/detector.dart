@@ -129,7 +129,13 @@ class _DetectorState extends State<Detector> {
   }
 
   bool _onNotification(ScrollNotification notification) {
-    _status.scrollStatus!.position = notification.metrics.pixels;
+    var vars = notification.metrics;
+    _status.scrollStatus!.position = vars.pixels;
+    var hasDims = vars.hasContentDimensions && vars.hasViewportDimension;
+    _status.scrollStatus!.scrollExtent = Offset(
+      hasDims ? vars.minScrollExtent : double.negativeInfinity,
+      hasDims ? vars.maxScrollExtent + vars.viewportDimension : double.infinity,
+    );
     return false;
   }
 

@@ -28,13 +28,9 @@ class ScreenshotProvider {
       }
     } else {
       var axis = scrollStatus!.axis;
-      double adjustForAxis(Axis currentAxis) => axis == currentAxis ? 1 : 0;
       // Decrease the drawn image by 1 pixel in the main axis direction
-      // to account for the scroll position being rounded to nearest pixel
-      var imageSize = Size(
-        image.width - adjustForAxis(Axis.horizontal),
-        image.height - adjustForAxis(Axis.vertical),
-      );
+      // to account for the scroll position being rounded to the nearest pixel
+      var imageSize = image.size.modifiedSize(axis, -1);
       session.screenshot = await image.drawOnto(
         session.screenshot!,
         Offsets.fromAxis(axis, imageOffset - scrollStatus.screenshotPosition),
@@ -60,9 +56,6 @@ class ScreenshotProvider {
 
 /// An extension for drawing one [Image] onto another
 extension on Image {
-  /// Returns the size of this image
-  Size get size => Size(width.toDouble(), height.toDouble());
-
   /// Draws this [Image] onto the [base] at [position]
   Future<Image> drawOnto(Image base, Offset position, Size size) {
     final pictureRecorder = PictureRecorder();
