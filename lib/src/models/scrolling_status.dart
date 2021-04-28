@@ -9,7 +9,10 @@ import 'session.dart';
 /// Instance of this model is shared between the [Session] and [DetectorStatus]
 class ScrollingStatus {
   /// Current offset of the [Session.screenshot] image along the [axis]
-  double screenshotPosition = 0;
+  late double screenshotPosition;
+
+  /// Offset of the last screenshot part that was taken
+  late double lastScreenshotPosition;
 
   /// Current scroll offset along the [axis]
   double position = 0;
@@ -17,8 +20,11 @@ class ScrollingStatus {
   /// Axis along which this [Session] widget scrolls
   final Axis axis;
 
-  /// Viewport dimensions along the [axis]
+  /// Viewport scroll extent along the [axis]
   Offset scrollExtent;
+
+  /// Viewport size along the [axis]
+  late double viewportDimension;
 
   /// Creates a [ScrollingStatus] with the given [axis]
   ScrollingStatus([

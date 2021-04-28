@@ -52,7 +52,8 @@ class GraphicalProcessor extends SessionProcessor {
         size = size.modifiedSize(status.axis, diff);
         status.screenshotPosition = status.scrollExtent.dx;
       }
-      diff = status.scrollExtent.dy -
+      diff = status.scrollExtent.dy +
+          status.viewportDimension -
           status.screenshotPosition -
           size.alongAxis(status.axis);
       if (diff < 0) size = size.modifiedSize(status.axis, diff);

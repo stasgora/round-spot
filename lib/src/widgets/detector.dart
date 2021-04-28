@@ -129,13 +129,17 @@ class _DetectorState extends State<Detector> {
   }
 
   bool _onNotification(ScrollNotification notification) {
-    var vars = notification.metrics;
-    _status.scrollStatus!.position = vars.pixels;
-    var hasDims = vars.hasContentDimensions && vars.hasViewportDimension;
+    var metrics = notification.metrics;
+    _status.scrollStatus!.position = metrics.pixels;
+    var hasDimensions = metrics.hasContentDimensions;
     _status.scrollStatus!.scrollExtent = Offset(
-      hasDims ? vars.minScrollExtent : double.negativeInfinity,
-      hasDims ? vars.maxScrollExtent + vars.viewportDimension : double.infinity,
+      hasDimensions ? metrics.minScrollExtent : double.negativeInfinity,
+      hasDimensions ? metrics.maxScrollExtent : double.infinity,
     );
+    // Synchronizes rendered image with reported scroll offset
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _manager.onSessionScroll(_status);
+    });
     return false;
   }
 

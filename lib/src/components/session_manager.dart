@@ -75,21 +75,16 @@ class SessionManager {
     if (_currentPageDisabled && !status.hasGlobalScope) return;
 
     var session = _recordEvent(event: event, status: status);
-    _screenshotProvider.takeScreenshot(session, status.areaKey);
+    _screenshotProvider.onEvent(event.location, session, status.areaKey);
   }
 
+  /// Handles the scroll event of a [Session]
+  void onSessionScroll(DetectorStatus status) =>
+      _screenshotProvider.onScroll(_getSession(status), status.areaKey);
+
   Session _recordEvent({required Event event, required DetectorStatus status}) {
-    var sessionKey = status.areaID;
-    if (!status.hasGlobalScope) {
-      sessionKey += _currentPage!;
-      _processedEventIDs.add(event.id);
-    }
-    var session = (_sessions[sessionKey] ??= Session(
-      page: status.hasGlobalScope ? null : _currentPage,
-      area: status.areaID,
-      pixelRatio: _config.heatMapPixelRatio,
-      scrollStatus: status.scrollStatus,
-    ));
+    var session = _getSession(status);
+    if (!status.hasGlobalScope) _processedEventIDs.add(event.id);
     session.addEvent(event);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
@@ -99,6 +94,17 @@ class SessionManager {
       );
     }
     return session;
+  }
+
+  Session _getSession(DetectorStatus status) {
+    var sessionKey = status.areaID;
+    if (!status.hasGlobalScope) sessionKey += _currentPage!;
+    return _sessions[sessionKey] ??= Session(
+      page: status.hasGlobalScope ? null : _currentPage,
+      area: status.areaID,
+      pixelRatio: _config.heatMapPixelRatio,
+      scrollStatus: status.scrollStatus,
+    );
   }
 
   void _endSessions() {
