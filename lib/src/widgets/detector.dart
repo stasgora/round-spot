@@ -167,7 +167,7 @@ class _DetectorState extends State<Detector> {
     var metrics = notification.metrics;
     _status.scrollStatus!.position = metrics.pixels;
     var hasDimensions = metrics.hasContentDimensions;
-    _status.scrollStatus!.scrollExtent = Offset(
+    _status.scrollStatus!.extent = Offset(
       hasDimensions ? metrics.minScrollExtent : double.negativeInfinity,
       hasDimensions ? metrics.maxScrollExtent : double.infinity,
     );

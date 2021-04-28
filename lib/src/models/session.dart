@@ -19,8 +19,8 @@ class Session implements OutputInfo {
   /// Events registered in this [Session]
   List<Event> get events => _events;
 
-  /// Holds the screenshots captured during this session
-  Image? screenshot;
+  /// Holds the sessions background
+  Image? background;
 
   /// Data used for scrollable [Session] processing
   final ScrollingStatus? scrollStatus;
@@ -29,7 +29,7 @@ class Session implements OutputInfo {
   bool get scrolling => scrollStatus != null;
 
   /// Returns the scroll [Offset] if there is any
-  Offset get screenshotOffset => scrollStatus?.screenshotOffset ?? Offset.zero;
+  Offset get backgroundOffset => scrollStatus?.backgroundOffset ?? Offset.zero;
 
   /// Determines this session output resolution
   final double pixelRatio;

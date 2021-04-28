@@ -17,11 +17,11 @@ class GraphicalProcessor extends SessionProcessor {
 
   @override
   Future<Uint8List?> process(Session session) async {
-    if (session.screenshot == null) {
+    if (session.background == null) {
       _logger.warning('Got session with no image attached, skipping.');
       return null;
     }
-    var image = session.screenshot!;
+    var image = session.background!;
     final pictureRecorder = PictureRecorder();
     final canvas = Canvas(pictureRecorder);
     var rect = _getClippedImageRect(session);
@@ -42,19 +42,19 @@ class GraphicalProcessor extends SessionProcessor {
 
   Rect _getClippedImageRect(Session session) {
     var offset = Offset.zero;
-    var image = session.screenshot!;
+    var image = session.background!;
     var size = image.size;
     if (session.scrolling) {
       var status = session.scrollStatus!;
-      var diff = status.screenshotPosition - status.scrollExtent.dx;
+      var diff = status.backgroundPosition - status.extent.dx;
       if (diff < 0) {
         offset = Offsets.fromAxis(status.axis, -diff);
         size = size.modifiedSize(status.axis, diff);
-        status.screenshotPosition = status.scrollExtent.dx;
+        status.backgroundPosition = status.extent.dx;
       }
-      diff = status.scrollExtent.dy +
+      diff = status.extent.dy +
           status.viewportDimension -
-          status.screenshotPosition -
+          status.backgroundPosition -
           size.alongAxis(status.axis);
       if (diff < 0) size = size.modifiedSize(status.axis, diff);
     }
@@ -64,7 +64,7 @@ class GraphicalProcessor extends SessionProcessor {
   void _drawHeatMap(Canvas canvas, Session session) {
     var clusterScale = config.uiElementSize * session.pixelRatio;
     var events = session.events
-        .map((e) => e.location - session.screenshotOffset)
+        .map((e) => e.location - session.backgroundOffset)
         .toList();
     var heatMap = HeatMap(events: events, pointProximity: clusterScale);
 

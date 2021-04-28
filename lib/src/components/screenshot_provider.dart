@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart' hide Image;
 import 'package:logging/logging.dart';
-import 'package:round_spot/src/models/scrolling_status.dart';
 
+import '../models/scrolling_status.dart';
 import '../models/session.dart';
 import '../utils/utils.dart';
 
@@ -16,7 +16,7 @@ class ScreenshotProvider {
   /// Controls when to take screenshot depending on the scroll amount
   void onScroll(Session session, GlobalKey areaKey) {
     if (!session.scrolling) return;
-    if (session.screenshot == null || _scrollOutsideBounds(session)) {
+    if (session.background == null || _scrollOutsideBounds(session)) {
       _takeScreenshot(session, areaKey);
     }
   }
@@ -29,52 +29,66 @@ class ScreenshotProvider {
 
   /// Determines if its necessary to take a screenshot when event is recorded
   void onEvent(Offset event, Session session, GlobalKey areaKey) {
-    if (session.screenshot == null || _eventOutsideScreenshot(event, session)) {
+    if (session.background == null || _eventOutsideScreenshot(event, session)) {
       _takeScreenshot(session, areaKey);
     }
   }
 
   bool _eventOutsideScreenshot(Offset event, Session session) {
     if (!session.scrolling) return false;
-    var offset = session.scrollStatus!.screenshotOffset;
-    return !(offset & session.screenshot!.size).contains(event);
+    var offset = session.scrollStatus!.backgroundOffset;
+    return !(offset & session.background!.size).contains(event);
   }
 
   /// Captures a screenshot from a [RepaintBoundary] using its [GlobalKey]
   /// It than joins it with the already assembled image
   /// replacing the part that's underneath it
   void _takeScreenshot(Session session, GlobalKey areaKey) async {
-    if (session.screenshot != null && !session.scrolling) return;
-    var status = session.scrollStatus;
-    if (session.scrolling) {
-      status!.lastScreenshotPosition = status.position.ceilToDouble();
+    if (!session.scrolling) {
+      if (session.background != null) return;
+      session.background = await _captureImage(areaKey, session.pixelRatio);
+      return;
     }
-    var image = await _capture(areaKey, session.pixelRatio);
-    if (image == null) return;
-    if (session.screenshot == null) {
-      session.screenshot = image;
-      if (session.scrolling) {
-        status!.screenshotPosition = status.lastScreenshotPosition;
+    var status = session.scrollStatus!;
+    status.lastScreenshotPosition = status.position.ceilToDouble();
+    var queueEmpty = status.screenshotQueue.isEmpty;
+    status.screenshotQueue.add(Screenshot(
+      status.lastScreenshotPosition,
+      _captureImage(areaKey, session.pixelRatio),
+    ));
+    if (queueEmpty) _processScreenshots(session);
+  }
+
+  void _processScreenshots(Session session) async {
+    var status = session.scrollStatus!;
+    var queue = status.screenshotQueue;
+    while (queue.isNotEmpty) {
+      var image = await queue.first.image;
+      if (image == null) return;
+      var offset = queue.first.offset;
+      if (session.background == null) {
+        session.background = image;
+        status.backgroundPosition = offset;
         status.viewportDimension = image.size.alongAxis(status.axis);
+        return;
       }
-    } else {
       // Decrease the drawn image by 1 pixel in the main axis direction
       // to account for the scroll position being rounded to the nearest pixel
-      var imageSize = image.size.modifiedSize(status!.axis, -1);
-      session.screenshot = await image.drawOnto(
-        session.screenshot!,
-        Offsets.fromAxis(status.axis,
-            status.lastScreenshotPosition - status.screenshotPosition),
+      var imageSize = image.size.modifiedSize(status.axis, -1);
+      session.background = await image.drawOnto(
+        session.background!,
+        Offsets.fromAxis(status.axis, offset - status.backgroundPosition),
         imageSize,
       );
-      status.screenshotPosition = min(
-        status.lastScreenshotPosition,
-        status.screenshotPosition,
+      status.backgroundPosition = min(
+        offset,
+        status.backgroundPosition,
       );
+      queue.removeAt(0);
     }
   }
 
-  Future<Image?> _capture(GlobalKey areaKey, double pixelRatio) async {
+  Future<Image?> _captureImage(GlobalKey areaKey, double pixelRatio) async {
     if (areaKey.currentContext == null) {
       _logger.severe('Could not take a screenshot of the current page.');
       return null;
