@@ -57,18 +57,3 @@ class Session implements OutputInfo {
         'events': [for (var event in _events) event.toJson()],
       };
 }
-
-/// Represents a captured part of [Session] screen space
-class ImageStrip {
-  /// Offset from the origin at which this strip starts
-  final double offset;
-
-  /// Length of this strip
-  final double length;
-
-  /// Offset from the origin at which this strip ends
-  double get end => offset + length;
-
-  /// Creates a [ImageStrip] from [offset] and [length]
-  ImageStrip(this.offset, this.length);
-}

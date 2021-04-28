@@ -27,7 +27,7 @@ import '../utils/components.dart';
 /// [GridView] or [CustomScrollView] are recognised automatically.
 /// In case you are using a custom scrolling widget from an external package,
 /// and cannot put the [Detector] directly around one of the standard Flutter
-/// widgets listed above, provide the [customScrollWidgetAxis] parameter.
+/// widgets listed above, use the [Detector.custom()] constructor.
 ///
 /// Nested scroll views are currently not supported and can
 /// potentially impact the way that the outer scroll area is reported.
@@ -75,25 +75,55 @@ class Detector extends StatefulWidget {
   /// {@endtemplate}
   final bool hasGlobalScope;
 
-  /// Signals to the [Detector] that it's monitoring a custom scrolling widget.
-  ///
-  /// In that case that widget scrolling [Axis] must be provided.
-  final Axis? customScrollWidgetAxis;
+  /// Specifies the scroll axis of the custom scrolling [child] widget.
+  final Axis? customScrollAxis;
+
+  /// Holds the initial scroll offset of the custom scrolling [child] widget.
+  final double? customInitialOffset;
 
   late final bool _isScrollDetector;
 
   /// {@template Detector.constructor}
-  /// Creates a widget detector
+  /// Creates a widget detector observing the [child] widget tree
   ///
+  /// A non empty, unique [areaID] has to be provided.
   /// The default scope is local.
   /// {@endtemplate}
   Detector({
+    required Widget child,
+    required String areaID,
+    bool hasGlobalScope = false,
+  }) : this._(
+          child: child,
+          areaID: areaID,
+          hasGlobalScope: hasGlobalScope,
+        );
+
+  /// {@macro Detector.constructor}
+  /// [scrollAxis] and [initialScrollOffset] have
+  /// to be specified manually if they differ from the default values.
+  Detector.custom({
+    required Widget child,
+    required String areaID,
+    bool hasGlobalScope = false,
+    Axis scrollAxis = Axis.vertical,
+    double initialScrollOffset = 0,
+  }) : this._(
+          child: child,
+          areaID: areaID,
+          hasGlobalScope: hasGlobalScope,
+          customScrollAxis: scrollAxis,
+          customInitialOffset: initialScrollOffset,
+        );
+
+  Detector._({
     required this.child,
     required this.areaID,
     this.hasGlobalScope = false,
-    this.customScrollWidgetAxis,
+    this.customScrollAxis,
+    this.customInitialOffset,
   }) {
-    _isScrollDetector = customScrollWidgetAxis != null ||
+    _isScrollDetector = customScrollAxis != null ||
         child is ScrollView ||
         child is SingleChildScrollView ||
         child is PageView ||
@@ -112,12 +142,17 @@ class _DetectorState extends State<Detector> {
   @override
   void initState() {
     super.initState();
+    var offset = _getController()?.initialScrollOffset;
     _status = DetectorStatus(
       areaKey: GlobalKey(),
       areaID: widget.areaID,
       hasGlobalScope: widget.hasGlobalScope,
-      scrollStatus:
-          widget._isScrollDetector ? ScrollingStatus(_getScrollAxis()!) : null,
+      scrollStatus: widget._isScrollDetector
+          ? ScrollingStatus(
+              _getScrollAxis()!,
+              offset ?? widget.customInitialOffset ?? 0,
+            )
+          : null,
     );
   }
 
@@ -168,5 +203,13 @@ class _DetectorState extends State<Detector> {
     if (child is ListWheelScrollView) return Axis.vertical;
     if (child is SingleChildScrollView) return child.scrollDirection;
     if (child is PageView) child.scrollDirection;
+  }
+
+  ScrollController? _getController() {
+    var child = widget.child;
+    if (child is ScrollView) return child.controller;
+    if (child is ListWheelScrollView) return child.controller;
+    if (child is SingleChildScrollView) return child.controller;
+    if (child is PageView) child.controller;
   }
 }

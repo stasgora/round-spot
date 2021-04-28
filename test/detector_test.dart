@@ -40,18 +40,19 @@ void main() {
       var status = _validate();
       expect(status.scrollStatus, isNotNull);
     });
-    testWidgets('tracks scroll amount', (tester) async {
+    testWidgets('tracks scrolling', (tester) async {
+      var amount = 10.0;
       await tester.pumpWidget(
         Detector(
           areaID: '',
           child: SingleChildScrollView(
-            controller: ScrollController(initialScrollOffset: 20),
+            child: const SizedBox(width: 1000.0, height: 1000.0),
           ),
         ),
       );
-      await tester.press(find.byType(SingleChildScrollView));
+      await tester.drag(find.byType(SingleChildScrollView), Offset(0, -amount));
       var status = _validate();
-      expect(status.scrollStatus!.position, equals(20));
+      expect(status.scrollStatus!.position, equals(amount));
     });
     testWidgets('determines the scroll axis', (tester) async {
       await tester.pumpWidget(
@@ -68,6 +69,20 @@ void main() {
       await tester.press(find.byType(SingleChildScrollView));
       var status = _validate();
       expect(status.scrollStatus!.axis, equals(Axis.horizontal));
+    });
+    testWidgets('handles initial scroll offset', (tester) async {
+      var scrollAmount = 10.0;
+      await tester.pumpWidget(
+        Detector(
+          areaID: '',
+          child: SingleChildScrollView(
+            controller: ScrollController(initialScrollOffset: scrollAmount),
+          ),
+        ),
+      );
+      await tester.press(find.byType(SingleChildScrollView));
+      var status = _validate();
+      expect(status.scrollStatus!.position, equals(scrollAmount));
     });
   });
 }

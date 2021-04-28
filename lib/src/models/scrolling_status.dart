@@ -1,4 +1,6 @@
-import 'package:flutter/widgets.dart';
+import 'dart:ui';
+
+import 'package:flutter/widgets.dart' hide Image;
 
 import '../utils/utils.dart';
 import 'detector_status.dart';
@@ -15,7 +17,7 @@ class ScrollingStatus {
   late double lastScreenshotPosition;
 
   /// Current scroll offset along the [axis]
-  double position = 0;
+  double position;
 
   /// Axis along which this [Session] widget scrolls
   final Axis axis;
@@ -26,11 +28,12 @@ class ScrollingStatus {
   /// Viewport size along the [axis]
   late double viewportDimension;
 
+  /// Queue of unprocessed screenshot strips
+  final List<ImageStrip> imageQueue = [];
+
   /// Creates a [ScrollingStatus] with the given [axis]
-  ScrollingStatus([
-    this.axis = Axis.vertical,
-    this.scrollExtent = const Offset(double.negativeInfinity, double.infinity),
-  ]);
+  ScrollingStatus([this.axis = Axis.vertical, this.position = 0])
+      : scrollExtent = const Offset(double.negativeInfinity, double.infinity);
 
   /// Returns the [Offset] based on [screenshotPosition] and [axis]
   Offset get screenshotOffset => Offsets.fromAxis(axis, screenshotPosition);
