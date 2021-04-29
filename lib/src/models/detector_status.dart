@@ -20,7 +20,7 @@ class DetectorStatus {
   final ScrollingStatus? scrollStatus;
 
   /// Returns the scroll [Offset] if there is any
-  Offset get scrollOffset => scrollStatus?.scrollOffset ?? Offset.zero;
+  Offset get scrollOffset => scrollStatus?.offset ?? Offset.zero;
 
   /// Creates a [DetectorStatus] used by a [SessionManager]
   DetectorStatus({

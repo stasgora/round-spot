@@ -46,26 +46,26 @@ class GraphicalProcessor extends SessionProcessor {
     var image = session.background!;
     var size = image.size;
     if (session.scrolling) {
-      var status = session.scrollStatus!;
-      getPosition(Event e) => e.location.alongAxis(status.axis);
+      var scroll = session.scrollStatus!;
+      var background = session.backgroundStatus!;
+      getPosition(Event e) => e.location.alongAxis(scroll.axis);
       var eventPositions = session.events.map(getPosition);
-      final cutMargin = status.viewportDimension;
+      final cutMargin = background.viewportDimension;
       var extent = Offset(
-        max(status.extent.dx, eventPositions.reduce(min) - cutMargin),
+        max(scroll.extent.dx, eventPositions.reduce(min) - cutMargin),
         min(
-          status.extent.dy + status.viewportDimension,
+          scroll.extent.dy + background.viewportDimension,
           eventPositions.reduce(max) + cutMargin,
         ),
       );
-      var diff = status.backgroundPosition - extent.dx;
+      var diff = background.position - extent.dx;
       if (diff < 0) {
-        offset = Offsets.fromAxis(status.axis, -diff);
-        size = size.modifiedSize(status.axis, diff);
-        status.backgroundPosition = extent.dx;
+        offset = Offsets.fromAxis(scroll.axis, -diff);
+        size = size.modifiedSize(scroll.axis, diff);
+        background.position = extent.dx;
       }
-      diff =
-          extent.dy - status.backgroundPosition - size.alongAxis(status.axis);
-      if (diff < 0) size = size.modifiedSize(status.axis, diff);
+      diff = extent.dy - background.position - size.alongAxis(scroll.axis);
+      if (diff < 0) size = size.modifiedSize(scroll.axis, diff);
     }
     return offset & size;
   }

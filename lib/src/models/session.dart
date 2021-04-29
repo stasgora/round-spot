@@ -22,14 +22,18 @@ class Session implements OutputInfo {
   /// Holds the sessions background
   Image? background;
 
-  /// Data used for scrollable [Session] processing
+  /// Status of the scrollable widget
   final ScrollingStatus? scrollStatus;
+
+  /// Status of the scrollable background
+  BackgroundStatus? backgroundStatus;
 
   /// Returns if this [Session] monitors a scrolling widget
   bool get scrolling => scrollStatus != null;
 
-  /// Returns the scroll [Offset] if there is any
-  Offset get backgroundOffset => scrollStatus?.backgroundOffset ?? Offset.zero;
+  /// Returns the background [Offset] if there is any
+  Offset get backgroundOffset =>
+      backgroundStatus?.offset(scrollStatus!.axis) ?? Offset.zero;
 
   /// Determines this session output resolution
   final double pixelRatio;

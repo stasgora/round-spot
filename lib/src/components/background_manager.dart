@@ -22,9 +22,10 @@ class BackgroundManager {
   }
 
   bool _scrollOutsideBounds(Session session) {
-    var status = session.scrollStatus!;
-    var diff = status.lastScreenshotPosition - status.position;
-    return (diff).abs() > status.viewportDimension * 0.8;
+    var scroll = session.scrollStatus!;
+    var background = session.backgroundStatus!;
+    var diff = background.lastScreenshotPosition - scroll.position;
+    return (diff).abs() > background.viewportDimension * 0.8;
   }
 
   /// Determines if its necessary to take a screenshot when event is recorded
@@ -36,7 +37,7 @@ class BackgroundManager {
 
   bool _eventOutsideScreenshot(Offset event, Session session) {
     if (!session.scrolling) return false;
-    var offset = session.scrollStatus!.backgroundOffset;
+    var offset = session.backgroundOffset;
     return !(offset & session.background!.size).contains(event);
   }
 
@@ -49,19 +50,21 @@ class BackgroundManager {
       session.background = await _captureImage(areaKey, session.pixelRatio);
       return;
     }
-    var status = session.scrollStatus!;
-    status.lastScreenshotPosition = status.position.ceilToDouble();
-    var queueEmpty = status.screenshotQueue.isEmpty;
-    status.screenshotQueue.add(Screenshot(
-      status.lastScreenshotPosition,
+    var scroll = session.scrollStatus!;
+    var background = (session.backgroundStatus ??= BackgroundStatus());
+    background.lastScreenshotPosition = scroll.position.ceilToDouble();
+    var queueEmpty = background.screenshotQueue.isEmpty;
+    background.screenshotQueue.add(Screenshot(
+      background.lastScreenshotPosition,
       _captureImage(areaKey, session.pixelRatio),
     ));
     if (queueEmpty) _processScreenshots(session);
   }
 
   void _processScreenshots(Session session) async {
-    var status = session.scrollStatus!;
-    var queue = status.screenshotQueue;
+    var scroll = session.scrollStatus!;
+    var background = session.backgroundStatus!;
+    var queue = background.screenshotQueue;
     while (queue.isNotEmpty) {
       await Future.sync(() async {
         var image = await queue.first.image;
@@ -69,21 +72,21 @@ class BackgroundManager {
         var offset = queue.first.offset;
         if (session.background == null) {
           session.background = image;
-          status.backgroundPosition = offset;
-          status.viewportDimension = image.size.alongAxis(status.axis);
+          background.position = offset;
+          background.viewportDimension = image.size.alongAxis(scroll.axis);
           return;
         }
         // Decrease the drawn image by 1 pixel in the main axis direction
         // to account for the scroll position being rounded to the nearest pixel
-        var imageSize = image.size.modifiedSize(status.axis, -1);
+        var imageSize = image.size.modifiedSize(scroll.axis, -1);
         session.background = await image.drawOnto(
           session.background!,
-          Offsets.fromAxis(status.axis, offset - status.backgroundPosition),
+          Offsets.fromAxis(scroll.axis, offset - background.position),
           imageSize,
         );
-        status.backgroundPosition = min(
+        background.position = min(
           offset,
-          status.backgroundPosition,
+          background.position,
         );
       });
       queue.removeAt(0);
