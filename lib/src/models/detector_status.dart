@@ -1,13 +1,13 @@
 import 'package:flutter/widgets.dart';
 
-import '../components/screenshot_provider.dart';
+import '../components/background_manager.dart';
 import '../components/session_manager.dart';
 import '../widgets/detector.dart';
 import 'scrolling_status.dart';
 
 /// Holds the [Detector] status for [SessionManager] use.
 class DetectorStatus {
-  /// A key referring to a [RepaintBoundary] used by the [ScreenshotProvider]
+  /// A key referring to a [RepaintBoundary] used by the [BackgroundManager]
   final GlobalKey areaKey;
 
   /// [Detector.areaID]

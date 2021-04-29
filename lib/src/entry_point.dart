@@ -48,7 +48,16 @@ void _initializeLogger(LogLevel level) {
   Logger('RoundSpot').level = level.toLoggerLevel;
   Logger('RoundSpot').onRecord.listen((record) {
     var prefix = '${record.level.name} - ${record.loggerName}';
-    print('$prefix: ${record.message}');
+    var message = '$prefix: ${record.message}';
+    if (record.level == Level.SEVERE) {
+      if (record.error != null) {
+        message += '\n${record.error.runtimeType} was thrown';
+      }
+      if (record.stackTrace != null) {
+        message += '\nStacktrace:\n${record.stackTrace}';
+      }
+    }
+    print(message);
   });
 }
 

@@ -29,8 +29,10 @@ import '../utils/components.dart';
 /// and cannot put the [Detector] directly around one of the standard Flutter
 /// widgets listed above, use the [Detector.custom()] constructor.
 ///
-/// Nested scroll views are currently not supported and can
-/// potentially impact the way that the outer scroll area is reported.
+/// ### Not supported / untested
+/// * Nested scroll views
+/// * Widgets changing their size
+/// * Directly using slivers
 ///
 /// ## Detector scope
 /// Detectors can either have a _local_ or a _global_ scope:

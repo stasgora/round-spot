@@ -7,6 +7,9 @@ import 'package:flutter/widgets.dart' show Axis;
 
 /// [Offset] axis utility extension
 extension Offsets on Offset {
+  /// Returns [Offset] component along [axis]
+  double alongAxis(Axis axis) => axis == Axis.vertical ? dy : dx;
+
   /// Constructs [Offset] from an [offset] along [axis]
   static Offset fromAxis(Axis axis, double offset, [double other = 0]) =>
       axis == Axis.vertical ? Offset(other, offset) : Offset(offset, other);

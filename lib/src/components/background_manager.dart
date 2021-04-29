@@ -9,9 +9,9 @@ import '../models/scrolling_status.dart';
 import '../models/session.dart';
 import '../utils/utils.dart';
 
-/// Produces an image from widgets surrounded by a [RepaintBoundary]
-class ScreenshotProvider {
-  final _logger = Logger('RoundSpot.ScreenshotProvider');
+/// Creates backgrounds for sessions
+class BackgroundManager {
+  final _logger = Logger('RoundSpot.BackgroundManager');
 
   /// Controls when to take screenshot depending on the scroll amount
   void onScroll(Session session, GlobalKey areaKey) {
@@ -24,7 +24,7 @@ class ScreenshotProvider {
   bool _scrollOutsideBounds(Session session) {
     var status = session.scrollStatus!;
     var diff = status.lastScreenshotPosition - status.position;
-    return (diff).abs() > status.viewportDimension * 0.5;
+    return (diff).abs() > status.viewportDimension * 0.8;
   }
 
   /// Determines if its necessary to take a screenshot when event is recorded
@@ -63,27 +63,29 @@ class ScreenshotProvider {
     var status = session.scrollStatus!;
     var queue = status.screenshotQueue;
     while (queue.isNotEmpty) {
-      var image = await queue.first.image;
-      if (image == null) return;
-      var offset = queue.first.offset;
-      if (session.background == null) {
-        session.background = image;
-        status.backgroundPosition = offset;
-        status.viewportDimension = image.size.alongAxis(status.axis);
-        return;
-      }
-      // Decrease the drawn image by 1 pixel in the main axis direction
-      // to account for the scroll position being rounded to the nearest pixel
-      var imageSize = image.size.modifiedSize(status.axis, -1);
-      session.background = await image.drawOnto(
-        session.background!,
-        Offsets.fromAxis(status.axis, offset - status.backgroundPosition),
-        imageSize,
-      );
-      status.backgroundPosition = min(
-        offset,
-        status.backgroundPosition,
-      );
+      await Future.sync(() async {
+        var image = await queue.first.image;
+        if (image == null) return;
+        var offset = queue.first.offset;
+        if (session.background == null) {
+          session.background = image;
+          status.backgroundPosition = offset;
+          status.viewportDimension = image.size.alongAxis(status.axis);
+          return;
+        }
+        // Decrease the drawn image by 1 pixel in the main axis direction
+        // to account for the scroll position being rounded to the nearest pixel
+        var imageSize = image.size.modifiedSize(status.axis, -1);
+        session.background = await image.drawOnto(
+          session.background!,
+          Offsets.fromAxis(status.axis, offset - status.backgroundPosition),
+          imageSize,
+        );
+        status.backgroundPosition = min(
+          offset,
+          status.backgroundPosition,
+        );
+      });
       queue.removeAt(0);
     }
   }

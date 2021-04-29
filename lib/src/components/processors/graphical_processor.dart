@@ -6,6 +6,7 @@ import 'package:flutter/painting.dart';
 import 'package:logging/logging.dart';
 
 import '../../models/config/heat_map_style.dart';
+import '../../models/event.dart';
 import '../../models/session.dart';
 import '../../utils/utils.dart';
 import '../heat_map.dart';
@@ -46,16 +47,24 @@ class GraphicalProcessor extends SessionProcessor {
     var size = image.size;
     if (session.scrolling) {
       var status = session.scrollStatus!;
-      var diff = status.backgroundPosition - status.extent.dx;
+      getPosition(Event e) => e.location.alongAxis(status.axis);
+      var eventPositions = session.events.map(getPosition);
+      final cutMargin = status.viewportDimension;
+      var extent = Offset(
+        max(status.extent.dx, eventPositions.reduce(min) - cutMargin),
+        min(
+          status.extent.dy + status.viewportDimension,
+          eventPositions.reduce(max) + cutMargin,
+        ),
+      );
+      var diff = status.backgroundPosition - extent.dx;
       if (diff < 0) {
         offset = Offsets.fromAxis(status.axis, -diff);
         size = size.modifiedSize(status.axis, diff);
-        status.backgroundPosition = status.extent.dx;
+        status.backgroundPosition = extent.dx;
       }
-      diff = status.extent.dy +
-          status.viewportDimension -
-          status.backgroundPosition -
-          size.alongAxis(status.axis);
+      diff =
+          extent.dy - status.backgroundPosition - size.alongAxis(status.axis);
       if (diff < 0) size = size.modifiedSize(status.axis, diff);
     }
     return offset & size;

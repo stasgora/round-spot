@@ -10,17 +10,17 @@ import '../models/detector_status.dart';
 import '../models/event.dart';
 import '../models/session.dart';
 import '../utils/components.dart';
+import 'background_manager.dart';
 import 'processors/graphical_processor.dart';
 import 'processors/raw_data_processor.dart';
 import 'processors/session_processor.dart';
-import 'screenshot_provider.dart';
 
 /// Coordinates and manages data gathering, processing and reporting.
 class SessionManager {
   final _logger = Logger('RoundSpot.SessionManager');
 
   final _config = S.get<Config>();
-  final _screenshotProvider = S.get<ScreenshotProvider>();
+  final _backgroundManager = S.get<BackgroundManager>();
 
   final Map<String, Session> _sessions = {};
   final Set<int> _processedEventIDs = {};
@@ -75,12 +75,12 @@ class SessionManager {
     if (_currentPageDisabled && !status.hasGlobalScope) return;
 
     var session = _recordEvent(event: event, status: status);
-    _screenshotProvider.onEvent(event.location, session, status.areaKey);
+    _backgroundManager.onEvent(event.location, session, status.areaKey);
   }
 
   /// Handles the scroll event of a [Session]
   void onSessionScroll(DetectorStatus status) =>
-      _screenshotProvider.onScroll(_getSession(status), status.areaKey);
+      _backgroundManager.onScroll(_getSession(status), status.areaKey);
 
   Session _recordEvent({required Event event, required DetectorStatus status}) {
     var session = _getSession(status);
