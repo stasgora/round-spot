@@ -202,7 +202,7 @@ class _DetectorState extends State<Detector> {
     if (child is ScrollView) return child.scrollDirection;
     if (child is ListWheelScrollView) return Axis.vertical;
     if (child is SingleChildScrollView) return child.scrollDirection;
-    if (child is PageView) child.scrollDirection;
+    if (child is PageView) return child.scrollDirection;
   }
 
   ScrollController? _getController() {
@@ -210,6 +210,6 @@ class _DetectorState extends State<Detector> {
     if (child is ScrollView) return child.controller;
     if (child is ListWheelScrollView) return child.controller;
     if (child is SingleChildScrollView) return child.controller;
-    if (child is PageView) child.controller;
+    if (child is PageView) return child.controller;
   }
 }

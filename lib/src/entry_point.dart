@@ -40,7 +40,7 @@ Widget initialize({
 }) {
   _initializeLogger(loggingLevel);
   initializeComponents(config, heatMapCallback, rawDataCallback);
-  return LifecycleObserver(child: Detector(child: child, areaID: ''));
+  return LifecycleObserver(child: Detector(areaID: '', child: child));
 }
 
 void _initializeLogger(LogLevel level) {

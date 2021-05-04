@@ -1,3 +1,7 @@
+# 0.3.1
+
+- **FIX**: `PageView` config was not correctly detected by the `Detector`
+
 # 0.3.0
 
 - **BREAKING**: reworked `Detector` implementation - should be placed around the scrolling widgets

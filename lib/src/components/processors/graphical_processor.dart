@@ -48,7 +48,7 @@ class GraphicalProcessor extends SessionProcessor {
     if (session.scrollable) {
       var scroll = session.scrollStatus!;
       var background = session.backgroundStatus!;
-      getPosition(Event e) => e.location.alongAxis(scroll.axis);
+      double getPosition(Event e) => e.location.alongAxis(scroll.axis);
       var eventPositions = session.events.map(getPosition);
       final cutMargin = background.viewportDimension;
       var extent = Offset(
@@ -77,13 +77,13 @@ class GraphicalProcessor extends SessionProcessor {
         .toList();
     var heatMap = HeatMap(events: events, pointProximity: clusterScale);
 
-    layerCount() {
+    int layerCount() {
       if (heatMap.largestCluster == 1) return 1;
       return heatMap.largestCluster * config.heatMapStyle.multiplier;
     }
 
-    calcFraction(int i) => (i - 1) / max((layerCount() - 1), 1);
-    calcBlur(double val) => (4 * val * val + 2) * clusterScale / 10;
+    double calcFraction(int i) => (i - 1) / max((layerCount() - 1), 1);
+    double calcBlur(double val) => (4 * val * val + 2) * clusterScale / 10;
     for (var i = 1; i <= layerCount(); i++) {
       var fraction = calcFraction(i);
       var paint = Paint()..color = _getSpectrumColor(fraction);

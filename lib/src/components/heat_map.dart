@@ -76,7 +76,7 @@ class HeatMap {
         points: cluster.map((e) => events[e]).toList(),
       ));
     }
-    simpleCluster(index) => ClusterPath(
+    ClusterPath simpleCluster(index) => ClusterPath(
           path: _eventPath(events[index], pointRadius),
           points: [events[index]],
         );

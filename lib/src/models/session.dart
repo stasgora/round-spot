@@ -9,9 +9,16 @@ import 'scrolling_status.dart';
 /// Holds information about user interactions with a particular
 /// [area] on some [page] during some period of time.
 class Session implements OutputInfo {
+  @override
   final String? page;
+
+  @override
   final String area;
+
+  @override
   final int startTime;
+
+  @override
   int endTime;
 
   final List<Event> _events = [];
