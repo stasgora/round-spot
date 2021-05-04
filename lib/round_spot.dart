@@ -47,6 +47,15 @@
 /// Scrollable spaces need manual instrumentation to be correctly monitored.
 /// Read about the use of a [Detector] widget to learn more.
 ///
+/// ### Current limitations
+/// Widgets that dynamically change their size, position, dis/appear
+/// or otherwise cause other widgets to shift their positions relative to
+/// the viewport (for example in response to a user action) are not supported.
+/// When that happens during a session recording it will cause
+/// some of the gathered interactions to be displaced in relation
+/// to the background image and the rest of data making
+/// the heat map difficult to interpret and understand.
+///
 /// ## Commonly used terms
 ///
 /// ### Area

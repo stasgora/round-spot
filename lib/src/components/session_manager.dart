@@ -6,21 +6,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 
 import '../../round_spot.dart';
-import '../models/detector_config.dart';
+import '../models/detector_status.dart';
 import '../models/event.dart';
 import '../models/session.dart';
 import '../utils/components.dart';
+import 'background_manager.dart';
 import 'processors/graphical_processor.dart';
 import 'processors/raw_data_processor.dart';
 import 'processors/session_processor.dart';
-import 'screenshot_provider.dart';
 
 /// Coordinates and manages data gathering, processing and reporting.
 class SessionManager {
   final _logger = Logger('RoundSpot.SessionManager');
 
   final _config = S.get<Config>();
-  final _screenshotProvider = S.get<ScreenshotProvider>();
+  final _backgroundManager = S.get<BackgroundManager>();
 
   final Map<String, Session> _sessions = {};
   final Set<int> _processedEventIDs = {};
@@ -59,7 +59,7 @@ class SessionManager {
   }
 
   /// Handles processing user interactions
-  void onEvent({required Event event, required DetectorConfig detector}) async {
+  void onEvent({required Event event, required DetectorStatus status}) async {
     if (_currentPage == null) {
       _logger.warning(
         'The current page route was not detected. '
@@ -72,17 +72,19 @@ class SessionManager {
       _endSessions();
       return;
     }
-    if (_currentPageDisabled && !detector.hasGlobalScope) return;
-    var sessionKey = detector.areaID;
-    if (!detector.hasGlobalScope) {
-      sessionKey += _currentPage!;
-      _processedEventIDs.add(event.id);
-    }
+    if (_currentPageDisabled && !status.hasGlobalScope) return;
 
-    var session = (_sessions[sessionKey] ??= Session(
-      page: detector.hasGlobalScope ? null : _currentPage,
-      area: detector.areaID,
-    ));
+    var session = _recordEvent(event: event, status: status);
+    _backgroundManager.onEvent(event.location, session, status.areaKey);
+  }
+
+  /// Handles the scroll event of a [Session]
+  void onSessionScroll(DetectorStatus status) =>
+      _backgroundManager.onScroll(_getSession(status), status.areaKey);
+
+  Session _recordEvent({required Event event, required DetectorStatus status}) {
+    var session = _getSession(status);
+    if (!status.hasGlobalScope) _processedEventIDs.add(event.id);
     session.addEvent(event);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
@@ -91,12 +93,18 @@ class SessionManager {
         _endSessions,
       );
     }
-    if (session.screenSnap == null) {
-      session.screenSnap = await _screenshotProvider.takeScreenshot(
-        detector.areaKey,
-        _config.heatMapPixelRatio,
-      );
-    }
+    return session;
+  }
+
+  Session _getSession(DetectorStatus status) {
+    var sessionKey = status.areaID;
+    if (!status.hasGlobalScope) sessionKey += _currentPage!;
+    return _sessions[sessionKey] ??= Session(
+      page: status.hasGlobalScope ? null : _currentPage,
+      area: status.areaID,
+      pixelRatio: _config.heatMapPixelRatio,
+      scrollStatus: status.scrollStatus,
+    );
   }
 
   void _endSessions() {
@@ -111,25 +119,23 @@ class SessionManager {
   void _exportSession(String key) {
     if (!_sessions.containsKey(key)) return;
     for (var type in _config.outputTypes) {
-      var typeName = EnumToString.convertToString(type, camelCase: true);
-      runZonedGuarded(() async {
-        if (_callbacks[type] == null) {
-          _logger.warning(
-            'Requested $typeName output but the callback is not set, skipping.',
-          );
-          return;
-        }
-        var session = _sessions[key]!;
-        var output = await _processors[type]!.process(session);
-        if (output == null) return;
-        _callbacks[type]!(output, session);
-      }, (e, stackTrace) {
-        _logger.severe(
-          'Error occurred while generating $typeName',
-          e,
-          stackTrace,
-        );
-      });
+      var name = EnumToString.convertToString(type, camelCase: true);
+      runZonedGuarded(
+        () async {
+          if (_callbacks[type] == null) {
+            _logger.warning(
+              'Requested $name output but the callback is not set, skipping.',
+            );
+            return;
+          }
+          var session = _sessions[key]!;
+          var output = await _processors[type]!.process(session);
+          if (output == null) return;
+          _callbacks[type]!(output, session);
+        },
+        (e, stackTrace) => _logger.severe(
+            'Error occurred while generating $name', e, stackTrace),
+      );
     }
   }
 }

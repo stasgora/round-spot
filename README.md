@@ -68,20 +68,20 @@ round_spot.initialize(
 
 #### Route naming
 Route names are used to differentiate between pages.
-Make sure you are consistently specifying them both when:
-- using [named routes](https://flutter.dev/docs/cookbook/navigation/named-routes) and
-- pushing a [PageRoute](https://api.flutter.dev/flutter/widgets/PageRoute-class.html) - 
-using [RouteSetting](https://api.flutter.dev/flutter/widgets/RouteSettings-class.html)
+Make sure you are consistently specifying them both when 
+using [named routes](https://flutter.dev/docs/cookbook/navigation/named-routes) and
+pushing [PageRoutes](https://api.flutter.dev/flutter/widgets/PageRoute-class.html)
+(inside [RouteSetting](https://api.flutter.dev/flutter/widgets/RouteSettings-class.html))
 
 #### Scrollable widgets
-To correctly monitor interactions with any scrollable space a `Detector` or a `ListDetector` 
-has to be placed between the scrollable widget and the widgets being scrolled:
+To correctly monitor interactions with any scrollable space a `Detector` 
+has to be placed as a direct parent of that widget:
 ```dart
-SingleChildScrollView(
-  child: round_spot.Detector(
-    child: /* child */,
-    areaID: id
-  )
+round_spot.Detector(
+  areaID: id,
+  child: ListView(
+    children: /* children */,
+  ),
 )
 ```
 

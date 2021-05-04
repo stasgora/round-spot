@@ -33,9 +33,9 @@ class ExampleApp extends StatelessWidget {
               ),
             ),
         'second': (context) => Scaffold(
-              body: SingleChildScrollView(
-                child: round_spot.ListDetector(
-                  areaID: 'list',
+              body: round_spot.Detector(
+                areaID: 'list',
+                child: ListView(
                   children: [
                     for (int i = 0; i < 50; i++) ListTile(title: Text('$i'))
                   ],

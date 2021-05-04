@@ -13,3 +13,7 @@ jobs:
         run: flutter format --set-exit-if-changed lib
       - name: Analyze
         run: flutter analyze
+      - name: Run tests
+        run: flutter test --no-pub --coverage --test-randomize-ordering-seed random
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1.4.1

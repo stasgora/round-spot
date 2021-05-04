@@ -7,9 +7,9 @@ import 'utils/components.dart';
 /// Keeps track of [Navigator] [PageRoute] changes.
 ///
 /// Route names are used to differentiate between pages.
-/// Make sure you are consistently specifying them both when:
-/// * using [named routes](https://flutter.dev/docs/cookbook/navigation/named-routes) and
-/// * pushing a [PageRoute] - using [RouteSettings]
+/// Make sure you are consistently specifying them both when
+/// using [named routes](https://flutter.dev/docs/cookbook/navigation/named-routes)
+/// and pushing a [PageRoute] (inside [RouteSettings])
 ///
 /// Without that the events might not get grouped correctly,
 /// either resulting in multiple outputs per page/area

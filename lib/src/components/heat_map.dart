@@ -18,7 +18,7 @@ class HeatMap {
   /// Specifies the cluster [Path] scale in relation to the [pointProximity]
   final double clusterScale; // 0.5 - 1.5
   /// [Session] being processed
-  final Session session;
+  final List<Offset> events;
 
   final _paths = <ClusterPath>[];
   final DBSCAN _dbScan;
@@ -31,11 +31,11 @@ class HeatMap {
 
   /// Creates a [HeatMap] that processes events into paths
   HeatMap({
-    required this.session,
+    required this.events,
     required this.pointProximity,
     this.clusterScale = 0.5,
   }) : _dbScan = DBSCAN(epsilon: pointProximity) {
-    var dbPoints = session.events.map<List<double>>((e) => e.locationAsList);
+    var dbPoints = events.map<List<double>>((e) => [e.dx, e.dy]);
     _dbScan.run(dbPoints.toList());
     _createClusterPaths();
 
@@ -68,19 +68,25 @@ class HeatMap {
     for (var cluster in _dbScan.cluster) {
       var clusterPath = Path();
       for (var pointIndex in cluster) {
-        var pointPath = session.events[pointIndex].asPath(pointRadius);
+        var pointPath = _eventPath(events[pointIndex], pointRadius);
         clusterPath = Path.combine(PathOperation.union, clusterPath, pointPath);
       }
       _paths.add(ClusterPath(
-          path: clusterPath,
-          points: cluster.map((e) => session.events[e].location).toList()));
+        path: clusterPath,
+        points: cluster.map((e) => events[e]).toList(),
+      ));
     }
     simpleCluster(index) => ClusterPath(
-        path: session.events[index].asPath(pointRadius),
-        points: [session.events[index].location]);
+          path: _eventPath(events[index], pointRadius),
+          points: [events[index]],
+        );
     _paths.addAll(_dbScan.noise.map(simpleCluster));
   }
 
   static double _logBasedLevelScale(double level, double scaleFactor) =>
       1 + log(level + 0.5 / scaleFactor) / scaleFactor;
+
+  /// Creates a [Path] from this [Event]
+  Path _eventPath(Offset location, double radius) =>
+      Path()..addOval(Rect.fromCircle(center: location, radius: radius));
 }
