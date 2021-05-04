@@ -1,9 +1,10 @@
 # 0.3.0
 
-- **BREAKING**: reworked `Detector` implementation - placed around the scrolling widgets
+- **BREAKING**: reworked `Detector` implementation - should be placed around the scrolling widgets
   - **NEW**: support for lazy loaded scroll widgets like `ListView.builder()`
   - **FIX**: events misreported during scrolling
-  - **NEW**: support for custom scroll widgets - using `Detector(customScrollWidgetAxis: )`
+  - **NEW**: support for custom scroll widgets - using `Detector.custom()` constructor
+  - **NEW**: scrolling heat maps smart cropping - saves on image size
   - **REFACTOR**: removed `ListDetector` - not needed anymore
 - **FIX**: rendering bug when `Config.heatMapPixelRatio` was changed during session recording
 
