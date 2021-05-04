@@ -10,7 +10,6 @@ import '../utils/components.dart';
 
 /// Detects user interactions in the [child] widget tree.
 ///
-/// {@template Detector.description}
 /// ## Scrollable widgets
 /// To correctly monitor interactions with any scrollable space a [Detector]
 /// has to be placed as a direct parent of that widget:
@@ -25,9 +24,11 @@ import '../utils/components.dart';
 ///
 /// Widgets provided by Flutter, like [ListView], [SingleChildScrollView],
 /// [GridView] or [CustomScrollView] are recognised automatically.
-/// In case you are using a custom scrolling widget from an external package,
+/// In case you are using a custom scrollable widget from an external package,
 /// and cannot put the [Detector] directly around one of the standard Flutter
-/// widgets listed above, use the [Detector.custom()] constructor.
+/// widgets, use the [Detector.custom()] constructor.
+///
+/// This widget relies on [NotificationListener] to track the
 ///
 /// ### Not supported / untested
 /// * Nested scroll views
@@ -49,23 +50,19 @@ import '../utils/components.dart';
 ///
 /// By default (with no additional _global_ scoped [Detector]) you only
 /// get the information about how the user exits every page.
-/// {@endtemplate}
 class Detector extends StatefulWidget {
   /// The widget below this widget to be observed.
   ///
   /// If you need to lay out multiple children in a column use [ListDetector].
   final Widget child;
 
-  /// {@template Detector.areaID}
   /// Consistently identifies the same visual region
   /// across widget tree rebuilds and multiple visits.
   ///
   /// It should be unique in its scope - see [hasGlobalScope].
   /// The empty ID is reserved as it's used by the root detector on every page.
-  /// {@endtemplate}
   final String areaID;
 
-  /// {@template Detector.hasGlobalScope}
   /// Determines the scope of this Detector's area:
   ///
   /// * **false** means the scope is local and limited
@@ -74,20 +71,19 @@ class Detector extends StatefulWidget {
   /// Every [Detector] with the same [areaID] on any page will become
   /// part of a group observing the same area. Keep in mind that
   /// each one of them needs to have the scope set to global.
-  /// {@endtemplate}
   final bool hasGlobalScope;
 
-  /// Specifies the scroll axis of the custom scrolling [child] widget.
+  /// Specifies the scroll axis of the custom scrollable [child] widget.
   final Axis? customScrollAxis;
 
-  /// Holds the initial scroll offset of the custom scrolling [child] widget.
+  /// Holds the initial scroll offset of the custom scrollable [child] widget.
   final double? customInitialOffset;
 
   late final bool _isScrollDetector;
 
-  /// {@template Detector.constructor}
   /// Creates a widget detector observing the [child] widget tree
   ///
+  /// {@template Detector.constructor}
   /// A non empty, unique [areaID] has to be provided.
   /// The default scope is local.
   /// {@endtemplate}
@@ -101,6 +97,8 @@ class Detector extends StatefulWidget {
           hasGlobalScope: hasGlobalScope,
         );
 
+  /// Creates a detector observing a custom scrollable [child] widget tree
+  ///
   /// {@macro Detector.constructor}
   /// [scrollAxis] and [initialScrollOffset] have
   /// to be specified manually if they differ from the default values.
@@ -151,7 +149,7 @@ class _DetectorState extends State<Detector> {
       hasGlobalScope: widget.hasGlobalScope,
       scrollStatus: widget._isScrollDetector
           ? ScrollingStatus(
-              _getScrollAxis()!,
+              _getScrollAxis() ?? widget.customScrollAxis ?? Axis.vertical,
               offset ?? widget.customInitialOffset ?? 0,
             )
           : null,

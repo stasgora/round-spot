@@ -45,7 +45,7 @@ class GraphicalProcessor extends SessionProcessor {
     var offset = Offset.zero;
     var image = session.background!;
     var size = image.size;
-    if (session.scrolling) {
+    if (session.scrollable) {
       var scroll = session.scrollStatus!;
       var background = session.backgroundStatus!;
       getPosition(Event e) => e.location.alongAxis(scroll.axis);

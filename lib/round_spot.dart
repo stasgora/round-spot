@@ -48,10 +48,13 @@
 /// Read about the use of a [Detector] widget to learn more.
 ///
 /// ### Current limitations
-/// Widgets that change their size (for example in response to a user action)
-/// during a session recording can potentially invalidate some
-/// or all of the gathered interactions causing them to be
-/// displaced in relation to the background and the rest of data.
+/// Widgets that dynamically change their size, position, dis/appear
+/// or otherwise cause other widgets to shift their positions relative to
+/// the viewport (for example in response to a user action) are not supported.
+/// When that happens during a session recording it will cause
+/// some of the gathered interactions to be displaced in relation
+/// to the background image and the rest of data making
+/// the heat map difficult to interpret and understand.
 ///
 /// ## Commonly used terms
 ///

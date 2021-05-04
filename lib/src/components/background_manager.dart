@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
@@ -15,7 +16,7 @@ class BackgroundManager {
 
   /// Controls when to take screenshot depending on the scroll amount
   void onScroll(Session session, GlobalKey areaKey) {
-    if (!session.scrolling) return;
+    if (!session.scrollable) return;
     if (session.background == null || _scrollOutsideBounds(session)) {
       _takeScreenshot(session, areaKey);
     }
@@ -36,7 +37,7 @@ class BackgroundManager {
   }
 
   bool _eventOutsideScreenshot(Offset event, Session session) {
-    if (!session.scrolling) return false;
+    if (!session.scrollable) return false;
     var offset = session.backgroundOffset;
     return !(offset & session.background!.size).contains(event);
   }
@@ -45,7 +46,7 @@ class BackgroundManager {
   /// It than joins it with the already assembled image
   /// replacing the part that's underneath it
   void _takeScreenshot(Session session, GlobalKey areaKey) async {
-    if (!session.scrolling) {
+    if (!session.scrollable) {
       if (session.background != null) return;
       session.background = await _captureImage(areaKey, session.pixelRatio);
       return;
@@ -58,7 +59,13 @@ class BackgroundManager {
       background.lastScreenshotPosition,
       _captureImage(areaKey, session.pixelRatio),
     ));
-    if (queueEmpty) _processScreenshots(session);
+    if (queueEmpty) {
+      runZonedGuarded(
+        () => _processScreenshots(session),
+        (e, stackTrace) => _logger.severe(
+            'Error occurred while processing screenshot', e, stackTrace),
+      );
+    }
   }
 
   void _processScreenshots(Session session) async {

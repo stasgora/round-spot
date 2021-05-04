@@ -28,8 +28,8 @@ class Session implements OutputInfo {
   /// Status of the scrollable background
   BackgroundStatus? backgroundStatus;
 
-  /// Returns if this [Session] monitors a scrolling widget
-  bool get scrolling => scrollStatus != null;
+  /// Returns if this [Session] monitors a scrollable widget
+  bool get scrollable => scrollStatus != null;
 
   /// Returns the background [Offset] if there is any
   Offset get backgroundOffset =>

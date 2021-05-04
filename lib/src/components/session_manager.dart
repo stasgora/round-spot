@@ -119,25 +119,23 @@ class SessionManager {
   void _exportSession(String key) {
     if (!_sessions.containsKey(key)) return;
     for (var type in _config.outputTypes) {
-      var typeName = EnumToString.convertToString(type, camelCase: true);
-      runZonedGuarded(() async {
-        if (_callbacks[type] == null) {
-          _logger.warning(
-            'Requested $typeName output but the callback is not set, skipping.',
-          );
-          return;
-        }
-        var session = _sessions[key]!;
-        var output = await _processors[type]!.process(session);
-        if (output == null) return;
-        _callbacks[type]!(output, session);
-      }, (e, stackTrace) {
-        _logger.severe(
-          'Error occurred while generating $typeName',
-          e,
-          stackTrace,
-        );
-      });
+      var name = EnumToString.convertToString(type, camelCase: true);
+      runZonedGuarded(
+        () async {
+          if (_callbacks[type] == null) {
+            _logger.warning(
+              'Requested $name output but the callback is not set, skipping.',
+            );
+            return;
+          }
+          var session = _sessions[key]!;
+          var output = await _processors[type]!.process(session);
+          if (output == null) return;
+          _callbacks[type]!(output, session);
+        },
+        (e, stackTrace) => _logger.severe(
+            'Error occurred while generating $name', e, stackTrace),
+      );
     }
   }
 }
