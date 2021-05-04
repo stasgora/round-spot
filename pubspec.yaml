@@ -3,7 +3,7 @@ description: Customizable, easy to use heat map interface analysis library
 repository: https://github.com/stasgora/round-spot
 issue_tracker: https://github.com/stasgora/round-spot/issues
 
-version: 0.3.0
+version: 0.3.1
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -13,10 +13,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  meta: ^1.3.0
   get_it: ^7.0.0
   logging: ^1.0.0
   simple_cluster: ^0.3.0
+
+  # Utils
+  meta: ^1.3.0
   enum_to_string: ^2.0.1
 
 dev_dependencies:
@@ -24,5 +26,8 @@ dev_dependencies:
     sdk: flutter
 
   mocktail: ^0.1.2
+  collection: ^1.15.0
+
+  # Lints
   effective_dart: ^1.3.1
   pedantic: ^1.11.0

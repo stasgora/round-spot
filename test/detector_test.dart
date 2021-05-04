@@ -10,9 +10,11 @@ import 'package:round_spot/src/widgets/detector.dart';
 class MockSessionManager extends Mock implements SessionManager {}
 
 void main() {
-  S.registerSingleton<SessionManager>(MockSessionManager());
-  registerFallbackValue<Event>(Event(location: Offset.zero, id: 0));
-  registerFallbackValue<DetectorStatus>(DetectorStatus(areaKey: GlobalKey()));
+  setUpAll(() {
+    S.registerSingleton<SessionManager>(MockSessionManager());
+    registerFallbackValue<Event>(Event());
+    registerFallbackValue<DetectorStatus>(DetectorStatus(areaKey: GlobalKey()));
+  });
 
   group('Detector', () {
     setUp(() {

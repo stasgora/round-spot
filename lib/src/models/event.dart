@@ -7,7 +7,7 @@ import '../utils/utils.dart';
 /// Holds information about a single user interaction
 class Event {
   /// Equals [PointerEvent.localPosition]
-  Offset location;
+  final Offset location;
 
   /// Timestamp of when the event fired
   final int timestamp;
@@ -17,7 +17,7 @@ class Event {
 
   /// Creates an [Event] with a given [location] and [id]
   @visibleForTesting
-  Event({required this.location, required this.id})
+  Event({this.location = Offset.zero, this.id = 0})
       : timestamp = getTimestamp();
 
   /// Creates an [Event] from Flutters [PointerEvent]

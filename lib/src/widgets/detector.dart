@@ -28,8 +28,6 @@ import '../utils/components.dart';
 /// and cannot put the [Detector] directly around one of the standard Flutter
 /// widgets, use the [Detector.custom()] constructor.
 ///
-/// This widget relies on [NotificationListener] to track the
-///
 /// ### Not supported / untested
 /// * Nested scroll views
 /// * Widgets changing their size

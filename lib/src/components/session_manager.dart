@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 
 import '../../round_spot.dart';
@@ -45,7 +45,7 @@ class SessionManager {
 
   /// Handles application lifecycle state changes
   void onLifecycleStateChanged(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) _endSessions();
+    if (state == AppLifecycleState.paused) endSessions();
   }
 
   /// Handles application [PageRoute] changes
@@ -67,9 +67,9 @@ class SessionManager {
       );
       return;
     }
-    if (_currentPage == null || _processedEventIDs.contains(event.id)) return;
+    if (_processedEventIDs.contains(event.id)) return;
     if (!_config.enabled) {
-      _endSessions();
+      endSessions();
       return;
     }
     if (_currentPageDisabled && !status.hasGlobalScope) return;
@@ -90,7 +90,7 @@ class SessionManager {
       _idleTimer?.cancel();
       _idleTimer = Timer(
         Duration(seconds: _config.maxSessionIdleTime!),
-        _endSessions,
+        endSessions,
       );
     }
     return session;
@@ -107,7 +107,9 @@ class SessionManager {
     );
   }
 
-  void _endSessions() {
+  /// Triggers the session processing
+  @visibleForTesting
+  void endSessions() {
     bool skipSession(Session session) =>
         session.events.length < _config.minSessionEventCount;
     for (var key in _sessions.keys) {
