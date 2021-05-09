@@ -41,7 +41,8 @@ class Config {
 
   // Session
 
-  /// Sets the time in seconds after which all current sessions will be closed.
+  /// Sets the in-app idle time in seconds after
+  /// which all current sessions will be closed.
   ///
   /// The default `null` value means there is no maximum time.
   int? maxSessionIdleTime;
