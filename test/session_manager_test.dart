@@ -81,6 +81,7 @@ void main() {
         expect(sessions.withAreaID(global), isNotNull);
         expect(sessions.withAreaID(enclosing), isNotNull);
       });
+
       group('Routes', () {
         test('page route changes are registered', () {
           var page = 'other';
@@ -99,6 +100,7 @@ void main() {
         });
       });
     });
+
     group('Other events', () {
       test('events are ignored if no route is set', () {
         _manager.onRouteOpened();
@@ -111,6 +113,7 @@ void main() {
             .called(equals(1));
       });
     });
+
     test('scroll events are forwarded to the Background Manager', () {
       _manager.onSessionScroll(detectorStatus());
       verify(() => S.get<BackgroundManager>().onScroll(any(), any())).called(1);

@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "Raw session data",
   "description": "Information about user interactions captured during a single session",
   "type": "object",

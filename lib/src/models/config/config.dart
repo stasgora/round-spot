@@ -1,4 +1,5 @@
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:equatable/equatable.dart';
 
 import '../../utils/utils.dart';
 import '../../widgets/detector.dart';
@@ -9,7 +10,8 @@ import 'output_type.dart';
 /// specifics of data gathering and processing.
 ///
 /// All properties can be changed at any moment.
-class Config {
+// ignore: must_be_immutable
+class Config extends Equatable {
   /// Specifies whether the library is currently active and collecting data.
   ///
   /// Set to `true` by default;
@@ -111,7 +113,7 @@ class Config {
           enabled: json['enabled'],
           uiElementSize: json['uiElementSize'].toDouble(),
           disabledRoutes: json['disabledRoutes'] != null
-              ? (json['disabledRoutes'] as List<String>).toSet()
+              ? (json['disabledRoutes'] as List).map((e) => e as String).toSet()
               : null,
           maxSessionIdleTime: json['session']?['maxIdleTime'],
           minSessionEventCount: json['session']?['minEventCount'],
@@ -127,4 +129,17 @@ class Config {
           heatMapTransparency: json['heatMap']?['transparency'].toDouble(),
           heatMapPixelRatio: json['heatMap']?['pixelRatio'].toDouble(),
         );
+
+  @override
+  List<Object?> get props => [
+        enabled,
+        uiElementSize,
+        disabledRoutes,
+        maxSessionIdleTime,
+        minSessionEventCount,
+        outputTypes,
+        heatMapStyle,
+        heatMapTransparency,
+        heatMapPixelRatio,
+      ];
 }
