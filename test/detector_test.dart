@@ -95,6 +95,6 @@ DetectorStatus _validate() {
           event: any(named: 'event'),
           status: captureAny(named: 'status'),
         ),
-  )..called(equals(1));
+  )..called(1);
   return args.captured.first;
 }
