@@ -13,16 +13,7 @@
 It produces beautiful heat map visualizations that aim to make the UI improvement and troubleshooting easy and intuitive.
 </div>
 
-## Examples
-
-<div align="center">
-
-| <img src="https://raw.githubusercontent.com/stasgora/round-spot/master/assets/screens/calendar.png" width=200 /> | <img src="https://raw.githubusercontent.com/stasgora/round-spot/master/assets/screens/form.png" width=200 /> | <img src="https://raw.githubusercontent.com/stasgora/round-spot/master/assets/screens/panel.png" width=200 /> | <img src="https://raw.githubusercontent.com/stasgora/round-spot/master/assets/screens/rating.png" width=200 /> |
-| :--------------------: | :--------------------: | :--------------------------: | :-------------------: |
-|        Calendar        |         Form           |            Panel             |         Cards         |
-
-(Screens taken from the **[Fokus](https://github.com/fokus-team/fokus)** application)
-</div>
+<div align="center"><img src="assets/banner.png" alt="Banner"></div>
 
 ## Usage
 Import the package in your main file:
