@@ -115,7 +115,7 @@ class SessionManager {
     for (var key in _sessions.keys) {
       if (!skipSession(_sessions[key]!)) _exportSession(key);
     }
-    _sessions.removeWhere((key, session) => !skipSession(session));
+    //_sessions.removeWhere((key, session) => !skipSession(session));
   }
 
   void _exportSession(String key) {
