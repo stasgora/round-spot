@@ -99,12 +99,12 @@ class SessionManager {
   Session _getSession(DetectorStatus status) {
     var sessionKey = status.areaID;
     if (!status.hasGlobalScope) sessionKey += _currentPage!;
-    return _sessions[sessionKey] ??= Session(
+    return (_sessions[sessionKey] ??= Session(
       page: status.hasGlobalScope ? null : _currentPage,
       area: status.areaID,
       pixelRatio: _config.heatMapPixelRatio,
-      scrollStatus: status.scrollStatus,
-    );
+    ))
+      ..scrollStatus = status.scrollStatus;
   }
 
   /// Triggers the session processing

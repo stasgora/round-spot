@@ -29,8 +29,11 @@ class Session implements OutputInfo {
   /// Holds the sessions background
   Image? background;
 
+  /// Returns the background size corrected for the image scaling
+  Size? get bgSize => background != null ? background!.size / pixelRatio : null;
+
   /// Status of the scrollable widget
-  final ScrollingStatus? scrollStatus;
+  ScrollingStatus? scrollStatus;
 
   /// Status of the scrollable background
   BackgroundStatus? backgroundStatus;
@@ -50,8 +53,7 @@ class Session implements OutputInfo {
     this.page,
     required this.area,
     required this.pixelRatio,
-    this.scrollStatus,
-  })  : startTime = getTimestamp(),
+  })   : startTime = getTimestamp(),
         endTime = getTimestamp();
 
   /// Registers an [event] in this session

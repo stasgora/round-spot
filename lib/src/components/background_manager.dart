@@ -39,7 +39,7 @@ class BackgroundManager {
   bool _eventOutsideScreenshot(Offset event, Session session) {
     if (!session.scrollable) return false;
     var offset = session.backgroundOffset;
-    return !(offset & session.background!.size).contains(event);
+    return !(offset & session.bgSize!).contains(event);
   }
 
   /// Captures a screenshot from a [RepaintBoundary] using its [GlobalKey]
@@ -80,21 +80,18 @@ class BackgroundManager {
         if (session.background == null) {
           session.background = image;
           background.position = offset;
-          background.viewportDimension = image.size.alongAxis(scroll.axis);
+          background.viewportDimension = session.bgSize!.alongAxis(scroll.axis);
           return;
         }
-        // Decrease the drawn image by 1 pixel in the main axis direction
-        // to account for the scroll position being rounded to the nearest pixel
-        var imageSize = image.size.modifiedSize(scroll.axis, -1);
+        var pos = Offsets.fromAxis(scroll.axis, offset - background.position);
         session.background = await image.drawOnto(
           session.background!,
-          Offsets.fromAxis(scroll.axis, offset - background.position),
-          imageSize,
+          pos * session.pixelRatio,
+          // Decrease the drawn image by 1 pixel in the main axis direction to
+          // account for the scroll position being rounded to the nearest pixel
+          image.size.modifiedSize(scroll.axis, -1),
         );
-        background.position = min(
-          offset,
-          background.position,
-        );
+        background.position = min(offset, background.position);
       });
       queue.removeAt(0);
     }

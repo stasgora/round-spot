@@ -1,3 +1,8 @@
+# 0.3.2
+
+- **FIX**: scroll state loss when switching routes
+- **FIX**: incorrect scrollable heat map scaling when using custom `Config.heatMapPixelRatio`
+
 # 0.3.1
 
 - **FIX**: `PageView` config not correctly detected by the `Detector`

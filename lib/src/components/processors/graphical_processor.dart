@@ -43,8 +43,7 @@ class GraphicalProcessor extends SessionProcessor {
 
   Rect _getClippedImageRect(Session session) {
     var offset = Offset.zero;
-    var image = session.background!;
-    var size = image.size;
+    var size = session.bgSize!;
     if (session.scrollable) {
       var scroll = session.scrollStatus!;
       var background = session.backgroundStatus!;
@@ -67,7 +66,7 @@ class GraphicalProcessor extends SessionProcessor {
       diff = extent.dy - background.position - size.alongAxis(scroll.axis);
       if (diff < 0) size = size.modifiedSize(scroll.axis, diff);
     }
-    return offset & size;
+    return offset & (size * session.pixelRatio);
   }
 
   void _drawHeatMap(Canvas canvas, Session session) {
