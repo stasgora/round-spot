@@ -29,9 +29,9 @@
 /// ```dart
 /// round_spot.initialize(
 ///   config: round_spot.Config(
-///     minSessionEventCount: 30,
-///     outputTypes: { round_spot.OutputType.graphicalRender },
-///     heatMapStyle: round_spot.HeatMapStyle.smooth
+///     minSessionEventCount: 5,
+///     uiElementSize: 15,
+///     heatMapPixelRatio: 2.0,
 ///   ),
 ///   loggingLevel: round_spot.LogLevel.warning // recommended for integration testing
 /// )
