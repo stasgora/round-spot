@@ -3,7 +3,7 @@ description: Customizable, easy to use heat map interface analysis library
 repository: https://github.com/stasgora/round-spot
 issue_tracker: https://github.com/stasgora/round-spot/issues
 
-version: 0.3.2
+version: 0.3.3
 
 environment:
   sdk: '>=2.12.0 <3.0.0'

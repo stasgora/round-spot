@@ -1,3 +1,7 @@
+# 0.3.3
+
+- **FIX**: interactions not cleared when heat map is generated
+
 # 0.3.2
 
 - **FIX**: scroll state loss when switching routes
