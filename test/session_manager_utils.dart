@@ -36,7 +36,7 @@ void setUpOnce() {
     S.registerSingleton<RawDataProcessor>(MockRawDataProcessor());
     S.registerSingleton<Config>(Config());
 
-    registerFallbackValue<Session>(Session(page: '', area: '', pixelRatio: 1));
+    registerFallbackValue<Session>(Session(page: '', area: ''));
     registerFallbackValue<GlobalKey>(GlobalKey());
   });
 }

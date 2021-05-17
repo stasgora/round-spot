@@ -7,7 +7,7 @@ import 'package:round_spot/src/components/background_manager.dart';
 import 'package:round_spot/src/models/event.dart';
 import 'package:round_spot/src/utils/components.dart';
 
-import 'session_test_utils.dart';
+import 'session_manager_utils.dart';
 
 void main() {
   setUpOnce();

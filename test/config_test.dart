@@ -13,7 +13,7 @@ import 'package:round_spot/src/models/config/config.dart';
 import 'package:round_spot/src/models/event.dart';
 import 'package:round_spot/src/utils/components.dart';
 
-import 'session_test_utils.dart';
+import 'session_manager_utils.dart';
 
 final String _schemaPath = 'assets/config-schema.json';
 final String _configPath = 'assets/example-config.json';

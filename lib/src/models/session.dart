@@ -52,8 +52,8 @@ class Session implements OutputInfo {
   Session({
     this.page,
     required this.area,
-    required this.pixelRatio,
-  })   : startTime = getTimestamp(),
+    this.pixelRatio = 1,
+  })  : startTime = getTimestamp(),
         endTime = getTimestamp();
 
   /// Registers an [event] in this session
