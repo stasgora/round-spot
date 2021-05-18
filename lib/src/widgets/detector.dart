@@ -33,21 +33,14 @@ import '../utils/components.dart';
 /// * Widgets changing their size
 /// * Directly using slivers
 ///
-/// ## Detector scope
-/// Detectors can either have a _local_ or a _global_ scope:
-/// * The default _local_ scope should generally be used whenever a unique area
-/// that only exist in one place on a single screen needs to be observed.
-/// * The _global_ scope is designed to allow for monitoring interactions with
-/// elements that appear in the same form on multiple pages.
-///
-/// As a result of a global scope events from all of the detectors grouped
-/// by the same [areaID] will contribute to the same heat maps.
-/// This is useful in situations where want to monitor
-/// the cumulative use of a common interface element that's
-/// shared between pages, like a navigation bar or a menu.
-///
-/// By default (with no additional _global_ scoped [Detector]) you only
-/// get the information about how the user exits every page.
+/// ## Cumulative detectors
+/// This option is designed to allow for capturing the overall usage
+/// of elements that appear in the same form on multiple pages.
+/// All cumulative detectors with the same [areaID] will be contributing
+/// to common heat maps. This is useful for common interface elements
+/// that are shared between pages, like a navigation bar or a menu.
+/// The cumulative detectors are "fall-through", meaning the interactions
+/// will be included here in addition to the default screen maps.
 class Detector extends StatefulWidget {
   /// The widget below this widget to be observed.
   ///
@@ -57,19 +50,18 @@ class Detector extends StatefulWidget {
   /// Consistently identifies the same visual region
   /// across widget tree rebuilds and multiple visits.
   ///
-  /// It should be unique in its scope - see [hasGlobalScope].
+  /// It should be unique in its scope - see [cumulative].
   /// The empty ID is reserved as it's used by the root detector on every page.
   final String areaID;
 
-  /// Determines the scope of this Detector's area:
+  /// Determines the scope of interactions that will be included in the output.
   ///
-  /// * **false** means the scope is local and limited
-  /// to the enclosing [PageRoute]
-  /// * **true** expands the scope beyond a single page.
-  /// Every [Detector] with the same [areaID] on any page will become
-  /// part of a group observing the same area. Keep in mind that
-  /// each one of them needs to have the scope set to global.
-  final bool hasGlobalScope;
+  /// By default only the interactions from the enclosing [PageRoute] will
+  /// be included. If this option is set to `true` every
+  /// [Detector] with the same [areaID] across all pages
+  /// will be contributing to common heat map outputs.
+  /// Keep in mind that each one of them has to be set as cumulative.
+  final bool cumulative;
 
   /// Specifies the scroll axis of the custom scrollable [child] widget.
   final Axis? customScrollAxis;
@@ -83,16 +75,16 @@ class Detector extends StatefulWidget {
   ///
   /// {@template Detector.constructor}
   /// A non empty, unique [areaID] has to be provided.
-  /// The default scope is local.
+  /// By default the detector is not [cumulative].
   /// {@endtemplate}
   Detector({
     required Widget child,
     required String areaID,
-    bool hasGlobalScope = false,
+    bool cumulative = false,
   }) : this._(
           child: child,
           areaID: areaID,
-          hasGlobalScope: hasGlobalScope,
+          cumulative: cumulative,
         );
 
   /// Creates a detector observing a custom scrollable [child] widget tree
@@ -103,13 +95,13 @@ class Detector extends StatefulWidget {
   Detector.custom({
     required Widget child,
     required String areaID,
-    bool hasGlobalScope = false,
+    bool cumulative = false,
     Axis scrollAxis = Axis.vertical,
     double initialScrollOffset = 0,
   }) : this._(
           child: child,
           areaID: areaID,
-          hasGlobalScope: hasGlobalScope,
+          cumulative: cumulative,
           customScrollAxis: scrollAxis,
           customInitialOffset: initialScrollOffset,
         );
@@ -117,7 +109,7 @@ class Detector extends StatefulWidget {
   Detector._({
     required this.child,
     required this.areaID,
-    this.hasGlobalScope = false,
+    this.cumulative = false,
     this.customScrollAxis,
     this.customInitialOffset,
   }) {
@@ -144,7 +136,7 @@ class _DetectorState extends State<Detector> {
     _status = DetectorStatus(
       areaKey: GlobalKey(),
       areaID: widget.areaID,
-      hasGlobalScope: widget.hasGlobalScope,
+      cumulative: widget.cumulative,
       scrollStatus: widget._isScrollDetector
           ? ScrollingStatus(
               _getScrollAxis() ?? widget.customScrollAxis ?? Axis.vertical,

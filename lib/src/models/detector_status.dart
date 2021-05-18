@@ -13,8 +13,8 @@ class DetectorStatus {
   /// [Detector.areaID]
   final String areaID;
 
-  /// [Detector.hasGlobalScope]
-  final bool hasGlobalScope;
+  /// [Detector.cumulative]
+  final bool cumulative;
 
   /// Data used for scrollable [Session] processing
   final ScrollingStatus? scrollStatus;
@@ -26,7 +26,7 @@ class DetectorStatus {
   DetectorStatus({
     required this.areaKey,
     this.areaID = '',
-    this.hasGlobalScope = false,
+    this.cumulative = false,
     this.scrollStatus,
   });
 }

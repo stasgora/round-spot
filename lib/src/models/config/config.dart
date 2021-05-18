@@ -30,8 +30,8 @@ class Config extends Equatable {
 
   /// Holds the route names on which event collection is disabled.
   ///
-  /// This does not apply to areas marked as global
-  /// through [Detector.hasGlobalScope] flag.
+  /// This does not apply to areas marked as cumulative
+  /// through [Detector.cumulative] flag.
   Set<String> disabledRoutes;
 
   /// Specifies what output data forms should be generated.

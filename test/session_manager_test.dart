@@ -26,7 +26,7 @@ void main() {
         var area = 'area';
         var list = [
           EventDescriptor(event, detectorStatus(areaID: area)),
-          EventDescriptor.global(event),
+          EventDescriptor.screen(event),
         ];
         var sessions = processEvents(list);
         expect(sessions.first.events, equals([event]));
@@ -34,16 +34,19 @@ void main() {
       });
       test('events captured by global Detector are registered twice', () {
         var event = Event();
-        var global = 'global';
+        var area = 'cumulative';
         var enclosing = 'area';
         var list = [
-          EventDescriptor(event, detectorStatus(areaID: global, global: true)),
+          EventDescriptor(
+            event,
+            detectorStatus(areaID: area, cumulative: true),
+          ),
           EventDescriptor(event, detectorStatus(areaID: enclosing)),
-          EventDescriptor.global(event),
+          EventDescriptor.screen(event),
         ];
         var sessions = processEvents(list, count: 2);
         expect(sessions, hasLength(2));
-        expect(sessions.withAreaID(global), isNotNull);
+        expect(sessions.withAreaID(area), isNotNull);
         expect(sessions.withAreaID(enclosing), isNotNull);
       });
 

@@ -72,7 +72,7 @@ class SessionManager {
       endSessions();
       return;
     }
-    if (_currentPageDisabled && !status.hasGlobalScope) return;
+    if (_currentPageDisabled && !status.cumulative) return;
 
     var session = _recordEvent(event: event, status: status);
     _backgroundManager.onEvent(event.location, session, status.areaKey);
@@ -84,7 +84,7 @@ class SessionManager {
 
   Session _recordEvent({required Event event, required DetectorStatus status}) {
     var session = _getSession(status);
-    if (!status.hasGlobalScope) _processedEventIDs.add(event.id);
+    if (!status.cumulative) _processedEventIDs.add(event.id);
     session.addEvent(event);
     if (_config.maxSessionIdleTime != null) {
       _idleTimer?.cancel();
@@ -98,9 +98,9 @@ class SessionManager {
 
   Session _getSession(DetectorStatus status) {
     var sessionKey = status.areaID;
-    if (!status.hasGlobalScope) sessionKey += _currentPage!;
+    if (!status.cumulative) sessionKey += _currentPage!;
     return (_sessions[sessionKey] ??= Session(
-      page: status.hasGlobalScope ? null : _currentPage,
+      page: status.cumulative ? null : _currentPage,
       area: status.areaID,
       pixelRatio: _config.heatMapPixelRatio,
     ))

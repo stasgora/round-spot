@@ -26,7 +26,7 @@ class EventDescriptor {
   final DetectorStatus status;
 
   EventDescriptor(this.event, this.status);
-  EventDescriptor.global(this.event) : status = detectorStatus();
+  EventDescriptor.screen(this.event) : status = detectorStatus();
 }
 
 void setUpOnce() {
@@ -54,17 +54,17 @@ void setUpEveryTime() {
   });
 }
 
-DetectorStatus detectorStatus({String areaID = '', bool global = false}) {
+DetectorStatus detectorStatus({String areaID = '', bool cumulative = false}) {
   return DetectorStatus(
     areaKey: GlobalKey(),
     areaID: areaID,
-    hasGlobalScope: global,
+    cumulative: cumulative,
   );
 }
 
 List<Session> simpleProcessEvents(List<Event> events, {int count = 1}) {
   return processEvents(
-    events.map((e) => EventDescriptor.global(e)).toList(),
+    events.map((e) => EventDescriptor.screen(e)).toList(),
     count: count,
   );
 }

@@ -1,3 +1,7 @@
+# 0.4.0
+
+- **BREAKING**: `Detector.hasGlobalScope` renamed to `Detector.cumulative`
+
 # 0.3.3
 
 - **FIX**: interactions not cleared when heat map is generated
