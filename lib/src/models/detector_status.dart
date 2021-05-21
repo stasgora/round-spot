@@ -19,6 +19,9 @@ class DetectorStatus {
   /// Data used for scrollable [Session] processing
   final ScrollingStatus? scrollStatus;
 
+  /// Returns if this [Detector] is the automatic global one
+  bool get globalDetector => areaID == '';
+
   /// Returns the scroll [Offset] if there is any
   Offset get scrollOffset => scrollStatus?.offset ?? Offset.zero;
 

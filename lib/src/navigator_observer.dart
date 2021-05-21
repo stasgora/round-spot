@@ -23,8 +23,6 @@ class Observer extends RouteObserver<ModalRoute<dynamic>> {
   final _manager = S.get<SessionManager>();
   final _config = S.get<Config>();
 
-  final _logger = Logger('RoundSpot.Observer');
-
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
@@ -40,11 +38,8 @@ class Observer extends RouteObserver<ModalRoute<dynamic>> {
   void _onRouteOpened(Route<dynamic>? route) {
     PageStatus? status;
     if (route != null) {
-      if (route.settings.name == null) {
-        _logger.warning('Current route has no name set.');
-      }
       status = PageStatus(
-        name: route.settings.name ?? '${DateTime.now()}',
+        name: route.settings.name,
         disabled: _config.disabledRoutes.contains(route.settings.name),
         isPopup: route is PopupRoute,
       );

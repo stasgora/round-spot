@@ -72,6 +72,7 @@ class SessionManager {
       return;
     }
     if (_pageStatus!.disabled && !status.cumulative) return;
+    if (_pageStatus!.isPopup && status.globalDetector) return;
 
     var session = _recordEvent(event: event, status: status);
     _backgroundManager.onEvent(event.location, session, status.areaKey);
@@ -98,6 +99,12 @@ class SessionManager {
   Session _getSession(DetectorStatus status) {
     var sessionKey = status.areaID;
     if (!status.cumulative) sessionKey += _pageStatus!.name;
+    if (_pageStatus!.nameMissing &&
+        _sessions[sessionKey] == null &&
+        !status.cumulative &&
+        !_pageStatus!.isPopup) {
+      _logger.warning('Current page has no name set.');
+    }
     return (_sessions[sessionKey] ??= Session(
       page: status.cumulative ? null : _pageStatus!.name,
       area: status.areaID,

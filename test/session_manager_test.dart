@@ -67,6 +67,16 @@ void main() {
           var sessions = simpleProcessEvents([Event(id: 1)], count: 1);
           expect(sessions.first.events, hasLength(2));
         });
+        test('global detector events are discarded during open popups', () {
+          manager.onRouteOpened(PageStatus(name: 'popup', isPopup: true));
+          simpleProcessEvents([Event()], count: 0);
+        });
+        test('area detector events are processed during open popups', () {
+          manager.onRouteOpened(PageStatus(name: 'popup', isPopup: true));
+          processEvents([
+            EventDescriptor(Event(), detectorStatus(areaID: 'area')),
+          ]);
+        });
       });
     });
 

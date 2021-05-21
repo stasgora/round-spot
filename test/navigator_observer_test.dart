@@ -49,6 +49,11 @@ void main() {
       _observer.didPush(_createRoute(route, popup: true), null);
       _verifyRouteOpened(PageStatus(name: route, isPopup: true));
     });
+    test('handles unnamed pages', () {
+      var status = PageStatus();
+      expect(status.name, isNotEmpty);
+      expect(status.nameMissing, isTrue);
+    });
   });
 }
 

@@ -7,6 +7,9 @@ class PageStatus extends Equatable {
   /// Page name set from [RouteSettings.name]
   final String name;
 
+  /// Set if the name was missing on the [RouteSettings]
+  final bool nameMissing;
+
   /// Set if this page was disabled in [Config.disabledRoutes]
   final bool disabled;
 
@@ -14,8 +17,13 @@ class PageStatus extends Equatable {
   final bool isPopup;
 
   /// Construct a new page status
-  PageStatus({required this.name, this.disabled = false, this.isPopup = false});
+  PageStatus({
+    String? name,
+    this.disabled = false,
+    this.isPopup = false,
+  })  : name = name ?? '${DateTime.now()}',
+        nameMissing = name == null;
 
   @override
-  List<Object?> get props => [name, disabled, isPopup];
+  List<Object?> get props => [name, nameMissing, disabled, isPopup];
 }
