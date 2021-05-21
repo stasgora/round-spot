@@ -11,7 +11,7 @@ import '../utils/components.dart';
 /// Detects user interactions in the [child] widget tree.
 ///
 /// ## Scrollable widgets
-/// To correctly monitor interactions with any scrollable space a [Detector]
+/// To correctly monitor interactions with scrollable space a [Detector]
 /// has to be placed as a direct parent of that widget:
 /// ```dart
 /// round_spot.Detector(
@@ -27,6 +27,20 @@ import '../utils/components.dart';
 /// In case you are using a custom scrollable widget from an external package,
 /// and cannot put the [Detector] directly around one of the standard Flutter
 /// widgets, use the [Detector.custom()] constructor.
+///
+/// ### Popups & Dialogs
+/// To monitor interactions with a popup place a [Detector] around
+/// the widget inside the builder (remember to also provide the route name):
+/// ```dart
+/// showDialog(
+///   builder: (_) => round_spot.Detector(
+///     areaID: 'sample-dialog',
+///     child: SimpleDialog(title: Text('dialog')),
+///   ),
+///   routeSettings: RouteSettings(name: 'simple-dialog-route'),
+///   context: context,
+/// );
+/// ```
 ///
 /// ### Not supported / untested
 /// * Nested scroll views
