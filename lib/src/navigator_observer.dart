@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:logging/logging.dart';
 
 import 'components/session_manager.dart';
 import 'models/config/config.dart';
