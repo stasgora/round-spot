@@ -10,6 +10,7 @@ import 'package:round_spot/src/components/session_manager.dart';
 import 'package:round_spot/src/models/config/config.dart';
 import 'package:round_spot/src/models/detector_status.dart';
 import 'package:round_spot/src/models/event.dart';
+import 'package:round_spot/src/models/page_status.dart';
 import 'package:round_spot/src/models/session.dart';
 import 'package:round_spot/src/utils/components.dart';
 
@@ -50,7 +51,7 @@ void setUpEveryTime() {
     S.registerSingleton<Config>(Config());
 
     manager = SessionManager((_, __) {}, (_, __) {});
-    manager.onRouteOpened(settings: RouteSettings(name: ''));
+    manager.onRouteOpened(PageStatus(name: ''));
   });
 }
 

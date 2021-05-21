@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:round_spot/src/components/processors/graphical_processor.dart';
 import 'package:round_spot/src/components/background_manager.dart';
 import 'package:round_spot/src/models/event.dart';
+import 'package:round_spot/src/models/page_status.dart';
 import 'package:round_spot/src/utils/components.dart';
 
 import 'session_manager_utils.dart';
@@ -54,15 +55,15 @@ void main() {
         test('page route changes are registered', () {
           var page = 'other';
           registerEvent();
-          manager.onRouteOpened(settings: RouteSettings(name: page));
+          manager.onRouteOpened(PageStatus(name: page));
           var sessions = simpleProcessEvents([Event(id: 1)], count: 2);
           expectEventsByIDs(sessions.withPage()!.events, [0]);
           expectEventsByIDs(sessions.withPage(page)!.events, [1]);
         });
         test('session is continued once the page route is reopened', () {
           registerEvent();
-          manager.onRouteOpened(settings: RouteSettings(name: 'other'));
-          manager.onRouteOpened(settings: RouteSettings(name: ''));
+          manager.onRouteOpened(PageStatus(name: 'other'));
+          manager.onRouteOpened(PageStatus(name: ''));
           var sessions = simpleProcessEvents([Event(id: 1)], count: 1);
           expect(sessions.first.events, hasLength(2));
         });
@@ -71,7 +72,7 @@ void main() {
 
     group('Other events', () {
       test('events are ignored if no route is set', () {
-        manager.onRouteOpened();
+        manager.onRouteOpened(null);
         simpleProcessEvents([Event()], count: 0);
       });
       test('all sessions are ended when app goes into paused state', () {

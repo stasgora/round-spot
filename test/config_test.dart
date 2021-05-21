@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fake_async/fake_async.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json_schema2/json_schema2.dart';
 import 'package:mocktail/mocktail.dart';
@@ -46,12 +45,6 @@ void main() {
       setUpOnce();
       setUpEveryTime();
 
-      test('events from disabled routes are ignored', () {
-        var route = 'disabled-route';
-        S.get<Config>().disabledRoutes = {route};
-        manager.onRouteOpened(settings: RouteSettings(name: route));
-        simpleProcessEvents([Event()], count: 0);
-      });
       test('disabling the library ends all sessions', () {
         registerEvent();
         S.get<Config>().enabled = false;

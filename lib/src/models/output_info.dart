@@ -16,4 +16,7 @@ abstract class OutputInfo {
 
   /// Timestamp of the last event included in the heat map (in ms)
   int get endTime;
+
+  /// Set if this output was was captured from a [PopupRoute]
+  bool get isPopup;
 }

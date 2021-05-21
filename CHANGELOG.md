@@ -1,6 +1,8 @@
 # 0.4.0
 
+- **NEW**: support for popups
 - **BREAKING**: `Detector.hasGlobalScope` renamed to `Detector.cumulative`
+- **FIX**: popup interactions included in outputs from below them
 
 # 0.3.3
 

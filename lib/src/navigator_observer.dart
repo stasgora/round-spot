@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 
 import 'components/session_manager.dart';
+import 'models/config/config.dart';
+import 'models/page_status.dart';
 import 'utils/components.dart';
 
 /// Keeps track of [Navigator] [PageRoute] changes.
@@ -17,8 +19,9 @@ import 'utils/components.dart';
 ///
 /// If the current route has no name set a unique
 /// identifier will be assigned in its place.
-class Observer extends RouteObserver<PageRoute<dynamic>> {
+class Observer extends RouteObserver<ModalRoute<dynamic>> {
   final _manager = S.get<SessionManager>();
+  final _config = S.get<Config>();
 
   final _logger = Logger('RoundSpot.Observer');
 
@@ -35,12 +38,17 @@ class Observer extends RouteObserver<PageRoute<dynamic>> {
   }
 
   void _onRouteOpened(Route<dynamic>? route) {
+    PageStatus? status;
     if (route != null) {
-      if (route is! PageRoute) return;
       if (route.settings.name == null) {
-        _logger.warning('Current PageRoute has no name set.');
+        _logger.warning('Current route has no name set.');
       }
+      status = PageStatus(
+        name: route.settings.name ?? '${DateTime.now()}',
+        disabled: _config.disabledRoutes.contains(route.settings.name),
+        isPopup: route is PopupRoute,
+      );
     }
-    _manager.onRouteOpened(settings: route?.settings);
+    _manager.onRouteOpened(status);
   }
 }

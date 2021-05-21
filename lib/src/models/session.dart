@@ -21,6 +21,9 @@ class Session implements OutputInfo {
   @override
   int endTime;
 
+  @override
+  bool isPopup;
+
   final List<Event> _events = [];
 
   /// Events registered in this [Session]
@@ -53,6 +56,7 @@ class Session implements OutputInfo {
     this.page,
     required this.area,
     this.pixelRatio = 1,
+    this.isPopup = false,
   })  : startTime = getTimestamp(),
         endTime = getTimestamp();
 

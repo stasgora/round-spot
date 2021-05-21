@@ -8,6 +8,7 @@ import 'package:logging/logging.dart';
 import '../../round_spot.dart';
 import '../models/detector_status.dart';
 import '../models/event.dart';
+import '../models/page_status.dart';
 import '../models/session.dart';
 import '../utils/components.dart';
 import 'background_manager.dart';
@@ -24,14 +25,16 @@ class SessionManager {
 
   final Map<String, Session> _sessions = {};
   final Set<int> _processedEventIDs = {};
-  String? _currentPage;
-  bool _currentPageDisabled = false;
   Timer? _idleTimer;
+
+  /// Current route status
+  PageStatus? _pageStatus;
 
   /// Creates a [SessionManager] that manages the data flow
   SessionManager(
-      OutputCallback? _heatMapCallback, OutputCallback? _rawDataCallback)
-      : _callbacks = {
+    OutputCallback? _heatMapCallback,
+    OutputCallback? _rawDataCallback,
+  ) : _callbacks = {
           OutputType.graphicalRender: _heatMapCallback,
           OutputType.rawData: _rawDataCallback,
         };
@@ -48,21 +51,17 @@ class SessionManager {
     if (state == AppLifecycleState.paused) endSessions();
   }
 
-  /// Handles application [PageRoute] changes
-  void onRouteOpened({RouteSettings? settings}) {
-    if (settings == null) {
-      _currentPage = null;
-      return;
-    }
-    _currentPageDisabled = _config.disabledRoutes.contains(settings.name);
-    _currentPage = settings.name ?? '${DateTime.now()}';
+  /// Handles processing user interactions
+  void onRouteOpened(PageStatus? status) {
+    _pageStatus = status;
+    _logger.finer('${status?.name} route opened');
   }
 
   /// Handles processing user interactions
   void onEvent({required Event event, required DetectorStatus status}) async {
-    if (_currentPage == null) {
+    if (_pageStatus == null) {
       _logger.warning(
-        'The current page route was not detected. '
+        'Current page route was not detected. '
         'Make sure the navigation Observer is setup correctly.',
       );
       return;
@@ -72,7 +71,7 @@ class SessionManager {
       endSessions();
       return;
     }
-    if (_currentPageDisabled && !status.cumulative) return;
+    if (_pageStatus!.disabled && !status.cumulative) return;
 
     var session = _recordEvent(event: event, status: status);
     _backgroundManager.onEvent(event.location, session, status.areaKey);
@@ -98,11 +97,12 @@ class SessionManager {
 
   Session _getSession(DetectorStatus status) {
     var sessionKey = status.areaID;
-    if (!status.cumulative) sessionKey += _currentPage!;
+    if (!status.cumulative) sessionKey += _pageStatus!.name;
     return (_sessions[sessionKey] ??= Session(
-      page: status.cumulative ? null : _currentPage,
+      page: status.cumulative ? null : _pageStatus!.name,
       area: status.areaID,
       pixelRatio: _config.heatMapPixelRatio,
+      isPopup: _pageStatus!.isPopup,
     ))
       ..scrollStatus = status.scrollStatus;
   }
