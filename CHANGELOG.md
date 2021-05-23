@@ -4,6 +4,7 @@
 - **BREAKING**: `Detector.hasGlobalScope` renamed to `Detector.cumulative`
 - **FIX**: popup interactions included in outputs from below them
 - **FIX**: background could be captured before the route transition animation has ended
+- **NEW**: improved screenshot taking policy in regards to screen loading period
 
 # 0.3.3
 

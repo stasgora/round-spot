@@ -31,15 +31,14 @@ class BackgroundManager {
 
   /// Determines if its necessary to take a screenshot when event is recorded
   void onEvent(Offset event, Session session, GlobalKey areaKey) {
-    if (session.background == null || _eventOutsideScreenshot(event, session)) {
+    var baseCheck = session.background == null || !session.scrollable;
+    if (baseCheck || _eventOutsideScreenshot(event, session)) {
       _takeScreenshot(session, areaKey);
     }
   }
 
   bool _eventOutsideScreenshot(Offset event, Session session) {
-    if (!session.scrollable) return false;
-    var offset = session.backgroundOffset;
-    return !(offset & session.bgSize!).contains(event);
+    return !(session.backgroundOffset & session.bgSize!).contains(event);
   }
 
   /// Captures a screenshot from a [RepaintBoundary] using its [GlobalKey]
@@ -47,7 +46,6 @@ class BackgroundManager {
   /// replacing the part that's underneath it
   void _takeScreenshot(Session session, GlobalKey areaKey) async {
     if (!session.scrollable) {
-      if (session.background != null) return;
       session.background = await _captureImage(areaKey, session.pixelRatio);
       return;
     }
