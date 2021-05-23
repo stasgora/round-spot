@@ -39,6 +39,7 @@ void setUpOnce() {
 
     registerFallbackValue<Session>(Session(page: '', area: ''));
     registerFallbackValue<GlobalKey>(GlobalKey());
+    registerFallbackValue<Offset>(Offset.zero);
   });
 }
 

@@ -1,3 +1,4 @@
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -77,6 +78,23 @@ void main() {
             EventDescriptor(Event(), detectorStatus(areaID: 'area')),
           ]);
         });
+        test(
+          'waits for the page transition before calling background manager',
+          () {
+            return FakeAsync().run((self) {
+              var duration = Duration(seconds: 2);
+              manager.onRouteOpened(PageStatus(
+                name: 'page',
+                transitionDuration: duration,
+              ));
+              simpleProcessEvents([Event()]);
+              var bgManager = S.get<BackgroundManager>();
+              verifyNever(() => bgManager.onEvent(any(), any(), any()));
+              self.elapse(duration);
+              verify(() => bgManager.onEvent(any(), any(), any())).called(1);
+            });
+          },
+        );
       });
     });
 
@@ -90,11 +108,6 @@ void main() {
         manager.onLifecycleStateChanged(AppLifecycleState.paused);
         verify(() => S.get<GraphicalProcessor>().process(any())).called(1);
       });
-    });
-
-    test('scroll events are forwarded to the Background Manager', () {
-      manager.onSessionScroll(detectorStatus());
-      verify(() => S.get<BackgroundManager>().onScroll(any(), any())).called(1);
     });
   });
 }

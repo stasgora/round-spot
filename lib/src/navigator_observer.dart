@@ -25,22 +25,36 @@ class Observer extends RouteObserver<ModalRoute<dynamic>> {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
-    _onRouteOpened(route);
+    _onRouteOpened(route, _getLongestTransition(route, previousRoute));
   }
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPop(route, previousRoute);
-    _onRouteOpened(previousRoute);
+    _onRouteOpened(previousRoute, _getLongestTransition(route, previousRoute));
   }
 
-  void _onRouteOpened(Route<dynamic>? route) {
+  Duration _getLongestTransition(
+    Route<dynamic> primary,
+    Route<dynamic>? secondary,
+  ) {
+    var duration = Duration.zero;
+    if (primary is TransitionRoute) duration = primary.transitionDuration;
+    if (secondary != null && secondary is TransitionRoute) {
+      duration += secondary.reverseTransitionDuration;
+    }
+    return duration;
+  }
+
+  void _onRouteOpened(Route<dynamic>? route, Duration transitionDuration) {
     PageStatus? status;
     if (route != null) {
+      if (route is! ModalRoute) return;
       status = PageStatus(
         name: route.settings.name,
         disabled: _config.disabledRoutes.contains(route.settings.name),
         isPopup: route is PopupRoute,
+        transitionDuration: transitionDuration,
       );
     }
     _manager.onRouteOpened(status);

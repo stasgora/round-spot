@@ -54,11 +54,40 @@ void main() {
       expect(status.name, isNotEmpty);
       expect(status.nameMissing, isTrue);
     });
+    test('sets up the page transition future', () {
+      var main = Duration(seconds: 1);
+      var reverse = Duration(seconds: 2);
+      _observer.didPush(
+        _createAnimatedRoute('1', mainDuration: main),
+        _createAnimatedRoute('2', reverseDuration: reverse),
+      );
+      var page = _verifyRouteOpened(PageStatus(name: '1'));
+      expect(page.transitionDuration, equals(main + reverse));
+    });
   });
 }
 
-void _verifyRouteOpened(PageStatus page) {
-  verify(() => S.get<SessionManager>().onRouteOpened(page)).called(1);
+PageStatus _verifyRouteOpened(PageStatus page) {
+  var args = verify(() {
+    S.get<SessionManager>().onRouteOpened(captureAny());
+  })
+    ..called(1);
+  var actual = args.captured.first as PageStatus;
+  expect(actual, equals(page));
+  return actual;
+}
+
+ModalRoute _createAnimatedRoute(
+  String name, {
+  Duration mainDuration = Duration.zero,
+  Duration reverseDuration = Duration.zero,
+}) {
+  return PageRouteBuilder(
+    pageBuilder: (_, __, ___) => Container(),
+    transitionDuration: mainDuration,
+    reverseTransitionDuration: reverseDuration,
+    settings: RouteSettings(name: name),
+  );
 }
 
 ModalRoute _createRoute(String name, {bool popup = false}) {

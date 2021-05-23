@@ -75,12 +75,15 @@ class SessionManager {
     if (_pageStatus!.isPopup && status.globalDetector) return;
 
     var session = _recordEvent(event: event, status: status);
+    await _pageStatus!.transitionEnded;
     _backgroundManager.onEvent(event.location, session, status.areaKey);
   }
 
   /// Handles the scroll event of a [Session]
-  void onSessionScroll(DetectorStatus status) =>
-      _backgroundManager.onScroll(_getSession(status), status.areaKey);
+  void onSessionScroll(DetectorStatus status) async {
+    await _pageStatus!.transitionEnded;
+    _backgroundManager.onScroll(_getSession(status), status.areaKey);
+  }
 
   Session _recordEvent({required Event event, required DetectorStatus status}) {
     var session = _getSession(status);

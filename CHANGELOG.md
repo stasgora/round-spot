@@ -3,6 +3,7 @@
 - **NEW**: support for popups
 - **BREAKING**: `Detector.hasGlobalScope` renamed to `Detector.cumulative`
 - **FIX**: popup interactions included in outputs from below them
+- **FIX**: background could be captured before the route transition animation has ended
 
 # 0.3.3
 
