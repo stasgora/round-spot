@@ -1,10 +1,11 @@
 # 0.4.0
 
-- **NEW**: support for popups
+- **NEW**: support for **popups** 💬
+  - **FIX**: popup interactions included in outputs from below them
 - **BREAKING**: `Detector.hasGlobalScope` renamed to `Detector.cumulative`
-- **FIX**: popup interactions included in outputs from below them
-- **FIX**: background could be captured before the route transition animation has ended
-- **NEW**: improved screenshot taking policy in regards to screen loading period
+- **NEW**: background screenshot taking improvements:
+  - **FIX**: background could be captured before the route transition animation has ended
+  - Improved screenshot taking policy in regard to the screen loading period
 
 # 0.3.3
 
