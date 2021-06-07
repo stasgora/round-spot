@@ -19,4 +19,7 @@ abstract class OutputInfo {
 
   /// Set if this output was was captured from a [PopupRoute]
   bool get isPopup;
+
+  /// Number of events included in heat map
+  int get eventCount;
 }

@@ -22,13 +22,18 @@ import '../utils/components.dart';
 /// )
 /// ```
 ///
+/// ### Not supported / untested
+/// * Nested scroll views
+/// * Widgets changing their size
+/// * Directly using slivers
+///
 /// Widgets provided by Flutter, like [ListView], [SingleChildScrollView],
 /// [GridView] or [CustomScrollView] are recognised automatically.
 /// In case you are using a custom scrollable widget from an external package,
 /// and cannot put the [Detector] directly around one of the standard Flutter
 /// widgets, use the [Detector.custom()] constructor.
 ///
-/// ### Popups & Dialogs
+/// ## Popups & Dialogs
 /// To monitor interactions with a popup place a [Detector] around
 /// the widget inside the builder (remember to also provide the route name):
 /// ```dart
@@ -41,11 +46,6 @@ import '../utils/components.dart';
 ///   context: context,
 /// );
 /// ```
-///
-/// ### Not supported / untested
-/// * Nested scroll views
-/// * Widgets changing their size
-/// * Directly using slivers
 ///
 /// ## Cumulative detectors
 /// This option is designed to allow for capturing the overall usage

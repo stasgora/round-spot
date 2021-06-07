@@ -24,6 +24,9 @@ class Session implements OutputInfo {
   @override
   bool isPopup;
 
+  @override
+  int get eventCount => _events.length;
+
   final List<Event> _events = [];
 
   /// Events registered in this [Session]
