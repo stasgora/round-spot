@@ -10,7 +10,7 @@ void main() {
     config: round_spot.Config(
       uiElementSize: 12,
     ),
-    heatMapCallback: (data, info) async {
+	  localRenderCallback: (data, info) async {
       var path = (await getApplicationDocumentsDirectory()).path;
       File('$path/${info.page}_${info.area}.png').writeAsBytes(data);
     },

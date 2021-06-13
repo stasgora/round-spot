@@ -4,9 +4,7 @@
   "disabledRoutes": [
     "some-unimportant-route"
   ],
-  "outputTypes": [
-    "graphicalRender"
-  ],
+  "outputType": "localRender",
   "session": {
     "minEventCount": 1,
     "maxIdleTime": 60

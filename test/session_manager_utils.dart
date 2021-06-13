@@ -1,11 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:collection/collection.dart';
 
 import 'package:round_spot/src/components/background_manager.dart';
-import 'package:round_spot/src/components/processors/graphical_processor.dart';
-import 'package:round_spot/src/components/processors/raw_data_processor.dart';
+import 'package:round_spot/src/components/processors/local_processor.dart';
+import 'package:round_spot/src/components/processors/data_serializer.dart';
 import 'package:round_spot/src/components/session_manager.dart';
 import 'package:round_spot/src/models/config/config.dart';
 import 'package:round_spot/src/models/detector_status.dart';
@@ -14,11 +16,11 @@ import 'package:round_spot/src/models/page_status.dart';
 import 'package:round_spot/src/models/session.dart';
 import 'package:round_spot/src/utils/components.dart';
 
-class MockBackgroundManager extends Mock implements BackgroundManager {}
+class BackgroundManagerMock extends Mock implements BackgroundManager {}
 
-class MockGraphicalProcessor extends Mock implements GraphicalProcessor {}
+class LocalProcessorMock extends Mock implements LocalProcessor {}
 
-class MockRawDataProcessor extends Mock implements RawDataProcessor {}
+class DataSerializerMock extends Mock implements DataSerializer {}
 
 late SessionManager manager;
 
@@ -32,9 +34,9 @@ class EventDescriptor {
 
 void setUpOnce() {
   setUpAll(() {
-    S.registerSingleton<BackgroundManager>(MockBackgroundManager());
-    S.registerSingleton<GraphicalProcessor>(MockGraphicalProcessor());
-    S.registerSingleton<RawDataProcessor>(MockRawDataProcessor());
+    S.registerSingleton<BackgroundManager>(BackgroundManagerMock());
+    S.registerSingleton<LocalProcessor>(LocalProcessorMock());
+    S.registerSingleton<DataSerializer>(DataSerializerMock());
     S.registerSingleton<Config>(Config());
 
     registerFallbackValue<Session>(Session(page: '', area: ''));
@@ -46,13 +48,16 @@ void setUpOnce() {
 void setUpEveryTime() {
   setUp(() {
     reset(S.get<BackgroundManager>());
-    reset(S.get<GraphicalProcessor>());
-    reset(S.get<RawDataProcessor>());
+    reset(S.get<LocalProcessor>());
+    reset(S.get<DataSerializer>());
     S.unregister<Config>();
     S.registerSingleton<Config>(Config());
 
-    manager = SessionManager((_, __) {}, (_, __) {});
+    manager = SessionManager((_, __) {}, (_) {});
     manager.onRouteOpened(PageStatus(name: ''));
+
+    when(() => S.get<DataSerializer>().process(any()))
+        .thenAnswer((_) => Future.value(Uint8List(0)));
   });
 }
 
@@ -77,11 +82,11 @@ List<Session> processEvents(List<EventDescriptor> events, {int count = 1}) {
   }
   manager.endSessions();
   if (count == 0) {
-    verifyNever(() => S.get<GraphicalProcessor>().process(any()));
+    verifyNever(() => S.get<LocalProcessor>().process(any()));
     return [];
   }
   var args = verify(() {
-    return S.get<GraphicalProcessor>().process(captureAny());
+    return S.get<LocalProcessor>().process(captureAny());
   })
     ..called(equals(count));
   return args.captured.map((e) => e as Session).toList();

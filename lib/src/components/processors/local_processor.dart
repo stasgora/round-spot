@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -5,18 +6,21 @@ import 'dart:ui';
 import 'package:flutter/painting.dart';
 import 'package:logging/logging.dart';
 
+import '../../models/config/config.dart';
 import '../../models/config/heat_map_style.dart';
 import '../../models/event.dart';
 import '../../models/session.dart';
+import '../../utils/components.dart';
 import '../../utils/utils.dart';
-import '../heat_map.dart';
-import 'session_processor.dart';
+import '../event_processor.dart';
 
 /// Processes sessions into heat maps
-class GraphicalProcessor extends SessionProcessor {
+class LocalProcessor {
   final _logger = Logger('RoundSpot.GraphicalProcessor');
 
-  @override
+  final _config = S.get<Config>();
+
+  /// Processes session locally into a heat map
   Future<Uint8List?> process(Session session) async {
     if (session.background == null) {
       _logger.warning('Got session with no image attached, skipping.');
@@ -28,7 +32,7 @@ class GraphicalProcessor extends SessionProcessor {
     var rect = _getClippedImageRect(session);
     canvas.drawImageRect(image, rect, Offset.zero & rect.size, Paint());
 
-    var alpha = (config.heatMapTransparency * 255).toInt();
+    var alpha = (_config.heatMapTransparency * 255).toInt();
     canvas.saveLayer(null, Paint()..color = Color.fromARGB(alpha, 0, 0, 0));
     _drawHeatMap(canvas, session);
     canvas.restore();
@@ -38,7 +42,7 @@ class GraphicalProcessor extends SessionProcessor {
       rect.size.width.toInt(),
       rect.size.height.toInt(),
     );
-    return exportHeatMap(sessionImage);
+    return imageToBytes(sessionImage);
   }
 
   Rect _getClippedImageRect(Session session) {
@@ -70,14 +74,14 @@ class GraphicalProcessor extends SessionProcessor {
   }
 
   void _drawHeatMap(Canvas canvas, Session session) {
-    var clusterScale = config.uiElementSize * session.pixelRatio;
+    var clusterScale = _config.uiElementSize * session.pixelRatio;
     transform(Offset o) => (o - session.backgroundOffset) * session.pixelRatio;
     var events = session.events.map((e) => transform(e.location)).toList();
-    var heatMap = HeatMap(events: events, pointProximity: clusterScale);
+    var heatMap = EventProcessor(events: events, pointProximity: clusterScale);
 
     int layerCount() {
       if (heatMap.largestCluster == 1) return 1;
-      return heatMap.largestCluster * config.heatMapStyle.multiplier;
+      return heatMap.largestCluster * _config.heatMapStyle.multiplier;
     }
 
     double calcFraction(int i) => (i - 1) / max((layerCount() - 1), 1);
@@ -85,7 +89,7 @@ class GraphicalProcessor extends SessionProcessor {
     for (var i = 1; i <= layerCount(); i++) {
       var fraction = calcFraction(i);
       var paint = Paint()..color = _getSpectrumColor(fraction);
-      if (config.heatMapStyle == HeatMapStyle.smooth) {
+      if (_config.heatMapStyle == HeatMapStyle.smooth) {
         paint.maskFilter =
             MaskFilter.blur(BlurStyle.normal, calcBlur(1 - fraction));
       }

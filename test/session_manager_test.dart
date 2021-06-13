@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-import 'package:round_spot/src/components/processors/graphical_processor.dart';
+import 'package:round_spot/src/components/processors/local_processor.dart';
 import 'package:round_spot/src/components/background_manager.dart';
 import 'package:round_spot/src/models/event.dart';
 import 'package:round_spot/src/models/page_status.dart';
@@ -106,7 +106,7 @@ void main() {
       test('all sessions are ended when app goes into paused state', () {
         registerEvent();
         manager.onLifecycleStateChanged(AppLifecycleState.paused);
-        verify(() => S.get<GraphicalProcessor>().process(any())).called(1);
+        verify(() => S.get<LocalProcessor>().process(any())).called(1);
       });
     });
   });

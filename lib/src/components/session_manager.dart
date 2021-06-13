@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 
@@ -12,9 +11,8 @@ import '../models/page_status.dart';
 import '../models/session.dart';
 import '../utils/components.dart';
 import 'background_manager.dart';
-import 'processors/graphical_processor.dart';
-import 'processors/raw_data_processor.dart';
-import 'processors/session_processor.dart';
+import 'processors/data_serializer.dart';
+import 'processors/local_processor.dart';
 
 /// Coordinates and manages data gathering, processing and reporting.
 class SessionManager {
@@ -32,19 +30,15 @@ class SessionManager {
 
   /// Creates a [SessionManager] that manages the data flow
   SessionManager(
-    OutputCallback? _heatMapCallback,
-    OutputCallback? _rawDataCallback,
-  ) : _callbacks = {
-          OutputType.graphicalRender: _heatMapCallback,
-          OutputType.rawData: _rawDataCallback,
-        };
+    this._localRenderCallback,
+    this._dataCallback,
+  );
 
-  final Map<OutputType, SessionProcessor> _processors = {
-    OutputType.graphicalRender: S.get<GraphicalProcessor>(),
-    OutputType.rawData: S.get<RawDataProcessor>()
-  };
+  final _dataSerializer = S.get<DataSerializer>();
+  final _localProcessor = S.get<LocalProcessor>();
 
-  final Map<OutputType, OutputCallback?> _callbacks;
+  final LocalRenderCallback? _localRenderCallback;
+  final DataCallback? _dataCallback;
 
   /// Handles application lifecycle state changes
   void onLifecycleStateChanged(AppLifecycleState state) {
@@ -119,35 +113,40 @@ class SessionManager {
 
   /// Triggers the session processing
   @visibleForTesting
-  void endSessions() {
-    bool skipSession(Session session) =>
-        session.events.length < _config.minSessionEventCount;
-    for (var key in _sessions.keys) {
-      if (!skipSession(_sessions[key]!)) _exportSession(key);
+  void endSessions() async {
+    var dataOutput = _config.outputType == OutputType.data;
+    var minEventCount = dataOutput ? 1 : _config.minSessionEventCount;
+    var sessions = _closeSessionsWith(minEventCount);
+    if (sessions.isEmpty) return;
+    if ((dataOutput ? _dataCallback : _localRenderCallback) == null) {
+      _logger.warning('Output callback is not set, no data will be returned.');
+      return;
     }
-    _sessions.removeWhere((key, session) => !skipSession(session));
+    if (dataOutput) {
+      _dataCallback!(await _dataSerializer.process(sessions));
+    } else {
+      _render(sessions);
+    }
   }
 
-  void _exportSession(String key) {
-    if (!_sessions.containsKey(key)) return;
-    for (var type in _config.outputTypes) {
-      var name = EnumToString.convertToString(type, camelCase: true);
+  void _render(Iterable<Session> sessions) {
+    for (var session in sessions) {
       runZonedGuarded(
         () async {
-          if (_callbacks[type] == null) {
-            _logger.warning(
-              'Requested $name output but the callback is not set, skipping.',
-            );
-            return;
-          }
-          var session = _sessions[key]!;
-          var output = await _processors[type]!.process(session);
+          var output = await _localProcessor.process(session);
           if (output == null) return;
-          _callbacks[type]!(output, session);
+          _localRenderCallback!(output, session);
         },
         (e, stackTrace) => _logger.severe(
-            'Error occurred while generating $name', e, stackTrace),
+            'Error occurred while processing locally', e, stackTrace),
       );
     }
+  }
+
+  Iterable<Session> _closeSessionsWith(int minEventCount) {
+    bool close(Session session) => session.eventCount >= minEventCount;
+    var closed = _sessions.values.where(close).toList();
+    _sessions.removeWhere((_, session) => close(session));
+    return closed;
   }
 }

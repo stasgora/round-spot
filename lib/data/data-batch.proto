@@ -1,0 +1,40 @@
+syntax = "proto3";
+package round_spot;
+
+message Coordinate {
+  float x = 1;
+  float y = 2;
+}
+
+message EventRecord {
+  Coordinate coordinate = 1;
+  int64 time = 2;
+}
+
+enum Axis {
+  VERTICAL = 0;
+  HORIZONTAL = 1;
+}
+
+message BackgroundInfo {
+  double offset = 1;
+  Axis axis = 2;
+  Coordinate scroll_extent = 3;
+  double viewport_size = 4;
+}
+
+message DataRecord {
+  string page = 1;
+  string area = 2;
+  bool is_popup = 3;
+  bytes background = 4;
+  repeated EventRecord events = 5;
+
+  int64 start_time = 6;
+  int64 end_time = 7;
+  BackgroundInfo bg_info = 8;
+}
+
+message DataBatch {
+  repeated DataRecord records = 1;
+}

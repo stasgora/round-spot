@@ -6,8 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:json_schema2/json_schema2.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:round_spot/round_spot.dart';
-import 'package:round_spot/src/components/processors/graphical_processor.dart';
-import 'package:round_spot/src/components/processors/raw_data_processor.dart';
+import 'package:round_spot/src/components/processors/local_processor.dart';
+import 'package:round_spot/src/components/processors/data_serializer.dart';
 import 'package:round_spot/src/models/config/config.dart';
 import 'package:round_spot/src/models/event.dart';
 import 'package:round_spot/src/utils/components.dart';
@@ -20,7 +20,7 @@ final Config _config = Config(
   enabled: true,
   uiElementSize: 10,
   disabledRoutes: {'some-unimportant-route'},
-  outputTypes: {OutputType.graphicalRender},
+  outputType: OutputType.localRender,
   minSessionEventCount: 1,
   maxSessionIdleTime: 60,
   heatMapStyle: HeatMapStyle.smooth,
@@ -50,7 +50,7 @@ void main() {
         S.get<Config>().enabled = false;
         // TODO remove once changes are being detected
         registerEvent(event: Event(id: 1));
-        verify(() => S.get<GraphicalProcessor>().process(any())).called(1);
+        verify(() => S.get<LocalProcessor>().process(any())).called(1);
       });
       test('events are ignored if the library is disabled', () {
         S.get<Config>().enabled = false;
@@ -61,9 +61,9 @@ void main() {
         S.get<Config>().maxSessionIdleTime = idleTime;
         return FakeAsync().run((self) {
           registerEvent();
-          verifyNever(() => S.get<GraphicalProcessor>().process(any()));
+          verifyNever(() => S.get<LocalProcessor>().process(any()));
           self.elapse(Duration(seconds: idleTime));
-          verify(() => S.get<GraphicalProcessor>().process(any())).called(1);
+          verify(() => S.get<LocalProcessor>().process(any())).called(1);
         });
       });
       test('minimum event count filters ended sessions', () {
@@ -72,9 +72,9 @@ void main() {
         simpleProcessEvents([Event(id: 1)], count: 1);
       });
       test('output types determine the invoked processors', () {
-        S.get<Config>().outputTypes = {OutputType.rawData};
+        S.get<Config>().outputType = OutputType.data;
         simpleProcessEvents([Event()], count: 0);
-        verify(() => S.get<RawDataProcessor>().process(any())).called(1);
+        verify(() => S.get<DataSerializer>().process(any())).called(1);
       });
     });
   });

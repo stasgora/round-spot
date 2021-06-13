@@ -22,7 +22,7 @@
 /// Provide the callbacks for saving the processed output:
 /// ```dart
 /// round_spot.initialize(
-///   heatMapCallback: (data, info) => sendHeatMapImage(data)
+///   localRenderCallback: (data, info) => sendHeatMapImage(data)
 /// )
 /// ```
 /// Use [Config] to make the tool better fit your needs:

@@ -10,17 +10,22 @@ import 'utils/components.dart';
 import 'widgets/detector.dart';
 import 'widgets/lifecycle_observer.dart';
 
-/// Signature for the [initialize] data output callbacks.
+/// Signature for the local render output callback.
 ///
 /// Provides the [data] along with some additional [info] about it.
-typedef OutputCallback = void Function(Uint8List data, OutputInfo info);
+typedef LocalRenderCallback = void Function(Uint8List data, OutputInfo info);
+
+/// Signature for the data output callback.
+///
+/// Provides the serialized [data] to be processed later.
+typedef DataCallback = void Function(Uint8List data);
 
 /// Initializes the _Round Spot_ library.
 ///
 /// Takes a [child] widget, an optional [config],
 /// a [loggingLevel] which defaults to [LogLevel.off]
-/// and output callbacks ([heatMapCallback] and [rawDataCallback])
-/// that must be set depending on the [Config.outputTypes] requested.
+/// and output callbacks ([localRenderCallback] and [dataCallback])
+/// that must be set depending on the [Config.outputType] requested.
 ///
 /// Should be invoked in `main()` or otherwise wrap the [MaterialApp] widget:
 /// ```dart
@@ -35,11 +40,11 @@ Widget initialize({
   required Widget child,
   Config? config,
   LogLevel loggingLevel = LogLevel.off,
-  OutputCallback? heatMapCallback,
-  OutputCallback? rawDataCallback,
+  LocalRenderCallback? localRenderCallback,
+  DataCallback? dataCallback,
 }) {
   _initializeLogger(loggingLevel);
-  initializeComponents(config, heatMapCallback, rawDataCallback);
+  initializeComponents(config, localRenderCallback, dataCallback);
   return LifecycleObserver(child: Detector(areaID: '', child: child));
 }
 

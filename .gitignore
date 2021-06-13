@@ -1,3 +1,6 @@
+lib/data/**
+!lib/data/data-batch.proto
+
 # Miscellaneous
 *.class
 *.log

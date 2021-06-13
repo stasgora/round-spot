@@ -43,7 +43,7 @@ MaterialApp(
 Provide the callbacks for saving the processed output:
 ```dart
 round_spot.initialize(
-  heatMapCallback: (data, info) => sendHeatMapImage(data)
+  localRenderCallback: (data, info) => sendHeatMapImage(data)
 )
 ```
 Configure the tool to better fit your needs:

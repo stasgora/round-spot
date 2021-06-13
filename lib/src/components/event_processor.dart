@@ -11,7 +11,7 @@ import '../models/session.dart';
 typedef ScaleFunction = double Function(double level, double scaleFactor);
 
 /// Processes touch events into drawable path layers using clustering
-class HeatMap {
+class EventProcessor {
   /// [Config.uiElementSize]
   final double pointProximity;
 
@@ -29,8 +29,8 @@ class HeatMap {
   /// Size of the smallest cluster in this [Session]
   late int smallestCluster;
 
-  /// Creates a [HeatMap] that processes events into paths
-  HeatMap({
+  /// Creates a [EventProcessor] that processes events into paths
+  EventProcessor({
     required this.events,
     required this.pointProximity,
     this.clusterScale = 0.5,

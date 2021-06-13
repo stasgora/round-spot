@@ -1,7 +1,6 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../utils/utils.dart';
 import '../../widgets/detector.dart';
 import 'heat_map_style.dart';
 import 'output_type.dart';
@@ -34,12 +33,12 @@ class Config extends Equatable {
   /// through [Detector.cumulative] flag.
   Set<String> disabledRoutes;
 
-  /// Specifies what output data forms should be generated.
+  /// Specifies what output data form should be generated.
   ///
-  /// This corresponds to the `heatMapCallback` and
-  /// `rawDataCallback` passed during [initialize()].
-  /// The default value contains [OutputType.graphicalRender].
-  Set<OutputType> outputTypes;
+  /// This corresponds to the `localRenderCallback` and
+  /// `dataCallback` passed during [initialize()].
+  /// The default value is [OutputType.localRender].
+  OutputType outputType;
 
   // Session
 
@@ -51,6 +50,7 @@ class Config extends Equatable {
 
   /// Sets the minimum event count for a session to be closed.
   ///
+  /// This only applies when using the [OutputType.localRender] output.
   /// It's set to 1 by default which is the minimum supported value.
   int minSessionEventCount;
 
@@ -84,7 +84,7 @@ class Config extends Equatable {
     Set<String>? disabledRoutes,
     this.maxSessionIdleTime,
     int? minSessionEventCount,
-    Set<OutputType>? outputTypes,
+    OutputType? outputType,
     HeatMapStyle? heatMapStyle,
     double? heatMapTransparency,
     double? heatMapPixelRatio,
@@ -96,7 +96,7 @@ class Config extends Equatable {
         uiElementSize = uiElementSize ?? 12,
         disabledRoutes = disabledRoutes ?? {},
         minSessionEventCount = minSessionEventCount ?? 1,
-        outputTypes = outputTypes ?? {OutputType.graphicalRender},
+        outputType = outputType ?? OutputType.localRender,
         heatMapStyle = heatMapStyle ?? HeatMapStyle.smooth,
         heatMapTransparency =
             (heatMapTransparency ?? 0.75).clamp(0, 1).toDouble(),
@@ -118,10 +118,8 @@ class Config extends Equatable {
               : null,
           maxSessionIdleTime: json['session']?['maxIdleTime'],
           minSessionEventCount: json['session']?['minEventCount'],
-          outputTypes: json['outputTypes'] != null
-              ? filterNotNull(EnumToString.fromList(
-                      OutputType.values, json['outputTypes']))
-                  .toSet()
+          outputType: json['outputType'] != null
+              ? EnumToString.fromString(OutputType.values, json['outputType'])
               : null,
           heatMapStyle: json['heatMap']?['style'] != null
               ? EnumToString.fromString(
@@ -138,7 +136,7 @@ class Config extends Equatable {
         disabledRoutes,
         maxSessionIdleTime,
         minSessionEventCount,
-        outputTypes,
+        outputType,
         heatMapStyle,
         heatMapTransparency,
         heatMapPixelRatio,

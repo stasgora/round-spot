@@ -23,18 +23,13 @@
       "minItems": 1,
       "uniqueItems": true
     },
-    "outputTypes": {
+    "outputType": {
       "description": "Specifies what output data forms should be generated",
-      "type": "array",
-      "items": {
-        "type": "string",
-        "enum": [
-          "graphicalRender",
-          "rawData"
-        ]
-      },
-      "minItems": 1,
-      "uniqueItems": true
+      "type": "string",
+      "enum": [
+        "localRender",
+        "data"
+      ]
     },
     "session": {
       "description": "Holds properties connected to sessions",
