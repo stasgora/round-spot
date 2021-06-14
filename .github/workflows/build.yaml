@@ -10,7 +10,7 @@ jobs:
       - name: Install Dependencies
         run: flutter packages get
       - name: Format
-        run: flutter format --set-exit-if-changed .
+        run: find lib -name "*.dart" ! -name "*.pb*.dart" | xargs flutter format --set-exit-if-changed
       - name: Analyze
         run: flutter analyze
       - name: Run tests
