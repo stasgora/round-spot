@@ -1,4 +1,4 @@
-lib/data/*.pbserver.dart
+lib/src/data/*.pbserver.dart
 
 # Miscellaneous
 *.class

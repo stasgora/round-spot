@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/rendering.dart' as flutter;
 
-import '../../../data/data-batch.pb.dart';
+import '../../data/data-batch.pb.dart';
 import '../../models/session.dart';
 import '../../utils/utils.dart';
 
