@@ -16,18 +16,20 @@
 It produces beautiful heat map visualizations that aim to make the UI improvement and troubleshooting easy and intuitive.
 </div>
 
+> **⚠️ Note:** This tool still in its development and currently only offers local on device heat map generation.
+> This limits the number of interactions that can be included in a single image and therefore can be considered as a preview.
+
 ## Usage
 Import the package in your main file:
 ```dart
-import 'package:round_spot/round_spot.dart' as round_spot;
+import 'package:round_spot/round_spot.dart';
 ```
-> **⚠️ Note:** Using a `round_spot` prefix is highly recommended to avoid potential name collisions and improve readability
 
 ### Setup
 Wrap your `MaterialApp` widget to initialize the library:
 ```dart
 void main() {
-  runApp(round_spot.initialize(
+  runApp(initialize(
     child: Application()
   ));
 }
@@ -35,21 +37,21 @@ void main() {
 Add an observer for monitoring the navigator:
 ```dart
 MaterialApp(
-  navigatorObservers: [ round_spot.Observer() ]
+  navigatorObservers: [ Observer() ]
 )
 ```
 
 ### Configuration
 Provide the callbacks for saving the processed output:
 ```dart
-round_spot.initialize(
+initialize(
   localRenderCallback: (data, info) => sendHeatMapImage(data)
 )
 ```
 Configure the tool to better fit your needs:
 ```dart
-round_spot.initialize(
-  config: round_spot.Config(
+initialize(
+  config: Config(
     minSessionEventCount: 5,
     uiElementSize: 15,
     heatMapPixelRatio: 2.0,
@@ -69,7 +71,7 @@ pushing [PageRoutes](https://api.flutter.dev/flutter/widgets/PageRoute-class.htm
 To correctly monitor interactions with any scrollable space a `Detector` 
 has to be placed as a direct parent of that widget:
 ```dart
-round_spot.Detector(
+Detector(
   areaID: id,
   child: ListView(
     children: /* children */,
