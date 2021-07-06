@@ -1,3 +1,11 @@
+# 0.5.0
+
+- **NEW**: refreshed data output implementation that uses a binary Protobuf serialized format
+- **BREAKING**: output types and callbacks have been renamed:
+  - `graphicalRender` ➡️ `localRender`
+  - `rawData` ➡️ `data` (data callback no longer provides the `OutputInfo` parameter)
+- **BREAKING**: only one output type can now be chosen (`Config.outputTypes` ➡️ `Config.outputType`)
+
 # 0.4.0
 
 - **NEW**: support for **popups** 💬

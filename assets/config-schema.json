@@ -24,7 +24,7 @@
       "uniqueItems": true
     },
     "outputType": {
-      "description": "Specifies what output data forms should be generated",
+      "description": "Specifies what output data form should be generated",
       "type": "string",
       "enum": [
         "localRender",
