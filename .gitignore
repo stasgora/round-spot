@@ -1,4 +1,5 @@
-lib/src/data/*.pbserver.dart
+lib/src/data/**
+!lib/src/data/data-batch.proto
 
 # Miscellaneous
 *.class

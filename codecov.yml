@@ -1,6 +1,5 @@
 ignore:
   - "lib/src/data"
-# No local processing coverage
-  - "lib/src/components/processors/local_processor.dart"
-  - "lib/src/components/event_processor.dart"
-  - "lib/src/models/cluster_path.dart"
+#  - "lib/src/components/processors/local_processor.dart"
+#  - "lib/src/components/event_processor.dart"
+#  - "lib/src/models/cluster_path.dart"
