@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:round_spot/round_spot.dart' as round_spot;
+import 'package:round_spot/round_spot.dart' as rs;
 
 void main() {
-  runApp(round_spot.initialize(
+  runApp(rs.initialize(
     child: ExampleApp(),
-    config: round_spot.Config(
+    config: rs.Config(
       uiElementSize: 12,
     ),
 	  localRenderCallback: (data, info) async {
@@ -22,7 +22,7 @@ class ExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Example Application',
-      navigatorObservers: [round_spot.Observer()],
+      navigatorObservers: [rs.Observer()],
       initialRoute: 'first',
       routes: {
         'first': (context) => Scaffold(
@@ -33,7 +33,7 @@ class ExampleApp extends StatelessWidget {
               ),
             ),
         'second': (context) => Scaffold(
-              body: round_spot.Detector(
+              body: rs.Detector(
                 areaID: 'list',
                 child: ListView(
                   children: [

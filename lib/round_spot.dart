@@ -6,7 +6,7 @@
 /// Wrap your [MaterialApp] widget to [initialize()] the library:
 /// ```dart
 /// void main() {
-///   runApp(round_spot.initialize(
+///   runApp(rs.initialize(
 ///     child: Application()
 ///   ));
 /// }
@@ -14,26 +14,26 @@
 /// Add an [Observer] for monitoring the navigator:
 /// ```dart
 /// MaterialApp(
-///   navigatorObservers: [ round_spot.Observer() ]
+///   navigatorObservers: [ rs.Observer() ]
 /// )
 /// ```
 ///
 /// ### Configuration
 /// Provide the callbacks for saving the processed output:
 /// ```dart
-/// round_spot.initialize(
+/// rs.initialize(
 ///   localRenderCallback: (data, info) => sendHeatMapImage(data)
 /// )
 /// ```
 /// Use [Config] to make the tool better fit your needs:
 /// ```dart
-/// round_spot.initialize(
-///   config: round_spot.Config(
+/// rs.initialize(
+///   config: rs.Config(
 ///     minSessionEventCount: 5,
 ///     uiElementSize: 15,
 ///     heatMapPixelRatio: 2.0,
 ///   ),
-///   loggingLevel: round_spot.LogLevel.warning // recommended for integration testing
+///   loggingLevel: rs.LogLevel.warning // recommended for integration testing
 /// )
 /// ```
 ///

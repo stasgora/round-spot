@@ -30,7 +30,7 @@ typedef DataCallback = void Function(Uint8List data);
 /// Should be invoked in `main()` or otherwise wrap the [MaterialApp] widget:
 /// ```dart
 /// void main() {
-///   runApp(round_spot.initialize(
+///   runApp(rs.initialize(
 ///     child: Application()
 ///   ));
 /// }

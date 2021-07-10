@@ -14,7 +14,7 @@ import '../utils/components.dart';
 /// To correctly monitor interactions with scrollable space a [Detector]
 /// has to be placed as a direct parent of that widget:
 /// ```dart
-/// round_spot.Detector(
+/// rs.Detector(
 ///   areaID: id,
 ///   child: ListView(
 ///     children: /* children */,
@@ -57,8 +57,6 @@ import '../utils/components.dart';
 /// will be included here in addition to the default screen maps.
 class Detector extends StatefulWidget {
   /// The widget below this widget to be observed.
-  ///
-  /// If you need to lay out multiple children in a column use [ListDetector].
   final Widget child;
 
   /// Consistently identifies the same visual region
